@@ -22,7 +22,7 @@ class RpCommand extends Command {
 		if (message.channel.id != 719323871580258376){
 			let msg = await message.channel.send('Please keep bot usage in '+ message.channel.toString());
 			message.delete();
-			setTimeOut(function(){msg.delete()});
+			setTimeOut(function(){msg.delete()}, 3000);
 			return
 		}
 
