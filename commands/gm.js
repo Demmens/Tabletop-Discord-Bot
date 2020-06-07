@@ -1,5 +1,5 @@
 const { Command } = require("discord-akairo");
-const RP_COLOUR = 'DARK_BLUE';
+const RP_COLOUR = '#206694';
 
 class GmCommand extends Command {
 	constructor() {
