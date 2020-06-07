@@ -3,22 +3,31 @@ const { Command } = require("discord-akairo");
 class GmCommand extends Command {
 	constructor() {
 		super("gm", {
-			aliases: ["gm", "createrpg"],
-			args: [{id: "message", type: "string", default: "Please specify the name of your game", match: "content"}],
-			description: "Creates channels for your roleplay game"
+			aliases: ["gm"],
+			args: [
+				{id: "command", type: "string", default: "help", match: "content"},
+				{id: "name", type: "string", default: "", match: "content"}
+			],
+			description: "Manages channels for your roleplay game"
 		});
 	}
 	exec(message, args) {
-		message.guild.roles.create({
-			data: {
-				name: args.message,
-				color: 'GOLD'
-			}
-		})
-			.then(console.log)
-			.catch(console.error);
+		if (args.command == 'create') {
+			if (args.name == ''){
+				return message.channel.send('Please specify the name of your game');
+			} else{
+				message.guild.roles.create({
+					data: {
+						name: args.message,
+						color: 'GOLD'
+					}
+				})
+					.then(console.log)
+					.catch(console.error);
 
-		return message.channel.send('Created your game: \''.concat(args.message,'\''));
+				return message.channel.send('Created your game: \''.concat(args.message,'\''));
+			}
+		}
 	}
 }
 
