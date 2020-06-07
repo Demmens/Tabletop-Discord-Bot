@@ -178,9 +178,28 @@ class RpCommand extends Command {
 				}
 			}
 			return message.channel.send('Successfully renamed game.')
+		//Join Command
 		} else if (args.command == 'join'){
+
+			if (isGM){
+				return message.channel.send('You cannot join a game as a GM. Instead use \'/rp create [name]\' to create your campaign.')
+			}
+
+			let roleExists = 0;
+
+			for (let role of gld.roles.cache){
+				if (role[1].name == args.name && role[1].hexColor == RP_COLOUR){
+					roleExists = role[1];
+				}
+			}
+
+			if (roleExists == 0){
+				return message.channel.send('There is no game of that name');
+			}
+
 			if (inGame != 0){
-				for (let mem of )
+				us.roles.remove(inGame, 'Joined new game');
+				us.roles.add(roleExists, 'Joined new game');
 			}
 		}
 	}
