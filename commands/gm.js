@@ -6,14 +6,14 @@ class GmCommand extends Command {
 			aliases: ["gm"],
 			args: [
 				{id: "command", type: "string", default: "help"},
-				{id: "name", type: "string", default: 'asdf'}
+				{id: "name", type: "string", default: ''}
 			],
 			description: "Manages channels for your roleplay game"
 		});
 	}
 	async exec(message, args) {
 		if (args.command == 'create') {
-			if (args.name == 'asdf'){
+			if (args.name == ''){
 				return message.channel.send('Please specify the name of your game');
 			} else{
 				//Create Role
@@ -22,7 +22,7 @@ class GmCommand extends Command {
 				let newRole = await gld.roles.create({
 					data: {
 						name: args.name,
-						color: 'DARK_GOLD'
+						color: 'DARK_BLUE'
 					}
 				})
 
@@ -42,6 +42,7 @@ class GmCommand extends Command {
 						}
 					],
 				});
+				//Create Text Channel
 				gld.channels.create(args.name, {
 					type: 'text',
 					permissionOverwrites:[
@@ -56,7 +57,7 @@ class GmCommand extends Command {
 					],
 					parent: categ,
 				});
-
+				//Create Voice Channel
 				gld.channels.create(args.name, {
 					type: 'voice',
 					permissionOverwrites:[
