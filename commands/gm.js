@@ -1,6 +1,6 @@
 const { Command } = require("discord-akairo");
 
-class EchoCommand extends Command {
+class GmCommand extends Command {
 	constructor() {
 		super("gm", {
 			aliases: ["gm", "createrpg"],
@@ -22,4 +22,4 @@ class EchoCommand extends Command {
 	}
 }
 
-module.exports = EchoCommand;
+module.exports = GmCommand;
