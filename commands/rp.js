@@ -22,15 +22,22 @@ class RpCommand extends Command {
 		if (message.channel.id != 719323871580258376){
 			let msg = await message.channel.send('Please keep bot usage in '+ message.channel.toString());
 			message.delete();
-			setTimeOut(function(){msg.delete()})
+			setTimeOut(function(){msg.delete()});
+			return
 		}
 
 		//Check all the members roles
 		for (let role of us.roles.cache){
 			//Check they have the GM role
 			if (role[1].name == "GM"){isGM = true;}
+			//Check they have the Rp role
+			if (role[1].name == "Roleplay"){isRP = true;}
 			//Check whether they're currently in a game
 			if (role[1].hexColor == RP_COLOUR){inGame = role[1];}
+		}
+
+		if (!isRP){
+			return message.channel.send('You must have the Roleplay role to use this command. React to the bot in ' + message.guild.channels.get('704330819392766035').toString() + ' to get the role.');
 		}
 
 		if (args.command == 'create') {
@@ -173,7 +180,7 @@ class RpCommand extends Command {
 			return message.channel.send('Successfully renamed game.')
 		} else if (args.command == 'join'){
 			if (inGame != 0){
-
+				for (let mem of )
 			}
 		}
 	}
