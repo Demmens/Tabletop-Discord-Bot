@@ -199,8 +199,9 @@ class RpCommand extends Command {
 
 			if (inGame != 0){
 				us.roles.remove(inGame, 'Joined new game');
-				us.roles.add(roleExists, 'Joined new game');
 			}
+			us.roles.add(roleExists, 'Joined new game');
+			return message.channel.send('You have successfully joined '+roleExists.name+'.')
 		}
 	}
 }
