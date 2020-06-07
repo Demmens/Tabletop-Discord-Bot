@@ -22,7 +22,7 @@ class GmCommand extends Command {
 				let newRole = await gld.roles.create({
 					data: {
 						name: args.name,
-						color: 'GOLD'
+						color: 'DARK_GOLD'
 					}
 				})
 
@@ -42,8 +42,23 @@ class GmCommand extends Command {
 						}
 					],
 				});
-				let txtchnl = await gld.channels.create(args.name, {
+				gld.channels.create(args.name, {
 					type: 'text',
+					permissionOverwrites:[
+						{
+							id: newRole.id,
+							allow: ['VIEW_CHANNEL']
+						},
+						{
+							id: gld.roles.everyone,
+							deny: ['VIEW_CHANNEL']
+						}
+					],
+					parent: categ,
+				});
+
+				gld.channels.create(args.name, {
+					type: 'voice',
 					permissionOverwrites:[
 						{
 							id: newRole.id,
