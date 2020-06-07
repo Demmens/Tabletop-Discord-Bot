@@ -1,4 +1,5 @@
 const { Command } = require("discord-akairo");
+const RP_COLOUR = 'DARK_BLUE';
 
 class GmCommand extends Command {
 	constructor() {
@@ -19,7 +20,7 @@ class GmCommand extends Command {
 			for (let role of gld.roles.cache) {
 				//Check that role doesn't already exist
 				if (role[1].name == args.name){
-					if (role[1].color == 'DARK_BLUE'){return message.channel.send('A game of that name already exists.');}
+					if (role[1].hexColor == RP_COLOUR){return message.channel.send('A game of that name already exists.');}
 					return message.channel.send('You may not use that name.');
 				}
 				//Check that they have the GM role
@@ -40,7 +41,7 @@ class GmCommand extends Command {
 				let newRole = await gld.roles.create({
 					data: {
 						name: args.name,
-						color: 'DARK_BLUE'
+						color: RP_COLOUR
 					}
 				})
 
