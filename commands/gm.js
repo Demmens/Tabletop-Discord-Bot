@@ -24,29 +24,32 @@ class GmCommand extends Command {
 						color: 'GOLD'
 					}
 				})
-					.then(console.log)
+					.then( function(){ //Do this after resolving properly
+
+						//give creator the role
+						for (let role of gld.roles.cache){
+							if (role[1].name == args.name){
+								const newRole = role[1];
+								const user = gld.members.fetch(message.author.id)
+								user.roles.add(role[1]);
+							}
+						}
+						//Create Corresponding Channels
+						gld.channels.create(args.name, {
+							type: 'category',
+							permissionOverwrites:[
+								{
+									id: newRole.id,
+									allow: ['VIEW_CHANNEL']
+								},
+							],
+						})
+
+						return message.channel.send('Created your game: \''.concat(args.name,'\''));
+					})
 					.catch(console.error);
 
-				for (let role of gld.roles.cache){
-					if (role[1].name == args.name){
-						const newRole = role[1];
-						const user = gld.members.fetch(message.author)
-						user.roles.add(role[1]);
-					}
 				}
-				//Create Corresponding Channels
-				gld.channels.create(args.name, {
-					type: 'category',
-					permissionOverwrites:[
-						{
-							id: newRole.id,
-							allow: ['VIEW_CHANNEL']
-						},
-					],
-				})
-
-				return message.channel.send('Created your game: \''.concat(args.name,'\''));
-			}
 		} else if (args.command == 'help'){
 			return message.channel.send('/gm create [name] - Makes channels for a game\n/gm rename [new name] - Renames the channels\n/gm remove - Removes your channels')
 		}
