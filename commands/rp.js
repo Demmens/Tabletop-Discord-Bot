@@ -120,7 +120,7 @@ class RpCommand extends Command {
 			return message.channel.send('Created your game: \''.concat(args.name,'\'.'));
 		//Help Command
 		} else if (args.command == 'help'){
-			return message.channel.send('/rp create [name] - Makes channels for a game\n/rp rename [new name] - Renames the channels\n/rp remove - Removes your channels\n/rp leave - Leaves your current game')
+			return message.channel.send('/rp create [name] - Makes channels for a game\n/rp rename [new name] - Renames the channels\n/rp remove - Removes your channels\n/rp leave - Leaves your current game\n/rp join [name] - Joins the game of that name')
 		//Leave Command
 		} else if (args.command == 'leave'){
 			if (inGame == 0){
