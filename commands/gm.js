@@ -28,6 +28,7 @@ class GmCommand extends Command {
 
 						//give creator the role
 						for (let role of gld.roles.cache){
+							console.log('role[1] == '.concat(role[1].name))
 							if (role[1].name == args.name){
 								const newRole = role[1];
 								message.member.roles.add(role[1]);
