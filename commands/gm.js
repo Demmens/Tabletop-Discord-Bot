@@ -15,6 +15,17 @@ class GmCommand extends Command {
 	async exec(message, args) {
 		const gld = message.guild
 		const us = message.member
+		let isGM = 0;
+		let inGame = 0;
+
+		//Check all the members roles
+		for (let role of us.roles.cache){
+			//Check that they have the GM role
+			if (role[1].name == "GM"){isGM = 1;}
+			//Check they're not currently in a game
+			if (role[1].hexColor == RP_COLOUR){inGame = role[1];}
+		}
+
 		if (args.command == 'create') {
 
 			for (let role of gld.roles.cache) {
@@ -24,15 +35,8 @@ class GmCommand extends Command {
 					return message.channel.send('You may not use that name.');
 				}			
 			}
-			//Check all the members roles
-			let isGM = 0;
-			for (let role of us.roles.cache){
-				//Check that they have the GM role
-				if (role[1].name == "GM"){isGM = 1;}
-				//Check they're not currently in a game
-				if (role[1].hexColor == RP_COLOUR){
-					return message.channel.send('You are already a part of a game. You must leave your current game before you can create one.')
-				}
+			if (inGame != 0){
+				return message.channel.send('You are already a part of a game. You must leave your current game before you can create one.')
 			}
 
 			if (isGM == 0){
@@ -104,22 +108,16 @@ class GmCommand extends Command {
 			return message.channel.send('/gm create [name] - Makes channels for a game\n/gm rename [new name] - Renames the channels\n/gm remove - Removes your channels\n/gm leave - Leaves your current game')
 		//Leave Command
 		} else if (args.command == 'leave'){
-			let gameRole;
-			//Check all the members roles
-			let isGM = 0;
-			for (let role of us.roles.cache){
-				//Check that they have the GM role
-				if (role[1].name == "GM"){isGM = 1;}
-				//Check they're not currently in a game
-				if (role[1].hexColor == RP_COLOUR){
-					gameRole = role[1];
-				}
-			}
 			if (isGM == 1){
 				return message.channel.send('You may not leave your game if you are a GM. Instead use \'/gm remove\' to remove your game.');
 			}
-			us.roles.remove(gameRole);
-			return message.channel.send('Successfully left your game.');
+			if (inGame != 0){
+				us.roles.remove(inGame);
+				return message.channel.send('Successfully left your game.');
+			}
+			return message.channel.send('You are not currently in a game.')
+		} else if (args.command == 'remove'){
+
 		}
 	}
 }
