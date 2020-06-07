@@ -86,7 +86,6 @@ class RpCommand extends Command {
 					{
 						id: newRole.id,
 						allow: ['VIEW_CHANNEL']
-						allow: ['']
 					},
 					{
 						id: gld.roles.everyone,
@@ -172,6 +171,10 @@ class RpCommand extends Command {
 				}
 			}
 			return message.channel.send('Successfully renamed game.')
+		} else if (args.command == 'join'){
+			if (inGame != 0){
+				
+			}
 		}
 	}
 }
