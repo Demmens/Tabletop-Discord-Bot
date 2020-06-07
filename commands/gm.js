@@ -16,14 +16,24 @@ class GmCommand extends Command {
 		const us = message.member
 		if (args.command == 'create') {
 
-			for (let role of message.guild.roles.cache) {
+			for (let role of gld.roles.cache) {
+				//Check that role doesn't already exist
 				if (role[1].name == args.name){
-					return message.channel.send('A role of that name already exists.')
+					if (role[1].color == 'DARK_BLUE'){return message.channel.send('A game of that name already exists.');}
+					return message.channel.send('You may not use that name.');
+				}
+				//Check that they have the GM role
+				if (role[1].name == "GM"){
+					let hasRl = 0;
+					for(let mem of role[1].members){
+						if (mem[1] == us){ hasRl = 1; }
+					}
+					if (hasRl == 0){return message.channel.send('You must have the GM role to use that command. Ask the roleplay rep if you wish to run a game.')}
 				}
 			}
 
 			if (args.name == ''){
-				return message.channel.send('Please specify the name of your game');
+				return message.channel.send('Please specify the name of your game.');
 			} else{
 				
 				//Create Role
@@ -81,7 +91,7 @@ class GmCommand extends Command {
 					parent: categ,
 				});
 
-				return message.channel.send('Created your game: \''.concat(args.name,'\''));
+				return message.channel.send('Created your game: \''.concat(args.name,'\'.'));
 			}
 
 		} else if (args.command == 'help'){
