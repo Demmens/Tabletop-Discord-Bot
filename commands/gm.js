@@ -9,7 +9,7 @@ class GmCommand extends Command {
 		});
 	}
 	exec(message, args) {
-		guild.roles.create({
+		message.guild.roles.create({
 			data: {
 				name: args.message,
 				color: 'YELLOW'
