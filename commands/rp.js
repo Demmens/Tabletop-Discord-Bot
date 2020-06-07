@@ -16,11 +16,18 @@ class RpCommand extends Command {
 		const gld = message.guild
 		const us = message.member
 		let isGM = false;
+		let isRP = false;
 		let inGame = 0;
+
+		if (message.channel.id != 719323871580258376){
+			let msg = await message.channel.send('Please keep bot usage in <#${719323871580258376}>');
+			message.delete();
+			setTimeOut(function(){msg.delete()})
+		}
 
 		//Check all the members roles
 		for (let role of us.roles.cache){
-			//Check that they have the GM role
+			//Check they have the GM role
 			if (role[1].name == "GM"){isGM = true;}
 			//Check whether they're currently in a game
 			if (role[1].hexColor == RP_COLOUR){inGame = role[1];}
@@ -28,13 +35,6 @@ class RpCommand extends Command {
 
 		if (args.command == 'create') {
 
-			for (let role of gld.roles.cache) {
-				//Check that role doesn't already exist
-				if (role[1].name == args.name){
-					if (role[1].hexColor == RP_COLOUR){return message.channel.send('A game of that name already exists.');}
-					return message.channel.send('You may not use that name.');
-				}			
-			}
 			if (inGame != 0){
 				return message.channel.send('You are already a part of a game. You must leave your current game before you can create one.')
 			}
@@ -45,6 +45,14 @@ class RpCommand extends Command {
 
 			if (args.name == ''){
 				return message.channel.send('Please specify the name of your game.');
+			}
+
+			for (let role of gld.roles.cache) {
+				//Check that role doesn't already exist
+				if (role[1].name == args.name){
+					if (role[1].hexColor == RP_COLOUR){return message.channel.send('A game of that name already exists.');}
+					return message.channel.send('You may not use that name.');
+				}			
 			}
 			
 			//Create Role
@@ -78,6 +86,7 @@ class RpCommand extends Command {
 					{
 						id: newRole.id,
 						allow: ['VIEW_CHANNEL']
+						allow: ['']
 					},
 					{
 						id: gld.roles.everyone,
@@ -125,7 +134,7 @@ class RpCommand extends Command {
 				return message.channel.send('Only the GM may remove the game.')
 			}
 			//Delete Channels
-			//Make 2 passes, ignoring category the first time so nothing moves around weirdly.
+			//Make two passes, ignoring category the first time so nothing moves around weirdly.
 			for (let chnl of gld.channels.cache){
 				if(chnl[1].name == inGame.name && chnl[1].type != 'category'){
 					await chnl[1].delete('Deleted by GM');
