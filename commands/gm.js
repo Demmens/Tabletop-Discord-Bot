@@ -25,8 +25,8 @@ class GmCommand extends Command {
 				}			
 			}
 			//Check all the members roles
+			let isGM = 0;
 			for (let role of us.roles.cache){
-				let isGM = 0;
 				//Check that they have the GM role
 				if (role[1].name == "GM"){isGM = 1;}
 				//Check they're not currently in a game
