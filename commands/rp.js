@@ -137,6 +137,26 @@ class RpCommand extends Command {
 				}
 			}
 			return message.channel.send('Successfully removed game.')
+		} else if (args.command == 'rename'){
+			if (inGame == 0){
+				return message.channel.send('You are not currently in a game.')
+			}
+			if (!isGM){
+				return message.channel.send('Only the GM may rename the game.')
+			}
+			//Delete Channels
+			for (let chnl of gld.channels.cache){
+				if(chnl[1].name == inGame.name){
+					await chnl[1].edit({name: args.name});
+				}
+			}
+			//Delete Roles
+			for (let role of gld.roles.cache){
+				if(role[1] == inGame){
+					await role[1].edit({name: args.name});
+				}
+			}
+			return message.channel.send('Successfully renamed game.')
 		}
 	}
 }
