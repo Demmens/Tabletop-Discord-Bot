@@ -15,14 +15,14 @@ class GmCommand extends Command {
 	async exec(message, args) {
 		const gld = message.guild
 		const us = message.member
-		let isGM = 0;
+		let isGM = false;
 		let inGame = 0;
 
 		//Check all the members roles
 		for (let role of us.roles.cache){
 			//Check that they have the GM role
-			if (role[1].name == "GM"){isGM = 1;}
-			//Check they're not currently in a game
+			if (role[1].name == "GM"){isGM = true;}
+			//Check whether they're currently in a game
 			if (role[1].hexColor == RP_COLOUR){inGame = role[1];}
 		}
 
@@ -39,7 +39,7 @@ class GmCommand extends Command {
 				return message.channel.send('You are already a part of a game. You must leave your current game before you can create one.')
 			}
 
-			if (isGM == 0){
+			if (!isGM){
 				return message.channel.send('You must have the GM role to use that command. Ask the roleplay rep if you wish to run a game.')
 			}
 
@@ -108,16 +108,35 @@ class GmCommand extends Command {
 			return message.channel.send('/gm create [name] - Makes channels for a game\n/gm rename [new name] - Renames the channels\n/gm remove - Removes your channels\n/gm leave - Leaves your current game')
 		//Leave Command
 		} else if (args.command == 'leave'){
-			if (isGM == 1){
+			if (inGame == 0){
+				return message.channel.send('You are not currently in a game.')	
+			}
+			if (isGM){
 				return message.channel.send('You may not leave your game if you are a GM. Instead use \'/gm remove\' to remove your game.');
 			}
-			if (inGame != 0){
-				us.roles.remove(inGame);
-				return message.channel.send('Successfully left your game.');
-			}
-			return message.channel.send('You are not currently in a game.')
+			us.roles.remove(inGame);
+			return message.channel.send('Successfully left your game.');			
+		//Remove Command
 		} else if (args.command == 'remove'){
-
+			if (inGame == 0){
+				return message.channel.send('You are not currently in a game.')
+			}
+			if (!isGM){
+				return message.channel.send('Only the GM may remove the game.')
+			}
+			//Delete Channels
+			for (let chnl of gld.channels.cache){
+				if(chnl[1].name == inGame.name){
+					chnl[1].delete('Deleted by GM');
+				}
+			}
+			//Delete Roles
+			for (let role of gld.roles.cache){
+				if(role[1] == inGame){
+					role[1].delete('Deleted by GM');
+				}
+			}
+			return message.channel.send('Successfully removed game.')
 		}
 	}
 }
