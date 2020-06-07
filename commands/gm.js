@@ -12,13 +12,13 @@ class GmCommand extends Command {
 		message.guild.roles.create({
 			data: {
 				name: args.message,
-				color: 'YELLOW'
+				color: 'GOLD'
 			}
 		})
 			.then(console.log)
 			.catch(console.error);
 
-		return message.channel.send(args.message);
+		return message.channel.send('Created your game: \''.concat(args.message,'\''));
 	}
 }
 
