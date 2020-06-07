@@ -1,10 +1,10 @@
 const { Command } = require("discord-akairo");
 const RP_COLOUR = '#206694';
 
-class GmCommand extends Command {
+class RpCommand extends Command {
 	constructor() {
-		super("gm", {
-			aliases: ["gm"],
+		super("rp", {
+			aliases: ["rp"],
 			args: [
 				{id: "command", type: "string", default: "help"},
 				{id: "name", type: "string", default: ''}
@@ -105,14 +105,14 @@ class GmCommand extends Command {
 			return message.channel.send('Created your game: \''.concat(args.name,'\'.'));
 		//Help Command
 		} else if (args.command == 'help'){
-			return message.channel.send('/gm create [name] - Makes channels for a game\n/gm rename [new name] - Renames the channels\n/gm remove - Removes your channels\n/gm leave - Leaves your current game')
+			return message.channel.send('/rp create [name] - Makes channels for a game\n/rp rename [new name] - Renames the channels\n/rp remove - Removes your channels\n/rp leave - Leaves your current game')
 		//Leave Command
 		} else if (args.command == 'leave'){
 			if (inGame == 0){
 				return message.channel.send('You are not currently in a game.')	
 			}
 			if (isGM){
-				return message.channel.send('You may not leave your game if you are a GM. Instead use \'/gm remove\' to remove your game.');
+				return message.channel.send('You may not leave your game if you are a GM. Instead use \'/rp remove\' to remove your game.');
 			}
 			us.roles.remove(inGame);
 			return message.channel.send('Successfully left your game.');			
@@ -127,17 +127,17 @@ class GmCommand extends Command {
 			//Delete Channels
 			for (let chnl of gld.channels.cache){
 				if(chnl[1].name == inGame.name){
-					chnl[1].delete('Deleted by GM');
+					await chnl[1].delete('Deleted by GM');
 				}
 			}
 			//Delete Roles
 			for (let role of gld.roles.cache){
 				if(role[1] == inGame){
-					role[1].delete('Deleted by GM');
+					await role[1].delete('Deleted by GM');
 				}
 			}
 			return message.channel.send('Successfully removed game.')
 		}
 	}
 }
-module.exports = GmCommand;
+module.exports = RpCommand;
