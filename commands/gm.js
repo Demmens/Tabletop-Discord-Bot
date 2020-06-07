@@ -28,7 +28,7 @@ class GmCommand extends Command {
 				return message.channel.send('Created your game: \''.concat(args.name,'\''));
 			}
 		} else if (args.command == 'help'){
-			return message.channel.send('/gm create - Makes channels for a game\n/gm remove - Removes your channels\n/gm rename - Renames the channels')
+			return message.channel.send('/gm create [name] - Makes channels for a game\n/gm remove - Removes your channels\n/gm rename [new name] - Renames the channels')
 		}
 	}
 }
