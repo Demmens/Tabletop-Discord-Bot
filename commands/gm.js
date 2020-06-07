@@ -30,8 +30,7 @@ class GmCommand extends Command {
 						for (let role of gld.roles.cache){
 							if (role[1].name == args.name){
 								const newRole = role[1];
-								const user = gld.members.fetch(message.author.id)
-								user.roles.add(role[1]);
+								message.member.roles.add(role[1]);
 							}
 						}
 						//Create Corresponding Channels
