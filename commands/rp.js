@@ -20,7 +20,7 @@ class RpCommand extends Command {
 		let inGame = 0;
 
 		if (message.channel.id != 719323871580258376){
-			let msg = await message.channel.send('Please keep bot usage in '+ message.guild.channels.resolveID('719323871580258376').toString());
+			let msg = await message.channel.send('Please keep bot usage in '+ message.guild.channels.resolve('719323871580258376').toString());
 			message.delete();
 			setTimeout(function(){msg.delete()}, 3000);
 			return
@@ -37,7 +37,7 @@ class RpCommand extends Command {
 		}
 
 		if (!isRP){
-			return message.channel.send('You must have the Roleplay role to use this command. React to the bot in ' + message.guild.channels.resolveID('704330819392766035').toString() + ' to get the role.');
+			return message.channel.send('You must have the Roleplay role to use this command. React to the bot in ' + message.guild.channels.resolve('704330819392766035').toString() + ' to get the role.');
 		}
 
 		if (args.command == 'create') {
