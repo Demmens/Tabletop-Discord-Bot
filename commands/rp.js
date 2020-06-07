@@ -125,8 +125,14 @@ class RpCommand extends Command {
 				return message.channel.send('Only the GM may remove the game.')
 			}
 			//Delete Channels
+			//Make 2 passes, ignoring category the first time so nothing moves around weirdly.
 			for (let chnl of gld.channels.cache){
-				if(chnl[1].name == inGame.name){
+				if(chnl[1].name == inGame.name && chnl[1].type != 'category'){
+					await chnl[1].delete('Deleted by GM');
+				}
+			}
+			for (let chnl of gld.channels.cache){
+				if(chnl[1].name == inGame.name && chnl[1].type == 'category'){
 					await chnl[1].delete('Deleted by GM');
 				}
 			}
