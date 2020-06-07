@@ -25,8 +25,8 @@ class GmCommand extends Command {
 					}
 				})
 					.then( function(){ //Do this after resolving properly
-						const newRole;
 						//give creator the role
+						let newRole;
 						for (let role of gld.roles.cache){
 							if (role[1].name == args.name){
 								newRole = role[1];
