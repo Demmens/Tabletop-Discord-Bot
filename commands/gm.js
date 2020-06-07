@@ -17,7 +17,8 @@ class GmCommand extends Command {
 				return message.channel.send('Please specify the name of your game');
 			} else{
 				//Create Role
-				let newRole = message.guild.roles.create({
+				const gld = message.guild
+				gld.roles.create({
 					data: {
 						name: args.name,
 						color: 'GOLD'
@@ -26,8 +27,9 @@ class GmCommand extends Command {
 					.then(console.log)
 					.catch(console.error);
 
+				const newRole = gld.roles.find("name", args.name)
 				//Create Corresponding Channels
-				message.guild.channels.create(args.name, {
+				gld.channels.create(args.name, {
 					type: 'category',
 					permissionOverwrites:[
 						{
