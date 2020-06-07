@@ -25,14 +25,11 @@ class GmCommand extends Command {
 					}
 				})
 					.then( function(){ //Do this after resolving properly
-
+						const newRole;
 						//give creator the role
 						for (let role of gld.roles.cache){
-							console.log('role[1] == '.concat(role[1].name));
-							console.log('args.name = '.concat(args.name));
 							if (role[1].name == args.name){
-								console.log('Hasnt ignored if');
-								const newRole = role[1];
+								newRole = role[1];
 								message.member.roles.add(role[1]);
 							}
 						}
