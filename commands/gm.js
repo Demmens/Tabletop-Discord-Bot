@@ -33,6 +33,7 @@ class GmCommand extends Command {
 						gld.members.fetch(message.author.id).roles.add(role[1]);
 					}
 				}
+				console.log('args.name == '.concat(args.name));
 				//Create Corresponding Channels
 				gld.channels.create(args.name, {
 					type: 'category',
