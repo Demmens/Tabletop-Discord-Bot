@@ -11,7 +11,7 @@ class GmCommand extends Command {
 			description: "Manages channels for your roleplay game"
 		});
 	}
-	exec(message, args) {
+	async exec(message, args) {
 		if (args.command == 'create') {
 			if (args.name == 'asdf'){
 				return message.channel.send('Please specify the name of your game');
