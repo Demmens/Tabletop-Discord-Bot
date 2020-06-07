@@ -27,7 +27,12 @@ class GmCommand extends Command {
 					.then(console.log)
 					.catch(console.error);
 
-				const newRole = gld.roles.find("name", args.name)
+				for (let role of gld.roles.cache){
+					if (role[1].name == args.name){
+						const newRole = role[1];
+						gld.members.fetch(message.author.id).roles.add(role[1]);
+					}
+				}
 				//Create Corresponding Channels
 				gld.channels.create(args.name, {
 					type: 'category',
