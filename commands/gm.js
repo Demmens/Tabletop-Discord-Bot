@@ -99,13 +99,15 @@ class GmCommand extends Command {
 			});
 
 			return message.channel.send('Created your game: \''.concat(args.name,'\'.'));
+		//Help Command
 		} else if (args.command == 'help'){
 			return message.channel.send('/gm create [name] - Makes channels for a game\n/gm rename [new name] - Renames the channels\n/gm remove - Removes your channels\n/gm leave - Leaves your current game')
+		//Leave Command
 		} else if (args.command == 'leave'){
 			let gameRole;
 			//Check all the members roles
+			let isGM = 0;
 			for (let role of us.roles.cache){
-				let isGM = 0;
 				//Check that they have the GM role
 				if (role[1].name == "GM"){isGM = 1;}
 				//Check they're not currently in a game
