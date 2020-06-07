@@ -41,6 +41,10 @@ class GmCommand extends Command {
 									id: newRole.id,
 									allow: ['VIEW_CHANNEL']
 								},
+								{
+									id: gld.roles.everyone,
+									deny: ['VIEW_CHANNEL']
+								}
 							],
 						})
 
