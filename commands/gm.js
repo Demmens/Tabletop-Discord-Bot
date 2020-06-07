@@ -12,13 +12,21 @@ class GmCommand extends Command {
 		});
 	}
 	async exec(message, args) {
+		const gld = message.guild
+		const us = message.member
 		if (args.command == 'create') {
+
+			for (let role of message.guild.roles.cache) {
+				if (role[1].name == args.name){
+					return message.channel.send('A role of that name already exists.')
+				}
+			}
+
 			if (args.name == ''){
 				return message.channel.send('Please specify the name of your game');
 			} else{
+				
 				//Create Role
-				const gld = message.guild
-
 				let newRole = await gld.roles.create({
 					data: {
 						name: args.name,
