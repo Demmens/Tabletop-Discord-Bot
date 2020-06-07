@@ -18,41 +18,49 @@ class GmCommand extends Command {
 			} else{
 				//Create Role
 				const gld = message.guild
-				gld.roles.create({
+
+				let newRole = await gld.roles.create({
 					data: {
 						name: args.name,
 						color: 'GOLD'
 					}
 				})
-					.then( function(){ //Do this after resolving properly
-						//give creator the role
-						let newRole;
-						for (let role of gld.roles.cache){
-							if (role[1].name == args.name){
-								newRole = role[1];
-								message.member.roles.add(role[1]);
-							}
+
+				//give creator the role
+				message.member.roles.add(newRole);
+				//Create Corresponding Channels
+				let categ = await gld.channels.create(args.name, {
+					type: 'category',
+					permissionOverwrites:[
+						{
+							id: newRole.id,
+							allow: ['VIEW_CHANNEL']
+						},
+						{
+							id: gld.roles.everyone,
+							deny: ['VIEW_CHANNEL']
 						}
-						//Create Corresponding Channels
-						gld.channels.create(args.name, {
-							type: 'category',
-							permissionOverwrites:[
-								{
-									id: newRole.id,
-									allow: ['VIEW_CHANNEL']
-								},
-								{
-									id: gld.roles.everyone,
-									deny: ['VIEW_CHANNEL']
-								}
-							],
-						})
+					],
+				});
+				let txtchnl = await gld.channels.create(args.name, {
+					type: 'text',
+					permissionOverwrites:[
+						{
+							id: newRole.id,
+							allow: ['VIEW_CHANNEL']
+						},
+						{
+							id: gld.roles.everyone,
+							deny: ['VIEW_CHANNEL']
+						}
+					],
+					parent: categ,
+				});
 
-						return message.channel.send('Created your game: \''.concat(args.name,'\''));
-					})
-					.catch(console.error);
+				return message.channel.send('Created your game: \''.concat(args.name,'\''));
+			}
+			.catch(console.error);
 
-				}
 		} else if (args.command == 'help'){
 			return message.channel.send('/gm create [name] - Makes channels for a game\n/gm rename [new name] - Renames the channels\n/gm remove - Removes your channels')
 		}
