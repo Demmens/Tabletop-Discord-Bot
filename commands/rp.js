@@ -20,7 +20,7 @@ class RpCommand extends Command {
 		let inGame = 0;
 
 		if (message.channel.id != 719323871580258376){
-			let msg = await message.channel.send('Please keep bot usage in '+ message.guild.channels.resolve('719323871580258376').toString());
+			let msg = await message.channel.send('Please keep this command usage in '+ message.guild.channels.resolve('719323871580258376').toString());
 			message.delete();
 			setTimeout(function(){msg.delete()}, 3000);
 			return
