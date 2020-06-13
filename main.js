@@ -53,6 +53,8 @@ class MyClient extends AkairoClient {
 
 const client = new MyClient();
 
+client.on("ready", () => {console.log('ready')});
+
 client.testMode = testMode;
 
 client.login(token);
