@@ -49,7 +49,7 @@ class RpCommand extends Command {
 			if (args.name == ''){
 				return message.channel.send('Please specify the name of your game.');
 			}
-			message.channel.send(args.name.slice(args.name.length-3))
+			message.channel.send(args.name.slice(args.name.length-4))
 			if (args.name.slice(args.name.length-4) == ' GM') {
 				return message.channel.send('You may not use that name.')
 			}
@@ -153,12 +153,18 @@ class RpCommand extends Command {
 		//Remove Command
 		} else if (args.command == 'remove'){
 
+			let GMRoles = [];
 
+			for( let role of us.roles.cache){
+				if (role[1].hexColor == RP_COLOUR && role[1].name.slice(0,role[1].name.length-4) == args.name){
+					GMRoles.push(args.name);
+				}
+			}
 
 			if (inGame == 0){
 				return message.channel.send('You are not currently in a game.')
 			}
-			if (!isGameGM){
+			if (!isGM){
 				return message.channel.send('Only the GM may remove the game.')
 			}
 			//Delete Channels
