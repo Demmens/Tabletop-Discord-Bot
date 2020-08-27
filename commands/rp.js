@@ -18,12 +18,14 @@ class RpCommand extends Command {
 		let isGM = false;
 		let isRP = false;
 
+		/*
 		if (message.channel.id != 719323871580258376 && message.channel.id != 719204772590256159){
 			let msg = await message.channel.send('Please keep this command usage in '+ message.guild.channels.resolve('719323871580258376').toString());
 			message.delete();
 			setTimeout(function(){msg.delete()}, 3000);
 			return
 		}
+		*/
 
 		//Check all the members roles
 		for (let role of us.roles.cache){
