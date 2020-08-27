@@ -1,6 +1,4 @@
 const { Command } = require("discord-akairo");
-const config = require("../config.js");
-const Discord = require("discord.js");
 const RP_COLOUR = '#206694';
 
 class RpCommand extends Command {
@@ -168,40 +166,38 @@ class RpCommand extends Command {
 			if (GMRoles.length == 0){
 				return message.channel.send('You are not the GM of any games.')
 			}
-
-			for (let i = 0; i < GMRoles.length; i++) {
-				GMRoles[i] = [config.emoji_letters[i], GMRoles[i]]
+			if (args.name == '' && GMRoles.length != 1){
+				return message.channel.send('Please specify which game you wish to remove')
 			}
 
-			let sent = await message.channel.send(
-				new Discord.MessageEmbed()
-				.setColor(config.colour)
-				.setAuthor('Which game would you like to remove?')
-				.addField("⠀", [GMRoles.map(item => item.join(" - "))].join("\n")))
-			for (let i = 0; i < GMRoles.length; i++) {
-				await sent.react(config.emoji_letters[i]);
+			for (let i = 0; i < GMRoles.length; i++) { //Find all GM roles they have.
+				let gameName = 0;
+				if (GMRoles[i].name.slice(0, inGame.name.length-3) == args.name){
+					gameName = args.name; //Match to the message sent.
+				}
 			}
-
-			let inGameName = inGame.name.slice(0, inGame.name.length-3)
+			if (gameName == 0){
+				return message.channel.send('You are not the GM of the game \''+args.name+'\'')
+			}
 
 			//Delete Channels
 			//Make two passes, ignoring category the first time so nothing moves around weirdly.
 			for (let chnl of gld.channels.cache){
-				if(chnl[1].name == inGameName && chnl[1].type != 'category'){
+				if(chnl[1].name == gameName && chnl[1].type != 'category'){
 					await chnl[1].delete('Deleted by GM');
 				}
 			}
 			for (let chnl of gld.channels.cache){
-				if(chnl[1].name == inGameName && chnl[1].type == 'category'){
+				if(chnl[1].name == gameName && chnl[1].type == 'category'){
 					await chnl[1].delete('Deleted by GM');
 				}
 			}
 			//Delete Roles
 			for (let role of gld.roles.cache){
-				if(role[1].name == inGameName){
+				if(role[1].name == gameName){
 					await role[1].delete('Deleted by GM');
 				}
-				if(role[1].name == inGameName+" GM"){
+				if(role[1].name == gameName+" GM"){
 					await role[1].delete('Deleted by GM');
 				}
 			}
@@ -229,14 +225,10 @@ class RpCommand extends Command {
 		//Join Command
 		} else if (args.command == 'join'){
 
-			if (isGM){
-				return message.channel.send('You cannot join a game as a GM. Instead use \'/rp create [name]\' to create your campaign.')
-			}
-
 			let roleExists = 0;
 
 			for (let role of gld.roles.cache){
-				if (role[1].name == args.name && role[1].hexColor == RP_COLOUR){
+				if (role[1].name == args.name && role[1].hexColor == RP_COLOUR && role[1].name.slice(role[1].name.length-3) != ' GM'){
 					roleExists = role[1];
 				}
 			}
