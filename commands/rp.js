@@ -176,13 +176,13 @@ class RpCommand extends Command {
 			let sent = await message.channel.send(
 				new Discord.MessageEmbed()
 				.setColor(config.colour)
-				.setAuthor('**Which game would you like to remove?**')
+				.setAuthor('Which game would you like to remove?')
 				.addField("⠀", [GMRoles.map(item => item.join(" - "))].join("\n")))
 			for (let i = 0; i < GMRoles.length; i++) {
 				await sent.react(config.emoji_letters[i]);
 			}
 
-			inGameName = inGame.name.slice(0, role[1].name.length-3)
+			inGameName = inGame.name.slice(0, inGame.name.length-3)
 
 			//Delete Channels
 			//Make two passes, ignoring category the first time so nothing moves around weirdly.
@@ -199,6 +199,9 @@ class RpCommand extends Command {
 			//Delete Roles
 			for (let role of gld.roles.cache){
 				if(role[1] == inGame){
+					await role[1].delete('Deleted by GM');
+				}
+				if(role[1].name == inGameName+" GM"){
 					await role[1].delete('Deleted by GM');
 				}
 			}
