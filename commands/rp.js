@@ -182,7 +182,7 @@ class RpCommand extends Command {
 				await sent.react(config.emoji_letters[i]);
 			}
 
-			inGameName = inGame.name.slice(0, inGame.name.length-3)
+			let inGameName = inGame.name.slice(0, inGame.name.length-3)
 
 			//Delete Channels
 			//Make two passes, ignoring category the first time so nothing moves around weirdly.
