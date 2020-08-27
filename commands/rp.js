@@ -187,18 +187,18 @@ class RpCommand extends Command {
 			//Delete Channels
 			//Make two passes, ignoring category the first time so nothing moves around weirdly.
 			for (let chnl of gld.channels.cache){
-				if(chnl[1].name == inGameName.name && chnl[1].type != 'category'){
+				if(chnl[1].name == inGameName && chnl[1].type != 'category'){
 					await chnl[1].delete('Deleted by GM');
 				}
 			}
 			for (let chnl of gld.channels.cache){
-				if(chnl[1].name == inGameName.name && chnl[1].type == 'category'){
+				if(chnl[1].name == inGameName && chnl[1].type == 'category'){
 					await chnl[1].delete('Deleted by GM');
 				}
 			}
 			//Delete Roles
 			for (let role of gld.roles.cache){
-				if(role[1] == inGame){
+				if(role[1].name == inGameName){
 					await role[1].delete('Deleted by GM');
 				}
 				if(role[1].name == inGameName+" GM"){
