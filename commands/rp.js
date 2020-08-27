@@ -49,6 +49,10 @@ class RpCommand extends Command {
 			if (args.name == ''){
 				return message.channel.send('Please specify the name of your game.');
 			}
+			message.channel.send(args.name.slice(args.name.length-3))
+			if (args.name.slice(args.name.length-3) == args.name+' GM') {
+				return message.channel.send('You may not use that name.')
+			}
 
 			for (let role of gld.roles.cache) {
 				//Check that role doesn't already exist
@@ -148,10 +152,13 @@ class RpCommand extends Command {
 			return message.channel.send('Successfully left your game.');			
 		//Remove Command
 		} else if (args.command == 'remove'){
+
+
+
 			if (inGame == 0){
 				return message.channel.send('You are not currently in a game.')
 			}
-			if (!isGM){
+			if (!isGameGM){
 				return message.channel.send('Only the GM may remove the game.')
 			}
 			//Delete Channels
