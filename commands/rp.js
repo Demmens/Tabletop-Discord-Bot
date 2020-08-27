@@ -172,7 +172,7 @@ class RpCommand extends Command {
 
 			for (let i = 0; i < GMRoles.length; i++) { //Find all GM roles they have.
 				let gameName = 0;
-				if (GMRoles[i].name.slice(0, inGame.name.length-3) == args.name){
+				if (GMRoles[i] == args.name){
 					gameName = args.name; //Match to the message sent.
 				}
 			}
