@@ -49,7 +49,6 @@ class RpCommand extends Command {
 			if (args.name == ''){
 				return message.channel.send('Please specify the name of your game.');
 			}
-			message.channel.send(args.name.slice(args.name.length-3))
 			if (args.name.slice(args.name.length-3) == ' GM') {
 				return message.channel.send('You may not use that name.')
 			}
@@ -156,17 +155,31 @@ class RpCommand extends Command {
 			let GMRoles = [];
 
 			for( let role of us.roles.cache){
-				if (role[1].hexColor == RP_COLOUR && role[1].name.slice(0,role[1].name.length-4) == args.name){
-					GMRoles.push(args.name);
+				if (role[1].hexColor == RP_COLOUR && role[1].name.slice(role[1].name.length-3) == ' GM'){
+					GMRoles.push(role[1].name.slice(0, role[1].name.length-3));
 				}
 			}
 
 			if (inGame == 0){
 				return message.channel.send('You are not currently in a game.')
 			}
-			if (!isGM){
-				return message.channel.send('Only the GM may remove the game.')
+			if (GMRoles.length == 0){
+				return message.channel.send('You are not the GM of any games.')
 			}
+
+			for (let i = 0; i < GMRoles.length; i++) {
+				GMRoles[i] = [config.emoji_letters[i], GMRoles[i]]
+			}
+
+			let sent = await message.channel.send(
+				new Discord.MessageEmbed()
+				.setColor(config.colour)
+				.setAuthor('**Which game would you like to remove?**')
+				.addField("⠀", [GMRoles.map(item => item.join(" - "))].join("\n")))
+			for (let i = 0; i < GMRoles.length; i++) {
+				await sent.react(config.emoji_letters[i]);
+			}
+
 			//Delete Channels
 			//Make two passes, ignoring category the first time so nothing moves around weirdly.
 			for (let chnl of gld.channels.cache){
