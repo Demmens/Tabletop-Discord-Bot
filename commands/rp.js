@@ -65,8 +65,15 @@ class RpCommand extends Command {
 				}
 			})
 
+			let newGMRole = await gld.roles.create({
+				data: {
+					name: args.name+" GM",
+					color: RP_COLOUR
+				}
+			})
+
 			//give creator the role
-			us.roles.add(newRole);
+			us.roles.add(newGMRole);
 			//Create Corresponding Channels
 			let categ = await gld.channels.create(args.name, {
 				type: 'category',
