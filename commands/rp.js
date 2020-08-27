@@ -35,11 +35,18 @@ class RpCommand extends Command {
 			//Check whether they're currently in a game
 			if (role[1].hexColor == RP_COLOUR){inGame = role[1];}
 		}
+		//Check what games they are the GM of.
+		let GMRoles = [];
+		for( let role of us.roles.cache){
+			if (role[1].hexColor == RP_COLOUR && role[1].name.slice(role[1].name.length-3) == ' GM'){
+				GMRoles.push(role[1].name.slice(0, role[1].name.length-3));
+			}
+		}
 
 		if (!isRP){
 			return message.channel.send('You must have the Roleplay role to use this command. React to the bot in ' + message.guild.channels.resolve('704330819392766035').toString() + ' to get the role.');
 		}
-
+		//Create Command
 		if (args.command == 'create') {
 
 			if (!isGM){
@@ -138,38 +145,44 @@ class RpCommand extends Command {
 			return message.channel.send('Created your game: \''.concat(args.name,'\'.'));
 		//Help Command
 		} else if (args.command == 'help'){
-			return message.channel.send('/rp create [name] - Makes channels for a game\n/rp rename [new name] - Renames the channels\n/rp remove - Removes your channels\n/rp leave - Leaves your current game\n/rp join [name] - Joins the game of that name')
+			return message.channel.send('/rp create [name] - Makes channels for a game\n/rp rename [new name] - Renames the channels (Currently not working)\n/rp remove [name] - Removes the specified campaign (must be GM)\n/rp leave [name] - Leaves the game of that name\n/rp join [name] - Joins the game of that name');
 		//Leave Command
 		} else if (args.command == 'leave'){
+			for (let role of GMRoles){
+				if (args.name == role[1]){
+					return message.channel.send('You may not leave your game if you are a GM. Instead use \'/rp remove '+args.name+'\' to remove your game.');
+				}
+			}
 			if (inGame == 0){
-				return message.channel.send('You are not currently in a game.')	
+				return message.channel.send('You are not currently in a game.');
 			}
-			if (isGM){
-				return message.channel.send('You may not leave your game if you are a GM. Instead use \'/rp remove\' to remove your game.');
+			if (args.name == ''){
+				return message.channel.send('Please specify which game you wish to leave');
 			}
-			us.roles.remove(inGame);
+			let gameRemove = 0;
+			for( let role of us.roles.cache){
+				if (role[1].hexColor == RP_COLOUR && role[1].name == args.name){
+					gameRemove = role[1];
+				}
+			}
+			if (gameRemove == 0){
+				return message.channel.send('Could not find game \''+args.name+'\'');
+			}
+			us.roles.remove(gameRemove);
 			return message.channel.send('Successfully left your game.');			
 		//Remove Command
 		} else if (args.command == 'remove'){
 
-			let GMRoles = [];
-
-			for( let role of us.roles.cache){
-				if (role[1].hexColor == RP_COLOUR && role[1].name.slice(role[1].name.length-3) == ' GM'){
-					GMRoles.push(role[1].name.slice(0, role[1].name.length-3));
-				}
-			}
-
 			if (inGame == 0){
-				return message.channel.send('You are not currently in a game.')
+				return message.channel.send('You are not currently in a game.');
 			}
 			if (GMRoles.length == 0){
-				return message.channel.send('You are not the GM of any games.')
+				return message.channel.send('You are not the GM of any games.');
 			}
 			if (args.name == '' && GMRoles.length != 1){
-				return message.channel.send('Please specify which game you wish to remove')
+				return message.channel.send('Please specify which game you wish to remove');
 			}
-			
+
 			let gameName = 0;
 			for (let i = 0; i < GMRoles.length; i++) { //Find all GM roles they have.
 				
@@ -178,7 +191,7 @@ class RpCommand extends Command {
 				}
 			}
 			if (gameName == 0){
-				return message.channel.send('You are not the GM of the game \''+args.name+'\'')
+				return message.channel.send('You are not the GM of the game \''+args.name+'\'');
 			}
 
 			//Delete Channels
@@ -202,13 +215,13 @@ class RpCommand extends Command {
 					await role[1].delete('Deleted by GM');
 				}
 			}
-			return message.channel.send('Successfully removed game.')
+			return message.channel.send('Successfully removed game.');
 		} else if (args.command == 'rename'){
 			if (inGame == 0){
-				return message.channel.send('You are not currently in a game.')
+				return message.channel.send('You are not currently in a game.');
 			}
 			if (!isGM){
-				return message.channel.send('Only the GM may rename the game.')
+				return message.channel.send('Only the GM may rename the game.');
 			}
 			//Delete Channels
 			for (let chnl of gld.channels.cache){
@@ -222,7 +235,7 @@ class RpCommand extends Command {
 					await role[1].edit({name: args.name});
 				}
 			}
-			return message.channel.send('Successfully renamed game.')
+			return message.channel.send('Successfully renamed game.');
 		//Join Command
 		} else if (args.command == 'join'){
 
@@ -238,11 +251,8 @@ class RpCommand extends Command {
 				return message.channel.send('There is no game of that name');
 			}
 
-			if (inGame != 0){
-				us.roles.remove(inGame, 'Joined new game');
-			}
 			us.roles.add(roleExists, 'Joined new game');
-			return message.channel.send('You have successfully joined '+roleExists.name+'.')
+			return message.channel.send('You have successfully joined '+roleExists.name+'.');
 		}
 	}
 }
