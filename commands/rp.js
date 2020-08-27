@@ -17,15 +17,14 @@ class RpCommand extends Command {
 		const us = message.member
 		let isGM = false;
 		let isRP = false;
+		let inGame = 0;
 
-		/*
 		if (message.channel.id != 719323871580258376 && message.channel.id != 719204772590256159){
 			let msg = await message.channel.send('Please keep this command usage in '+ message.guild.channels.resolve('719323871580258376').toString());
 			message.delete();
 			setTimeout(function(){msg.delete()}, 3000);
 			return
 		}
-		*/
 
 		//Check all the members roles
 		for (let role of us.roles.cache){
@@ -42,6 +41,10 @@ class RpCommand extends Command {
 		}
 
 		if (args.command == 'create') {
+
+			if (inGame != 0){
+				return message.channel.send('You are already a part of a game. You must leave your current game before you can create one.')
+			}
 
 			if (!isGM){
 				return message.channel.send('You must have the GM role to use that command. Ask the roleplay rep if you wish to run a game.')
