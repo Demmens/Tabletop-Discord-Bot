@@ -1,4 +1,6 @@
 const { Command } = require("discord-akairo");
+const config = require("../config.js");
+const Discord = require("discord.js");
 const RP_COLOUR = '#206694';
 
 class RpCommand extends Command {
