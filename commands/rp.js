@@ -49,8 +49,8 @@ class RpCommand extends Command {
 			if (args.name == ''){
 				return message.channel.send('Please specify the name of your game.');
 			}
-			message.channel.send(args.name.slice(args.name.length-4))
-			if (args.name.slice(args.name.length-4) == ' GM') {
+			message.channel.send(args.name.slice(args.name.length-3))
+			if (args.name.slice(args.name.length-3) == ' GM') {
 				return message.channel.send('You may not use that name.')
 			}
 
