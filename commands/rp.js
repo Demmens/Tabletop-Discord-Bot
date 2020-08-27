@@ -169,9 +169,10 @@ class RpCommand extends Command {
 			if (args.name == '' && GMRoles.length != 1){
 				return message.channel.send('Please specify which game you wish to remove')
 			}
-
+			
+			let gameName = 0;
 			for (let i = 0; i < GMRoles.length; i++) { //Find all GM roles they have.
-				let gameName = 0;
+				
 				if (GMRoles[i] == args.name){
 					gameName = args.name; //Match to the message sent.
 				}
