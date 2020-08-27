@@ -17,6 +17,7 @@ class RpCommand extends Command {
 		const us = message.member
 		let isGM = false;
 		let isRP = false;
+		let inGame = false;
 
 		if (message.channel.id != 719323871580258376 && message.channel.id != 719204772590256159){
 			let msg = await message.channel.send('Please keep this command usage in '+ message.guild.channels.resolve('719323871580258376').toString());
@@ -83,6 +84,10 @@ class RpCommand extends Command {
 						allow: ['VIEW_CHANNEL']
 					},
 					{
+						id: newGMRole.id,
+						allow: ['VIEW_CHANNEL']
+					},
+					{
 						id: gld.roles.everyone,
 						deny: ['VIEW_CHANNEL']
 					}
@@ -94,6 +99,10 @@ class RpCommand extends Command {
 				permissionOverwrites:[
 					{
 						id: newRole.id,
+						allow: ['VIEW_CHANNEL']
+					},
+					{
+						id: newGMRole.id,
 						allow: ['VIEW_CHANNEL']
 					},
 					{
@@ -109,6 +118,10 @@ class RpCommand extends Command {
 				permissionOverwrites:[
 					{
 						id: newRole.id,
+						allow: ['VIEW_CHANNEL']
+					},
+					{
+						id: newGMRole.id,
 						allow: ['VIEW_CHANNEL']
 					},
 					{
