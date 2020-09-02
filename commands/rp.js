@@ -287,7 +287,7 @@ class RpCommand extends Command {
 			}
 
 			for (let chnl of message.guild.channels.cache){ //Create the channel
-				if (chnl[1].name == chGame && chnl[1].options.type == 'category'){ //Find correct category
+				if (chnl[1].name == chGame && chnl[1].type == 'category'){ //Find correct category
 					gld.channels.create(args.name, {
 						type: args.type,
 						permissionOverwrites:[
