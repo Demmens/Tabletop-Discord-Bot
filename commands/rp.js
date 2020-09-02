@@ -147,7 +147,7 @@ class RpCommand extends Command {
 			return message.channel.send('Created your game: \''.concat(args.name,'\'.'));
 		//Help Command
 		} else if (args.command == 'help'){
-			return message.channel.send('/rp create [name] - Makes channels for a game\n/rp rename [new name] - Renames the channels (Currently not working)\n/rp remove [name] - Removes the specified campaign (must be GM)\n/rp leave [name] - Leaves the game of that name\n/rp join [name] - Joins the game of that name');
+			return message.channel.send('/rp create [name] - Makes channels for a game\n/rp remove [name] - Removes the specified campaign (must be GM)\n/rp leave [name] - Leaves the game of that name\n/rp join [name] - Joins the game of that name\n/rp createchannel [name] [text/voice] [game] Creates a new channel in your game category');
 		//Leave Command
 		} else if (args.command == 'leave'){
 			for (let role of GMRoles){
@@ -197,17 +197,20 @@ class RpCommand extends Command {
 			}
 
 			//Delete Channels
-			//Make two passes, ignoring category the first time so nothing moves around weirdly.
-			for (let chnl of gld.channels.cache){
-				if(chnl[1].name == gameName && chnl[1].type != 'category'){
-					await chnl[1].delete('Deleted by GM');
-				}
-			}
-			for (let chnl of gld.channels.cache){
+			let categ = 0;
+			for (let chnl of gld.channels.cache){ //Find corresponding category
 				if(chnl[1].name == gameName && chnl[1].type == 'category'){
+					categ = chnl[1];
+				}
+			}
+			//Clear out all channels in category
+			for (let chnl of gld.channels.cache){
+				if(chnl[1].parent == categ){
 					await chnl[1].delete('Deleted by GM');
 				}
 			}
+			await categ.delete('Deleted by GM'); //Delete Category
+			
 			//Delete Roles
 			for (let role of gld.roles.cache){
 				if(role[1].name == gameName){
@@ -265,6 +268,16 @@ class RpCommand extends Command {
 			if (GMRoles.length == 1 && chGame == ''){ //If they didn't specify a game and are only GMing one campaign
 				chGame = GMRoles[0]; //Create channel in that campaign category
 			}
+
+			if (args.name == ''){
+				return message.channel.send('Please specify the name for the channel.')
+			}
+			for (let cnl of message.guild.channels.cache){
+				if (cnl[1].name == chName){
+					return message.channel.send('You cannot have multiple channels of the same name')
+				}
+			}
+
 			if (args.type != 'voice' && args.type != 'text'){
 				return message.channel.send('Invalid type. Must be text or voice.');
 			}
