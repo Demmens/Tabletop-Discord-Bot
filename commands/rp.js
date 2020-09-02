@@ -280,13 +280,13 @@ class RpCommand extends Command {
 			}
 
 			let regRl = 0 //Fetch non-gm variant of the role too.
-			for (let rl of guild.roles.cache){
+			for (let rl of message.guild.roles.cache){
 				if (rl[1].name == chGame){
 					regRl = rl[1];
 				}
 			}
 
-			for (let chnl of guild.channels.cache){ //Create the channel
+			for (let chnl of message.guild.channels.cache){ //Create the channel
 				if (chnl[1].name == chGame && chnl[1].options.type == 'category'){ //Find correct category
 					gld.channels.create(args.name, {
 						type: args.type,
