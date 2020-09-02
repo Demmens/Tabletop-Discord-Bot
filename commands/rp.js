@@ -7,7 +7,9 @@ class RpCommand extends Command {
 			aliases: ["rp"],
 			args: [
 				{id: "command", type: "string", default: "help"},
-				{id: "name", type: "string", default: ''}
+				{id: "name", type: "string", default: ''},
+				{id: "type", type: "string", default: ''},
+				{id: "campaign", type: "string", default: ''}
 			],
 			description: "Manages channels for your roleplay game"
 		});
@@ -253,6 +255,60 @@ class RpCommand extends Command {
 
 			us.roles.add(roleExists, 'Joined new game');
 			return message.channel.send('You have successfully joined '+roleExists.name+'.');
+
+		//Createchannel command
+		} else if (args.command == 'createchannel'){
+			let chName = args.name;
+			let chType = args.type;
+			let chGame = args.campaign;
+
+			if (GMRoles.length == 1 && chGame == ''){ //If they didn't specify a game and are only GMing one campaign
+				chGame = GMRoles[0]; //Create channel in that campaign category
+			}
+			if (args.type != 'voice' && args.type != 'text'){
+				return message.channel.send('Invalid type. Must be text or voice.');
+			}
+
+			let gmRl = 0;
+			for (let rl of us.roles.cache){ //Check user has the corresponding GM role.
+				if (rl[1].name == chGame + ' GM'){
+					gmRl = rl[1]; //While here, fetch the role for later
+				}
+			}
+			if (gmRl == 0){
+				return message.channel.send('You are not GM of that game.');
+			}
+
+			let regRl = 0 //Fetch non-gm variant of the role too.
+			for (let rl of guild.roles.cache){
+				if (rl[1].name == chGame){
+					regRl = rl[1];
+				}
+			}
+
+			for (let chnl of guild.channels.cache){ //Create the channel
+				if (chnl[1].name == chGame && chnl[1].options.type == 'category'){ //Find correct category
+					gld.channels.create(args.name, {
+						type: args.type,
+						permissionOverwrites:[
+							{
+								id: regRl.id,
+								allow: ['VIEW_CHANNEL']
+							},
+							{
+								id: gmRl.id,
+								allow: ['VIEW_CHANNEL']
+							},
+							{
+								id: gld.roles.everyone,
+								deny: ['VIEW_CHANNEL']
+							}
+						],
+						parent: chnl[1],
+					});
+				}
+			}
+
 		}
 	}
 }
