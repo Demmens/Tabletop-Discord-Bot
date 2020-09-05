@@ -346,6 +346,7 @@ class RpCommand extends Command {
 			let num = 0;
 			for (let ch in message.guild.channels.cache){
 				if (chName == ch[1].name && ch[1].parent.type == "category" && isGM(ch[1].parent.name)){ //Search through channels in games they GM.
+					return message.channel.send("Name: " + ch[1].name+' Category: '+ch[1].parent.name)
 					if (chan != 0){ //Triggers if there is more than one channel found of that name they are GM of.
 						if (chGame == ''){ //If they didn't specify which game to remove the channel from
 							return message.channel.send('Please specify which campaign you wish to remove the channel from')
