@@ -17,6 +17,7 @@ class RpCommand extends Command {
 	async exec(message, args) {
 		const gld = message.guild
 		const us = message.member
+		let hasGM = false;
 		let isRP = false;
 		let inGame = false;
 
