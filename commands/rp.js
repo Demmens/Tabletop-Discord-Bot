@@ -321,6 +321,7 @@ class RpCommand extends Command {
 					});
 				}
 			}
+			return message.channel.send("Successfully created your "+chType+"channel: '"+chName+"'")
 
 		}
 	}
