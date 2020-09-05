@@ -37,8 +37,8 @@ class RpCommand extends Command {
 		}
 
 		function isGM(game){
-			for (let role of GMRoles){
-				if (game == role[1]){
+			for (let role of us.roles.cache){
+				if (role[1].name == game+' GM'){
 					return true
 				}
 			}
@@ -117,7 +117,7 @@ class RpCommand extends Command {
 				],
 			});
 			//Create Text Channel
-			gld.channels.create(args.name, {
+			gld.channels.create('general', {
 				type: 'text',
 				permissionOverwrites:[
 					{
@@ -136,8 +136,8 @@ class RpCommand extends Command {
 				parent: categ,
 			});
 			//Create Voice Channel
-			gld.channels.create(args.name, {
-				type: 'voice',
+			gld.channels.create('voice', {
+				type: 'Voice',
 				permissionOverwrites:[
 					{
 						id: newRole.id,
@@ -158,7 +158,7 @@ class RpCommand extends Command {
 			return message.channel.send('Created your game: \''.concat(args.name,'\'.'));
 		//Help Command
 		} else if (args.command == 'help'){
-			return message.channel.send('/rp create [name] - Makes channels for a game\n/rp remove [name] - Removes the specified campaign (must be GM)\n/rp leave [name] - Leaves the game of that name\n/rp join [name] - Joins the game of that name\n/rp createchannel [name] [text/voice] [game] Creates a new channel in your game category');
+			return message.channel.send('`/rp create [name]` Makes channels for a game\n`/rp remove [name]` Removes the specified campaign (must be GM)\n`/rp leave [name]` Leaves the game of that name\n`/rp join [name]` Joins the game of that name\n`/rp createchannel [name] [text/voice] [game]` Creates a new channel in the game category (must be GM)\n`/rp removechannel [name] [game]` Removes the specified channel in the game category (must be GM)\n`/rp rename [old name] [new name]` Renames your campaign (must be GM)');
 		//Leave Command
 		} else if (args.command == 'leave'){
 			if (isGM(args.name)){
@@ -224,28 +224,40 @@ class RpCommand extends Command {
 				return message.channel.send('Successfully removed game.');
 			}else{ return message.channel.send('You are not the GM of the game \''+args.name+'\''); }
 		//Rename Command
-		/*
 		} else if (args.command == 'rename'){
-			if (inGame == 0){
-				return message.channel.send('You are not currently in a game.');
+			let cur = args.name;
+			let fin = args.type;
+
+			let categ = 0
+			for (let chnl of gld.channels.cache){
+				if(chnl[1].name == cur && chnl[1].type == 'category'){
+					categ = chnl[1];
+				}
 			}
-			if (!isGM()){
+			if (categ == 0){
+				return message.channel.send("Could not find game: '"+cur+"'.")
+			}
+			if (!isGM(cur)){
 				return message.channel.send('Only the GM may rename the game.');
 			}
-			//Rename Channels
-			for (let chnl of gld.channels.cache){
-				if(chnl[1].name == inGame.name){
-					await chnl[1].edit({name: args.name});
-				}
+			if (fin == ''){
+				return message.channel.send('Please specify the new name for the game')
 			}
+			//Rename Channel
+			console.log('renamed channel')
 			//Rename Roles
+			let rl = 0;
+			let rlGM = 0;
 			for (let role of gld.roles.cache){
-				if(role[1] == inGame){
-					await role[1].edit({name: args.name});
+				if(role[1].name == categ.name){
+					rl = role[1];
+				}
+				else if (role[1].name == categ.name+' GM'){
+					rlGM = role[1]
 				}
 			}
-			return message.channel.send('Successfully renamed game.');
-			*/
+			Promise.all([await rl.edit({name: fin}),await rlGM.edit({name: fin+' GM'}),await categ.edit({name: fin})])
+			return message.channel.send("Successfully renamed game to '"+fin+"'");
 		//Join Command
 		} else if (args.command == 'join'){
 
@@ -332,7 +344,7 @@ class RpCommand extends Command {
 					});
 				}
 			}
-			return message.channel.send("Successfully created your "+chType+" channel '"+chName+"'.");
+			return message.channel.send("Successfully created your "+chType+" channel '"+chName+"' in '"+chGame+"'.");
 		//Removechannel command
 		}else if (args.command == 'removechannel'){			
 			let chName = args.name;
@@ -345,9 +357,6 @@ class RpCommand extends Command {
 			let chan = 0;
 			let num = 0;
 			for (let ch of message.guild.channels.cache){
-				if (ch[1].parent != null){
-					message.channel.send('Channel: '+ch[1]+', Category: '+ch[1].parent.name)
-				}
 				if (chName == ch[1].name && ch[1].parent != null && isGM(ch[1].parent.name)){ //Search through channels in games they GM.
 					if (chan != 0){ //Triggers if there is more than one channel found of that name they are GM of.
 						if (chGame == ''){ //If they didn't specify which game to remove the channel from
@@ -359,14 +368,9 @@ class RpCommand extends Command {
 						}
 					} 
 
-					if (ch[1].type == 'text'){
-						num++; //Count number of text channels
-					}
-
 					chan = ch[1]; //Most of the time this will select the correct channel.
 				}
 			}
-
 			if (chan == 0){
 				return message.channel.send("Could not find channel: '"+chName+"'.");
 			}
