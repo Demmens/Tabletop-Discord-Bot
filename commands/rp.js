@@ -296,7 +296,7 @@ class RpCommand extends Command {
 				return message.channel.send('Please specify the name for the channel.')
 			}
 			for (let cnl of message.guild.channels.cache){
-				if (cnl[1].name == chName){
+				if (cnl[1].name == chName && cnl[1].parent != null && isGM(cnl[1].parent.name)){
 					return message.channel.send('You cannot have multiple channels of the same name.')
 				}
 			}
