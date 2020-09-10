@@ -13,9 +13,12 @@ class ReactRoleAddListener extends Listener {
 	}
 
 	async exec(messageReaction, user) {
+		console.log('0')
 		let message = messageReaction.message;
 		if (message.author.id == this.client.user.id) {
+			console.log('1')
 			if (message.channel.name == "welcome") {
+				console.log('2.0')
 				if (message.content.startsWith("**ROLES**")) {
 					let member = await message.guild.members.fetch(user.id);
 					let found_role = false;
@@ -30,7 +33,8 @@ class ReactRoleAddListener extends Listener {
 					}
 				} 
 			}
-			else if (message.channel.id == 719204772590256159){
+			else if (message.channel.id == 704331861534441532){
+				console.log('2.1')
 				if (message.content.startsWith("**First time players**")){
 					let member = await message.guild.members.fetch(user.id);
 					let found_role = false;
