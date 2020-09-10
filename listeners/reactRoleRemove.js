@@ -25,6 +25,17 @@ class ReactRoleRemoveListener extends Listener {
 					}
 				}
 			}
+			else if (message.channel.id == 719204772590256159){
+				if (message.content.startsWith("**First time players**")){
+					let member = await message.guild.members.fetch(user.id);
+					for (let [_,role] of message.guild.roles.cache){
+
+						if (role.name == "Newcomer" && messageReaction.emoji.name == "YesVote"){
+							member.roles.remove(role);
+						}
+					}
+				}
+			}
 		}
 	}
 }
