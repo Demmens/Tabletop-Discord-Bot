@@ -26,7 +26,7 @@ class ReactRoleRemoveListener extends Listener {
 				}
 			}
 			else if (message.channel.id == 704331861534441532){
-				if (message.content.startsWith("**First time players**")){
+				if (message.content.startsWith("**First time players")){
 					let member = await message.guild.members.fetch(user.id);
 					for (let [_,role] of message.guild.roles.cache){
 

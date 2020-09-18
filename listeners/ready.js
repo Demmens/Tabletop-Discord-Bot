@@ -31,7 +31,7 @@ class ReadyListener extends Listener {
                 else if (channel.id == 704331861534441532){
                     let messages = await channel.messages.fetch({ limit: 100 });
                     for (let [_,message] of messages){
-                        if (message.content.startsWith("**First time players**")){
+                        if (message.content.startsWith("**First time players")){
                             console.log(`Found first time players message for ${guild.name}`);
                         }
                     }
