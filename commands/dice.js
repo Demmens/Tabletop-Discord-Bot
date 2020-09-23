@@ -57,6 +57,23 @@ class DiceCommand extends Command {
 					rl.rolls.push(roll);
 					rl.subtotal += roll;
 				};
+				//Find if they wanted to reroll any results
+				let reroll = hasMod('r',index,arr);
+				if (reroll){
+					rl.subtotal = 0 //Re-do subtotal given that it will change
+					reroll = parseInt(arr[reroll+1],10); //Check number to reroll
+					if (isNaN(reroll)){
+						return message.channel.send('You must specify which number you wish to reroll');
+					}
+					rl.rolls.forEach(function(v,i,arr){
+						if (v==reroll){
+							rl.rolls[i] = Math.ceil(Math.random()*dice);
+						}
+						rl.subtotal+=rl.rolls[i];
+					})
+
+					rl.dice += "r"+reroll;
+				}
 
 				//Find if they wanted to keep the highest x dice
 				let keep = hasMod('k',index,arr);
