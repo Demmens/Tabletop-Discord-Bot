@@ -10,7 +10,7 @@ class DiceCommand extends Command {
 	}
 	exec(message, args) {
 		let cont = message.content;
-		let arr = cont.split(/ |\\|(?<=\D)(?=\d+)|(?<=\d)(?=\D+)/); //split string into an array of numbers and words while deleting spaces.
+		let arr = cont.split(/ |\\|\/|(?<=\D)(?=\d+)|(?<=\d)(?=\D+)/); //split string into an array of numbers and words while deleting spaces.
 		let dice; //Dice is the number of sides on the dice		
 		let num; //Num is how many dice to roll
 		let rolls = [];
@@ -43,11 +43,7 @@ class DiceCommand extends Command {
 				//Now determine what kind of dice to roll
 				dice = parseInt(arr[index+1],10);
 				let rl = [];
-				if (num == 1){
-					rl.num = 1;
-				} else{
-					rl.num = num;
-				}
+				rl.num = num;
 				rl.dice = dice;
 				rl.rolls = []
 				rl.subtotal = 0;
