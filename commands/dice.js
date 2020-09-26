@@ -44,7 +44,7 @@ class DiceCommand extends Command {
 				dice = parseInt(arr[index+1],10);
 				let rl = [];
 				if (num == 1){
-					rl.num = "";
+					rl.num = 1;
 				} else{
 					rl.num = num;
 				}

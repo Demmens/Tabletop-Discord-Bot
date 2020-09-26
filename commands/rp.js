@@ -11,7 +11,6 @@ class RpCommand extends Command {
 				{id: "type", type: "string", default: ''},
 				{id: "campaign", type: "string", default: ''}
 			],
-			description: "Manages channels for your roleplay game"
 		});
 	}
 	async exec(message, args) {
