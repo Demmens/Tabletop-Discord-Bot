@@ -1,5 +1,6 @@
   
 const { Listener } = require("discord-akairo");
+const config = require("../config.js");
 
 class ReactRoleAddListener extends Listener {
 	constructor() {
@@ -15,12 +16,13 @@ class ReactRoleAddListener extends Listener {
 	async exec(messageReaction, user) {
 		let message = messageReaction.message;
 		if (message.author.id == this.client.user.id) {
-			if (message.channel.name == "welcome") {
-				if (message.content.startsWith("**ROLES**")) {
+			if (message.channel.id == 704330819392766035) { 
+				if (message.content.startsWith("**ROLES**")) { //Roles
 					let member = await message.guild.members.fetch(user.id);
 					let found_role = false;
 					for (let role of message.guild.roles.cache) {
 						if ((role[1].name.split(" ").join("")).toUpperCase() == messageReaction.emoji.name.toUpperCase()){
+
 							member.roles.add(role[1]);
 							found_role = true
 						}
@@ -29,9 +31,30 @@ class ReactRoleAddListener extends Listener {
 						messageReaction.remove(user);
 					}
 				} 
+				else if(message.content.startsWith("**PRONOUNS**")){ //Pronouns
+					let member = await message.guild.members.fetch(user.id);
+					let found_role = false;
+					let rlName = "";
+					if (messageReaction.emoji.name == config.emoji_letters[7]){
+						rlName = "He/Him";
+					} else if (messageReaction.emoji.name == config.emoji_letters[18]){
+						rlName = "She/Her";
+					} else if (messageReaction.emoji.name == config.emoji_letters[19]){
+						rlName = "They/Them";
+					}
+					for (let [_, role] of message.guild.roles.cache){
+						if ((role.name == rlName)){
+							member.roles.add(role);
+							found_role = true;
+						}
+					}
+					if (!found_role){
+						messageReaction.remove(user);
+					}
+				}
 			}
 			else if (message.channel.id == 704331861534441532){
-				if (message.content.startsWith("**First time players")){
+				if (message.content.startsWith("**First time players")){ //First time players
 					let member = await message.guild.members.fetch(user.id);
 					let found_role = false;
 					for (let [_,role] of message.guild.roles.cache){

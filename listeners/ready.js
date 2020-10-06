@@ -20,11 +20,14 @@ class ReadyListener extends Listener {
         }
         for (let [_,guild] of this.client.guilds.cache) {
             for (let [_,channel] of guild.channels.cache) {
-                if (channel.name == "welcome") {
+                if (channel.id == 719204772590256159) {
                     let messages = await channel.messages.fetch({ limit: 100 });
                     for (let [_,message] of messages) {
                         if (message.content.startsWith("**ROLES**")) {
                             console.log(`Found roles message for ${guild.name}`);
+                        }
+                        else if(message.content.startsWith("**PRONOUNS**")){
+                            console.log(`Found pronouns message for ${guild.name}`);
                         }
                     }
                 }
