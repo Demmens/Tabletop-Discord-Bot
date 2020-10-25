@@ -80,7 +80,7 @@ class CreateGameCommand extends Command {
 				"value": args.system
 			},
 			{
-				"name": `Time & Days`,
+				"name": `Date & Time`,
 				"value": `Undecided`
 			}
 			])
