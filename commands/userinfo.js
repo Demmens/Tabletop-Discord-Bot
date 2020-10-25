@@ -77,3 +77,5 @@ class InfoUserCommand extends Command {
 }
 
 module.exports = InfoUserCommand
+
+//Thanks to Joe Gibson for the code

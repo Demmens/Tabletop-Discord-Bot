@@ -16,7 +16,7 @@ class ReactRoleRemoveListener extends Listener {
 		let message = messageReaction.message;
 		let bot_id = this.client.user.id;
 		if (message.author.id == this.client.user.id) {
-			if (message.channel.id == 704330819392766035) {
+			if (message.channel.id == 769131551828869130) {
 				if (message.content.startsWith("**ROLES**")) {
 					let member = await message.guild.members.fetch(user.id);
 					for (let role of message.guild.roles.cache) {
@@ -57,3 +57,5 @@ class ReactRoleRemoveListener extends Listener {
 }
 
 module.exports = ReactRoleRemoveListener;
+
+//Thanks to Joe Gibson for the code

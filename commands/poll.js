@@ -64,3 +64,5 @@ class PollCommand extends Command {
 
 
 module.exports = PollCommand;
+
+//Thanks to Joe Gibson for the code

@@ -1,5 +1,6 @@
 const { Listener } = require("discord-akairo");
 const Discord = require("discord.js");
+const RP_COLOUR = '#206694';
 
 class ReadyListener extends Listener {
     constructor() {
@@ -20,7 +21,7 @@ class ReadyListener extends Listener {
         }
         for (let [_,guild] of this.client.guilds.cache) {
             for (let [_,channel] of guild.channels.cache) {
-                if (channel.id == 704330819392766035) {
+                if (channel.id == 769131551828869130 && channel.name == 'roles') {
                     let messages = await channel.messages.fetch({ limit: 100 });
                     for (let [_,message] of messages) {
                         if (message.content.startsWith("**ROLES**")) {
@@ -39,9 +40,15 @@ class ReadyListener extends Listener {
                         }
                     }
                 }
+                else if (channel.name == 'active-games'){
+                    let messages = await channel.messages.fetch();
+                    console.log(`Cached active game messages in ${guild.name}`)
+                }
             }
         }
     }
 }
 
 module.exports = ReadyListener;
+
+//Thanks to Joe Gibson for the code

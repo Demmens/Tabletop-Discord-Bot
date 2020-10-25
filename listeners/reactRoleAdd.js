@@ -16,7 +16,7 @@ class ReactRoleAddListener extends Listener {
 	async exec(messageReaction, user) {
 		let message = messageReaction.message;
 		if (message.author.id == this.client.user.id) {
-			if (message.channel.id == 704330819392766035) { 
+			if (message.channel.id == 769131551828869130) { 
 				if (message.content.startsWith("**ROLES**")) { //Roles
 					let member = await message.guild.members.fetch(user.id);
 					let found_role = false;
@@ -74,3 +74,5 @@ class ReactRoleAddListener extends Listener {
 }
 
 module.exports = ReactRoleAddListener;
+
+//Thanks to Joe Gibson for the code

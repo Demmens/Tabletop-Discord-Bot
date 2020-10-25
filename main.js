@@ -1,5 +1,6 @@
 const { AkairoClient, CommandHandler, InhibitorHandler, ListenerHandler } = require("discord-akairo");
 const config = require("./config.js");
+const func = require('./functions.js');
 
 var token, prefix, testMode;
 try {
@@ -25,9 +26,41 @@ class MyClient extends AkairoClient {
 			this,
 			{
 				directory: "./commands/",
-				prefix: prefix
+				prefix: prefix,
+				argumentDefaults:{
+					prompt:{
+						timeout: message => `${message.author} Time ran out, command has been cancelled.`,
+						cancel: message => `${message.author} Command has been cancelled.`,
+						ended: message => `${message.author} Too many retries, command has been cancelled.`,
+						retries: 4,
+						time: 30000
+					}
+				}
 			}
 		);
+		this.commandHandler.resolver.addType('gameName', (message, string) => {
+			if (!string) return null;
+			if (string.length >= 100) return null;
+			for (let role of message.guild.roles.cache) {
+				//Check that role doesn't already exist
+				if (func.replaceHyphens(role[1].name.toUpperCase()) == func.replaceHyphens(string.toString().toUpperCase())){
+					return null;
+				}			
+			}
+			return string;
+		});
+		this.commandHandler.resolver.addType('yes/no', (message, string) => {
+			if (string.toUpperCase() == 'YES' || string.toUpperCase() == 'NO'){
+				return string;
+			}
+			return null;
+		});
+		this.commandHandler.resolver.addType('text/voice', (message, string) => {
+			if (string.toUpperCase() == 'TEXT' || string.toUpperCase() == 'VOICE'){
+				return string;
+			}
+			return null;
+		});
 /*		this.inhibitorHandler = new InhibitorHandler(
 			this,
 			{

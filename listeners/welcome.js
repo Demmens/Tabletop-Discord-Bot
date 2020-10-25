@@ -19,3 +19,5 @@ class WelcomeListener extends Listener {
 }
 
 module.exports = WelcomeListener;
+
+//Thanks to Joe Gibson for the code
