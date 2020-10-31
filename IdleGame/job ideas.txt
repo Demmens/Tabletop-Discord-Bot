@@ -1,0 +1,36 @@
+Explorer: {
+	str: More likely to acquire food,
+	dex: Less likely to take damage,
+	con: Required for surviving,
+	int: Affects value of items obtained,
+	wis: Affects exploration speed, increases chance of survival,
+	cha: no effect
+}
+Researcher: {
+	str: no effect,
+	dex: no effect,
+	con: no effect,
+	int: scope of research,
+	wis: speed of research,
+	cha: no effect
+}
+Trainer: {
+	all stats: Increases train speed for that stat.
+	cha: Increases train speed for all stats
+}
+Sacrificer: {
+	str: speed of sacrifices,
+	dex: speed of sacrifices,
+	con: no effect,
+	int: value of sacrifices,
+	wis: value of sacrifices,
+	cha: no effect
+}
+Medic: {
+	str: no effect,
+	dex: higher chance of success,
+	con: no effect,
+	int: higher chance of success,
+	wis: higher chance of success,
+	cha: no effect
+}

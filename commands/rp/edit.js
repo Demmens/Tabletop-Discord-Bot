@@ -35,7 +35,7 @@ class rpEditCommand extends Command {
 			}
 
 		    gameName = yield { 
-		    	type: Argument.range('number',0,gmRls.length,true),
+		    	type: Argument.range('integer',0,gmRls.length,true),
 		    	prompt: {
 		    		start: message => {
 		    			embed = new Discord.MessageEmbed()

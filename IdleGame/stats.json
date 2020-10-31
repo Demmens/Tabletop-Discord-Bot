@@ -1,0 +1,17 @@
+[
+  {
+    "name": "<@144543622015090690>",
+    "money": 11176,
+    "sacrifices": 0,
+    "offerMultiplier": 1,
+    "sacrificeMultiplier": 1,
+    "sacrificeMax": 10,
+    "startDate": "29/10/2020",
+    "lastUsed": "31/10/2020",
+    "cultists": [],
+    "ugrades": {
+        "renewable": [],
+        "oneTime": [],
+    }
+  }
+]
