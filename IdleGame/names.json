@@ -1,6 +1,6 @@
 {
     "cultist": {
-        "id": 15,
+        "id": 60,
         "forenames": [
             "Oboroti",
             "Saubrix",
@@ -119,6 +119,16 @@
             "Fearless",
             "Crooked",
             "Ancient"
+        ],
+        "traits": [
+            "brave",
+            "cowardly",
+            "smart",
+            "wise",
+            "kind",
+            "cruel",
+            "lazy",
+            "energetic"
         ]
     }
 }

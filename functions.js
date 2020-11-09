@@ -1,8 +1,26 @@
 module.exports = {
 
-	//|------------------------|//
-	//|String Editing Functions|//
-	//|------------------------|//
+	//|-----------------|//
+	//|General Functions|//
+	//|-----------------|//
+
+	//Return a random item from an array
+	arrRandom: function(arr){
+		let num = Math.floor(Math.random()*arr.length);
+		return arr[num];
+	},
+
+	//Randomise an array
+	arrRandomise: function(arr){
+		let newArr = [];
+		while (arr.length > 0){
+			let k = Math.floor(Math.random()*arr.length);
+			let v = arr[num];
+			arr.splice(k,1)
+			newArr.push(v);
+		}
+		return newArr;
+	},
 
 	//Replace hyphens and underscores with spaces
 	replaceHyphens: function(str){
@@ -17,6 +35,18 @@ module.exports = {
 	//Separate thousands by commas in a number
 	numberWithCommas: function(x) {
 	    return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+	},
+
+	//Remove array index by value
+	removeA: function(arr) {
+	    var what, a = arguments, L = a.length, ax;
+	    while (L > 1 && arr.length) {
+	        what = a[--L];
+	        while ((ax= arr.indexOf(what)) !== -1) {
+	            arr.splice(ax, 1);
+	        }
+	    }
+	    return arr;
 	},
 
 	//|----------------------------------|//
