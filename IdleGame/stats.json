@@ -1,162 +1,66 @@
 [
   {
     "name": "<@144543622015090690>",
-    "money": 358776,
-    "sacrifices": 0,
-    "offerMultiplier": 1.8,
-    "sacrificeMultiplier": 4,
+    "cultname": "Demons of Demise",
+    "money": 13389,
+    "sacrifices": 6,
+    "research": 0,
+    "offerMultiplier": 1,
+    "sacrificeMultiplier": 1,
+    "sacSpeed": 1,
     "sacrificeMax": 10,
-    "dailyMultiplier": 2,
+    "dailyMultiplier": 1,
     "partySize": 1,
     "party": [],
     "maxCultists": 2,
-    "startDate": "4/11/2020",
-    "lastUsed": "9/11/2020",
+    "startDate": "20/11/2020",
+    "lastUsed": "20/11/2020",
+    "cultSacMult": 1,
+    "cultResMult": 1,
+    "cultExplMult": 1,
+    "maxSacrificers": 1,
+    "maxResearchers": 1,
     "upgrades": {
       "repeatable": [],
-      "oneTime": [
-        1,
-        2,
-        4,
-        3,
-        5
-      ]
+      "oneTime": []
     },
     "items": {
-      "weapons": [
-        {
-          "damage": 7,
-          "value": 3500,
-          "dmgType": "piercing",
-          "type": "Thrown",
-          "stat": [
-            "dex"
-          ],
-          "name": "Iron Dagger",
-          "id": 39
-        },
-        {
-          "damage": 18,
-          "value": 9000,
-          "dmgType": "slashing",
-          "type": "Two Handed",
-          "stat": [
-            "str",
-            "dex"
-          ],
-          "name": "Iron Greatsword",
-          "id": 31
-        },
-        {
-          "damage": 18,
-          "value": 9000,
-          "dmgType": "slashing",
-          "type": "Two Handed",
-          "stat": [
-            "str",
-            "dex"
-          ],
-          "name": "Iron Greatsword",
-          "id": 31
-        }
-      ],
+      "weapons": [],
       "armour": [],
       "misc": []
     },
-    "cultists": [
-      {
-        "trait": "brave",
-        "name": "Saubrix The Mindless",
-        "id": 46,
-        "level": 1,
-        "stats": {
-          "str": 5,
-          "dex": 3,
-          "con": 3,
-          "int": 1,
-          "wis": 1,
-          "cha": 2
-        },
-        "value": 12000,
-        "hp": 3,
-        "equipment": {
-          "armour": {
-            "head": {
-              "name": "none"
-            },
-            "body": {
-              "name": "none"
-            },
-            "legs": {
-              "name": "none"
-            },
-            "hands": {
-              "name": "Cloth Gloves",
-              "id": 13,
-              "defence": 5,
-              "type": "light",
-              "equip": "hands",
-              "resistances": [],
-              "effectImmunities": [],
-              "effects": [],
-              "value": 2500
-            },
-            "feet": {
-              "name": "none"
-            }
-          },
-          "weapons": [],
-          "items": []
-        }
-      },
-      {
-        "name": "Bazor The Raised",
-        "id": 54,
-        "trait": "energetic",
-        "level": 1,
-        "stats": {
-          "str": 1,
-          "dex": 3,
-          "con": 3,
-          "int": 2,
-          "wis": 1,
-          "cha": 1
-        },
-        "value": 4000,
-        "hp": 3,
-        "equipment": {
-          "armour": {
-            "head": {
-              "name": "none"
-            },
-            "body": {
-              "name": "none"
-            },
-            "legs": {
-              "name": "none"
-            },
-            "hands": {
-              "name": "none",
-              "equip": "hands"
-            },
-            "feet": {
-              "name": "none"
-            }
-          },
-          "weapons": [
-            {
-              "name": "none",
-              "equip": "weapon",
-              "type": "One Handed"
-            },
-            {
-              "name": "none",
-              "damage": 0
-            }
-          ],
-          "items": []
-        }
-      }
-    ]
+    "cultists": []
+  },
+  {
+    "name": "<@171340685016956928>",
+    "cultname": "The Cult of Hand Dog",
+    "money": 0,
+    "sacrifices": 1,
+    "research": 0,
+    "offerMultiplier": 1,
+    "sacrificeMultiplier": 1,
+    "sacSpeed": 1,
+    "sacrificeMax": 10,
+    "dailyMultiplier": 1,
+    "partySize": 1,
+    "party": [],
+    "maxCultists": 2,
+    "startDate": "20/11/2020",
+    "lastUsed": 0,
+    "cultSacMult": 1,
+    "cultResMult": 1,
+    "cultExplMult": 1,
+    "maxSacrificers": 1,
+    "maxResearchers": 1,
+    "upgrades": {
+      "repeatable": [],
+      "oneTime": []
+    },
+    "items": {
+      "weapons": [],
+      "armour": [],
+      "misc": []
+    },
+    "cultists": []
   }
 ]

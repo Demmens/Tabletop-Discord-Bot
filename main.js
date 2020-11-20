@@ -1,6 +1,7 @@
 const { AkairoClient, CommandHandler, InhibitorHandler, ListenerHandler } = require("discord-akairo");
 const config = require("./config.js");
 const func = require('./functions.js');
+const jobloop = require('./IdleGame/jobs.js');
 
 var token, prefix, testMode;
 try {

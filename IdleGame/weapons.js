@@ -450,7 +450,7 @@ module.exports = {
 				value: 35
 			},
 			{
-				name: 'Legendary',
+				name: 'Legendary ',
 				damage: 8,
 				abundance: 1,
 				value: 35

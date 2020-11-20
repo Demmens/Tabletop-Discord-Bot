@@ -1,6 +1,7 @@
 const { Command } = require("discord-akairo");
 const fs = require('fs');
 const Discord = require("discord.js");
+const f = require('../../functions.js');
 
 function CreateBalanceEmbed(message, ply){
 	let player;
@@ -11,7 +12,7 @@ function CreateBalanceEmbed(message, ply){
 	}
 	let emb = new Discord.MessageEmbed()
 	.setTitle(`${player.displayName}'s Balance`)
-	.setDescription(`Money: £${ply.money}\nSacrifices: ${ply.sacrifices}`)
+	.setDescription(`Money: £${f.numberWithCommas(ply.money)}\nSacrifices: ${f.numberWithCommas(ply.sacrifices)}/${f.numberWithCommas(ply.sacrificeMax)}`)
 
 	return emb;
 }

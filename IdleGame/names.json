@@ -1,6 +1,6 @@
 {
     "cultist": {
-        "id": 60,
+        "id": 106,
         "forenames": [
             "Oboroti",
             "Saubrix",
@@ -118,17 +118,96 @@
             "Lifeless",
             "Fearless",
             "Crooked",
-            "Ancient"
+            "Ancient",
+            "Menacing",
+            "Broken"
         ],
         "traits": [
-            "brave",
-            "cowardly",
-            "smart",
-            "wise",
-            "kind",
-            "cruel",
-            "lazy",
-            "energetic"
+            {
+                "name": "Bloodthirsty",
+                "description": "Creates 20% more sacrifices",
+                "value": 1.2
+            },
+            {
+                "name": "Haemophobic",
+                "description": "Creates 20% less sacrifices",
+                "value": 0.95
+            },
+            {
+                "name": "Academic",
+                "description": "Researches 20% faster",
+                "value": 1.25
+            },
+            {
+                "name": "Disorganised",
+                "description": "Researches 20% slower",
+                "value": 0.95
+            },
+            {
+                "name": "Lazy",
+                "description": "Performs all tasks 10% slower",
+                "value": 1
+            },
+            {
+                "name": "Timid",
+                "description": "Weaker than usual",
+                "value": 1
+            },
+            {
+                "name": "Swole",
+                "description": "Stronger than usual",
+                "value": 1
+            },
+            {
+                "name": "Sly",
+                "description": "More dextrous than usual",
+                "value": 1
+            },
+            {
+                "name": "Clumsy",
+                "description": "Less dextrous than usual",
+                "value": 1
+            },
+            {
+                "name": "Health Nut",
+                "description": "Healthier than usual",
+                "value": 1
+            },
+            {
+                "name": "Sickly",
+                "description": "Less healthy than usual",
+                "value": 1
+            },
+            {
+                "name": "Ancient",
+                "description": "Wiser than usual",
+                "value": 1
+            },
+            {
+                "name": "Naive",
+                "description": "Less wise than usual",
+                "value": 1
+            },
+            {
+                "name": "Scholar",
+                "description": "Smarter than usual",
+                "value": 1
+            },
+            {
+                "name": "Thug",
+                "description": "Dumber than usual",
+                "value": 1
+            },
+            {
+                "name": "Extrovert",
+                "description": "More charismatic than usual",
+                "value": 1
+            },
+            {
+                "name": "Introvert",
+                "description": "Less charismatic than usual",
+                "value": 1
+            }
         ]
     }
 }

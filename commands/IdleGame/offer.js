@@ -1,6 +1,7 @@
 const { Command } = require("discord-akairo");
 const fs = require('fs');
 const Discord = require("discord.js");
+const f = require('../../functions.js');
 
 class OfferCommand extends Command {
 	constructor() {
@@ -17,9 +18,9 @@ class OfferCommand extends Command {
 			const players = JSON.parse(jsonString);
 			let auth = message.author;
 
-			const daily = 50; //Percentage of sacrifice money gained for the daily reward
-			const sacGainMin = 20; //Min money gained for sacrifice
-			const sacGainMax = 150; //Max money gained for sacrifice
+			let daily = 50; //Percentage of sacrifice money gained for the daily reward
+			const sacGainMin = 80; //Min money gained for sacrifice
+			const sacGainMax = 300; //Max money gained for sacrifice
 
 			function manualMoneyGain() {		
 				let sacGainDifference = sacGainMax - sacGainMin;
@@ -41,13 +42,14 @@ class OfferCommand extends Command {
 						}
 						total *= ply.offerMultiplier;
 
-						message.channel.send(`${auth} Your offering of ${ply.sacrifices} sacrifices has been rewarded.`);
-						message.channel.send(`${auth} You gain £${total}.`);
+						message.channel.send(`${auth} Your offering of ${f.numberWithCommas(ply.sacrifices)} sacrifices has been rewarded.`);
+						message.channel.send(`${auth} You gain £${f.numberWithCommas(Math.ceil(total))}.`);
 
-						ply.money += total;
+						ply.money += Math.ceil(total);
 						ply.sacrifices = 0;
 
 						if (ply.lastUsed != curDate){
+							daily *= ply.dailyMultiplier;
 							ply.lastUsed = curDate;
 							message.channel.send(`${auth} +${daily}% (£${Math.ceil(total*daily/100)}) for first offering of the day.`);
 							ply.money += Math.ceil(total*daily/100);

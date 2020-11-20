@@ -1,0 +1,189 @@
+{
+  "weapons": [
+    {
+      "damage": 8,
+      "value": 3750,
+      "dmgType": "cold",
+      "type": "Ranged",
+      "stat": [
+        "dex"
+      ],
+      "name": "Broken Oak Longbow of Ice",
+      "id": 62,
+      "prefix": {
+        "name": "Broken ",
+        "damage": 0.4,
+        "value": 0.3,
+        "abundance": 7,
+        "types": [
+          "Ranged",
+          "Thrown",
+          "One Handed",
+          "Two Handed",
+          "Magic"
+        ]
+      }
+    },
+    {
+      "damage": 8,
+      "value": 4000,
+      "dmgType": "piercing",
+      "type": "Thrown",
+      "stat": [
+        "str"
+      ],
+      "name": "Iron Javelin",
+      "id": 66
+    },
+    {
+      "damage": 14,
+      "value": 5500,
+      "dmgType": "piercing",
+      "type": "One Handed",
+      "stat": [
+        "dex"
+      ],
+      "name": "Fierce Iron Rapier",
+      "id": 67,
+      "prefix": {
+        "name": "Fierce ",
+        "damage": 1.3,
+        "value": 1,
+        "abundance": 5,
+        "types": [
+          "One Handed",
+          "Two Handed",
+          "Ranged",
+          "Thrown",
+          "Magic"
+        ]
+      }
+    },
+    {
+      "damage": 14,
+      "value": 7000,
+      "dmgType": "piercing",
+      "type": "Ranged",
+      "stat": [
+        "dex"
+      ],
+      "name": "Oak Shortbow",
+      "id": 68
+    },
+    {
+      "damage": 14,
+      "value": 7000,
+      "dmgType": "piercing",
+      "type": "Ranged",
+      "stat": [
+        "dex"
+      ],
+      "name": "Oak Shortbow",
+      "id": 64
+    },
+    {
+      "damage": 16,
+      "value": 8250,
+      "dmgType": "bludgeoning",
+      "type": "One Handed",
+      "stat": [
+        "str"
+      ],
+      "name": "Demonic Iron Mace",
+      "id": 60,
+      "prefix": {
+        "name": "Demonic ",
+        "damage": 1.4,
+        "value": 1.4,
+        "abundance": 2,
+        "types": [
+          "One Handed",
+          "Two Handed",
+          "Ranged",
+          "Thrown",
+          "Magic"
+        ]
+      }
+    },
+    {
+      "damage": 20,
+      "value": 10250,
+      "dmgType": "piercing",
+      "type": "Ranged",
+      "stat": [
+        "dex"
+      ],
+      "name": "Accurate Oak Crossbow",
+      "id": 69,
+      "prefix": {
+        "name": "Accurate ",
+        "damage": 1.3,
+        "value": 1.3,
+        "abundance": 5,
+        "types": [
+          "Ranged",
+          "Thrown"
+        ]
+      }
+    },
+    {
+      "damage": 18,
+      "value": 10250,
+      "dmgType": "lightning",
+      "type": "Magic",
+      "stat": [
+        "int"
+      ],
+      "name": "Crooked Common Spellbook of Lightning",
+      "id": 61,
+      "prefix": {
+        "name": "Crooked ",
+        "damage": 0.7,
+        "value": 0.7,
+        "abundance": 7,
+        "types": [
+          "One Handed",
+          "Thrown",
+          "Two Handed",
+          "Ranged",
+          "Magic"
+        ]
+      }
+    },
+    {
+      "damage": 15,
+      "value": 15000,
+      "dmgType": "fire",
+      "type": "One Handed",
+      "stat": [
+        "str",
+        "dex"
+      ],
+      "name": "Weightless Iron Greatsword of Fire",
+      "id": 65,
+      "prefix": {
+        "name": "Weightless ",
+        "damage": 0.7,
+        "value": 1.2,
+        "abundance": 2,
+        "types": [
+          "Two Handed"
+        ],
+        "overrideType": "One Handed"
+      }
+    },
+    {
+      "damage": 192,
+      "value": 455000,
+      "dmgType": "bludgeoning",
+      "type": "Magic",
+      "stat": [
+        "wis"
+      ],
+      "name": "Legendary Staff of Earth",
+      "id": 63
+    }
+  ],
+  "date": "18/11/2020",
+  "nextId": 70
+}
