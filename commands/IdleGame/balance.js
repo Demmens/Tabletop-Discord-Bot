@@ -12,7 +12,7 @@ function CreateBalanceEmbed(message, ply){
 	}
 	let emb = new Discord.MessageEmbed()
 	.setTitle(`${player.displayName}'s Balance`)
-	.setDescription(`Money: £${f.numberWithCommas(ply.money)}\nSacrifices: ${f.numberWithCommas(ply.sacrifices)}/${f.numberWithCommas(ply.sacrificeMax)}`)
+	.setDescription(`Money: £${f.numberWithCommas(ply.money)}\nSacrifices: ${f.numberWithCommas(ply.sacrifices)}/${f.numberWithCommas(ply.sacrificeMax)}\nResearch: ${ply.research}`)
 
 	return emb;
 }

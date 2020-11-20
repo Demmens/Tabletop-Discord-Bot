@@ -29,7 +29,7 @@ class IGShopCommand extends Command {
 
 					return{embed};
 				},
-				retry: message => `${us} Please enter a valid number.`,
+				retry: message => `${message.author} Please enter a valid number.`,
 				prompt: true
 			}
 		}
@@ -243,7 +243,7 @@ class IGShopCommand extends Command {
 							if (j.id == i.id) hasWep = true;
 						}
 						for (let ct of usStats.cultists){
-							for (let wep of ct.weapons){
+							for (let wep of ct.equipment.weapons){
 								if (wep.id == i.id) hasWep = true;
 							}
 						}
@@ -388,7 +388,7 @@ class IGShopCommand extends Command {
 			}
 
 			if (args.cultistConfirm){
-				if (args.cultistConfirm == 'yes'){
+				if (args.cultistConfirm.toLowerCase() == 'yes'){
 					console.log('test')
 					let price = args.cultistMenu.value;
 					if (price > usStats.money){
@@ -411,7 +411,7 @@ class IGShopCommand extends Command {
 			}
 
 			if (args.upgradeConfirm){
-				if (args.upgradeConfirm == 'yes'){
+				if (args.upgradeConfirm.toLowerCase() == 'yes'){
 					let upgr = args.upgr;
 					if (usStats.money < upgr.cost){
 						return message.channel.send(`${us} You cannot afford that upgrade.`);
@@ -431,7 +431,7 @@ class IGShopCommand extends Command {
 			}
 
 			if (args.weaponConfirm){
-				if (args.weaponConfirm == 'yes'){
+				if (args.weaponConfirm.toLowerCase() == 'yes'){
 					let wep = args.weapon;
 					if (usStats.money < wep.value){
 						return message.channel.send(`${us} You cannot afford that weapon.`);
@@ -443,7 +443,7 @@ class IGShopCommand extends Command {
 				}
 			}
 			if (args.armourConfirm){
-				if (args.armourConfirm == 'yes'){
+				if (args.armourConfirm.toLowerCase() == 'yes'){
 					let arm = args.arm;
 					if (usStats.money < arm.value){
 						return message.channel.send(`${us} You cannot afford that armour.`);

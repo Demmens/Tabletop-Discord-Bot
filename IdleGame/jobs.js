@@ -54,7 +54,7 @@ function TriggerJobs(){
 				let item;
 				let item2;
 				item = weapons.generateRandomItem();
-				item2 = armour.generateRandomItem();
+				item2 = armour.generateRandomArmour();
 				if (item2.value < item) item = item2; //Generate 2 items and take the lowest value of the two.
 
 				ply.items.weapons.push(item);

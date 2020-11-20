@@ -227,6 +227,39 @@ module.exports = {
 				pl.upgrades.oneTime.push(this.id);
 				writeStats(players);
 			}
+		},
+		{
+			name: 'Better Technique',
+			id:10,
+			description: "Decrease sacrifice time by 10%",
+			cost: 25000,
+			requirements: function(ply){
+				return true
+			},
+			onBuy: function(ply){
+				const players = retrieveStats();
+				let pl = findPly(ply, players);
+				pl.sacSpeed *= 0.9;
+				pl.upgrades.oneTime.push(this.id);
+				writeStats(players);
+			}
+		},
+		{
+			name: 'In the Rhythm',
+			id: 11,
+			description: "Decreases sacrifice time by 20%",
+			cost: 65000,
+			requirements: function(ply){
+				if (hasUpgrade(10,ply)) return true;
+				return false;
+			},
+			onBuy: function(ply){
+				const players = retrieveStats();
+				let pl = findPly(ply, players);
+				pl.sacSpeed *= 0.8;
+				pl.upgrades.oneTime.push(this.id);
+				writeStats(players);
+			}
 		}
 	],
 	repeatable: [

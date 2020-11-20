@@ -4,7 +4,7 @@ const Discord = require("discord.js");
 const f = require('../../functions.js');
 const f2 = require('./functions.js');
 
-const sacTime = 10000
+const sacTime = 7000
 
 class SacrificeCommand extends Command {
 	constructor() {
