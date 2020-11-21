@@ -6,6 +6,9 @@
     "scripts": {
         "start": "node main.js"
     },
+    "engines": {
+        "node": "14.x"
+    }, 
     "dependencies": {
         "discord-akairo": "8.0.0",
         "discord.js": "12.2.0",
