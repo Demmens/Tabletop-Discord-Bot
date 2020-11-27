@@ -1,5 +1,4 @@
 const { Command } = require("discord-akairo");
-const fs = require('fs');
 const Discord = require("discord.js");
 const f = require('../../functions.js');
 
@@ -12,63 +11,44 @@ class OfferCommand extends Command {
 		});
 	}
 	async exec(message, args) {
+		const us = message.author;
+		const ply = await f.getCult(us);
+		if (!ply) return
+		ply.money = Number(ply.money);
+		let daily = 50; //Percentage of sacrifice money gained for the daily reward
+		const sacGainMin = 80; //Min money gained for sacrifice
+		const sacGainMax = 300; //Max money gained for sacrifice
 
-		try {
-			const jsonString = fs.readFileSync('IdleGame/stats.json');
-			const players = JSON.parse(jsonString);
-			let auth = message.author;
+		function generateMoney() {		
+			let sacGainDifference = sacGainMax - sacGainMin;
+			return Math.floor(Math.random()*sacGainDifference) + sacGainMin;
+		}
 
-			let daily = 50; //Percentage of sacrifice money gained for the daily reward
-			const sacGainMin = 80; //Min money gained for sacrifice
-			const sacGainMax = 300; //Max money gained for sacrifice
+		let d = new Date();
+		let curDate = `${d.getDate()}/${d.getMonth()+1}/${d.getFullYear()}`;
+		if (ply.sacrifices == 0 ){
+			return message.channel.send(`${us} You have nothing to offer me, human.`);
+		} else {
+			let total = 0;
+			for (let i=0;i< ply.sacrifices;i++){
+				let money = generateMoney();
+				total += money;
+			}
+			total *= ply.offermultiplier;
 
-			function manualMoneyGain() {		
-				let sacGainDifference = sacGainMax - sacGainMin;
-				return Math.floor(Math.random()*sacGainDifference) + sacGainMin;
+			message.channel.send(`${us} Your offering of ${f.numberWithCommas(ply.sacrifices)} sacrifices has been rewarded. You gain £${f.numberWithCommas(Math.ceil(total))}.`);
+
+			ply.money += Math.ceil(total);
+
+			if (ply.lastused != curDate){
+				daily *= ply.dailymultiplier;
+				ply.lastused = curDate;
+				message.channel.send(`${us} +${daily}% (£${Math.ceil(total*daily/100)}) for first offering of the day.`);
+				ply.money += Math.ceil(total*daily/100);
 			}
 
-			let d = new Date();
-			let curDate = `${d.getDate()}/${d.getMonth()+1}/${d.getFullYear()}`;
-
-			for (let ply of players){
-				if (ply.name == auth.toString()){
-					if (ply.sacrifices ==0 ){
-						return message.channel.send(`${auth} You have nothing to offer me, human.`);
-					} else {
-						let total = 0;
-						for (let i=0;i< ply.sacrifices;i++){
-							let money = manualMoneyGain();
-							total += money;
-						}
-						total *= ply.offerMultiplier;
-
-						message.channel.send(`${auth} Your offering of ${f.numberWithCommas(ply.sacrifices)} sacrifices has been rewarded.`);
-						message.channel.send(`${auth} You gain £${f.numberWithCommas(Math.ceil(total))}.`);
-
-						ply.money += Math.ceil(total);
-						ply.sacrifices = 0;
-
-						if (ply.lastUsed != curDate){
-							daily *= ply.dailyMultiplier;
-							ply.lastUsed = curDate;
-							message.channel.send(`${auth} +${daily}% (£${Math.ceil(total*daily/100)}) for first offering of the day.`);
-							ply.money += Math.ceil(total*daily/100);
-						}
-					}
-				}
-			}
-
-
-			let writeJsonString = JSON.stringify(players, null, 2);
-			fs.writeFile('IdleGame/stats.json', writeJsonString, err => {
-				if (err) {
-					console.log('Error writing file', err);
-				}
-			})
-
-
-		} catch(err){
-			console.log('Error parsing JSON string:', err)
+			f.writeCults(us.id,'money',ply.money);
+			f.writeCults(us.id,'sacrifices',0);
 		}
 	}
 }

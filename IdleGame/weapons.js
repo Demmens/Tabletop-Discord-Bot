@@ -6,7 +6,6 @@ const TYPE_MAGIC = 'Magic';
 const TYPE_RANGED = 'Ranged';
 
 
-
 module.exports = {
 
 	generateRandomItem: function(id,guaranteePrefix, guaranteeSuffix){

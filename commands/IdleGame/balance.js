@@ -1,18 +1,13 @@
 const { Command } = require("discord-akairo");
-const fs = require('fs');
 const Discord = require("discord.js");
 const f = require('../../functions.js');
 
-function CreateBalanceEmbed(message, ply){
-	let player;
-	for (let [_,mem] of message.guild.members.cache){
-		if (mem.user.toString() == ply.name){
-			player = mem;
-		}
-	}
+async function CreateBalanceEmbed(message, player){
+	ply = await f.getCult(player);
+	if (!ply) return null;
 	let emb = new Discord.MessageEmbed()
 	.setTitle(`${player.displayName}'s Balance`)
-	.setDescription(`Money: £${f.numberWithCommas(ply.money)}\nSacrifices: ${f.numberWithCommas(ply.sacrifices)}/${f.numberWithCommas(ply.sacrificeMax)}\nResearch: ${ply.research}`)
+	.setDescription(`Money: £${f.numberWithCommas(ply.money)}\nSacrifices: ${f.numberWithCommas(ply.sacrifices)}/${f.numberWithCommas(ply.sacrificemax)}\nResearch: ${ply.research}`)
 
 	return emb;
 }
@@ -32,30 +27,18 @@ class IGBalanceCommand extends Command {
 		});
 	}
 	async exec(message, args) {
+		const us = message.author;
+		let ply = message.member;
+		if (args.player) ply = args.player;
+		let emb = await CreateBalanceEmbed(message, ply);
 
-
-		try {
-			const jsonString = fs.readFileSync('IdleGame/stats.json');
-			const players = JSON.parse(jsonString);
-
-
-			for (let ply of players){
-				if (args.player && ply.name == args.player.user.toString()){
-					return message.channel.send(CreateBalanceEmbed(message, ply));
-				} else if (!args.player && ply.name == message.author.toString()){
-					return message.channel.send(CreateBalanceEmbed(message, ply));
-				}
-			}
-
-			if (args.player.user.bot){
-				return message.channel.send(`Bots do not trifle with human concepts such as money.`)
-			}
-			return message.channel.send(`${args.player.displayName} has not made a sacrifice yet.`)
-
-
-		} catch(err){
-			console.log('Error parsing JSON string:', err)
+		if (ply.user.bot){
+			return message.channel.send(`${us} Bots do not trifle with human concepts such as money.`)
 		}
+		if (emb) return message.channel.send(emb);
+		else if (ply == message.member) return message.channel.send(`${us} You have not set up a cult yet. Type /CreateCult to get started.`);
+		else return message.channel.send(`${us} That player does not own a cult.`)
+
 	}
 }
 

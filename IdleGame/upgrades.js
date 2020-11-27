@@ -1,46 +1,22 @@
-const fs = require('fs');
-
-function findPly(ply,players){
-	if (!players){
-		players = retrieveStats();
-	}
-	for (pl of players){
-		if (ply.user.toString() == pl.name){
-			return pl;
-		}
-	}
-}
-
-function retrieveStats(){
-	const players = JSON.parse(fs.readFileSync('IdleGame/stats.json'));
-	return players;
-}
-
-function writeStats(players){
-	fs.writeFileSync('IdleGame/stats.json', JSON.stringify(players, null, 2));
-}
-
-function pushRepeatableUpgrade(id,pl){
+function pushRepeatableUpgrade(id,ply){
 	let upgr = {
 		id: id,
 		number: 1
 	}
 
-	for (let i of pl.upgrades.repeatable){
+	for (let i of ply.upgrades.repeatable){
 		if (i.id == id){
 			i.number++;
 			return i.number;
 		}
 	}
 
-	pl.upgrades.repeatable.push(upgr);
+	ply.upgrades.repeatable.push(upgr);
 	return 1;
 }
 
 function hasUpgrade(id, ply){
-	const players = retrieveStats();
-	let pl = findPly(ply,players);
-	for (let i of pl.upgrades.oneTime){
+	for (let i of ply.upgrades.oneTime){
 		if (i == id){
 			return true;
 		}
@@ -49,9 +25,7 @@ function hasUpgrade(id, ply){
 }
 
 function hasRepeatableUpgrade(id,ply){
-	const players = retrieveStats();
-	let pl = findPly(ply,players);
-	for (let i of pl.upgrades.repeatable){
+	for (let i of ply.upgrades.repeatable){
 		if (i.id == id){
 			return i.number;
 		}
@@ -60,9 +34,7 @@ function hasRepeatableUpgrade(id,ply){
 }
 
 function hasResearch(num, ply){
-	const players = retrieveStats();
-	let pl = findPly(ply,players);
-	if (pl.research >= num) return true;
+	if (ply.research >= num) return true;
 	return false;
 }
 
@@ -77,11 +49,8 @@ module.exports = {
 				return true;
 			},
 			onBuy: function(ply){
-				const players = retrieveStats();
-				let pl = findPly(ply,players);
-				pl.offerMultiplier += 0.3;
-				pl.upgrades.oneTime.push(this.id);
-				writeStats(players);		
+				ply.offermultiplier += 0.3;
+				ply.upgrades.oneTime.push(this.id);		
 			}
 		},
 		{
@@ -93,11 +62,8 @@ module.exports = {
 				return true;
 			},
 			onBuy: function(ply){
-				const players = retrieveStats();
-				let pl = findPly(ply,players);
-				pl.sacrificeMultiplier ++;
-				pl.upgrades.oneTime.push(this.id);
-				writeStats(players)
+				ply.sacrificemultiplier ++;
+				ply.upgrades.oneTime.push(this.id);
 			}
 		},
 		{
@@ -110,11 +76,8 @@ module.exports = {
 				return false;
 			},
 			onBuy: function(ply){
-				const players = retrieveStats()
-				let pl = findPly(ply,players);
-				pl.offerMultiplier += 0.5;
-				pl.upgrades.oneTime.push(this.id);
-				writeStats(players);
+				ply.offermultiplier += 0.5;
+				ply.upgrades.oneTime.push(this.id);
 			}
 		},
 		{
@@ -129,11 +92,8 @@ module.exports = {
 				return false;
 			},
 			onBuy: function(ply){
-				const players = retrieveStats()
-				let pl = findPly(ply,players);
-				pl.sacrificeMultiplier += 2;
-				pl.upgrades.oneTime.push(this.id);
-				writeStats(players);
+				ply.sacrificemultiplier += 2;
+				ply.upgrades.oneTime.push(this.id);
 			}
 		},
 		{
@@ -145,11 +105,8 @@ module.exports = {
 				return true
 			},
 			onBuy: function(ply){
-				const players = retrieveStats();
-				let pl = findPly(ply,players);
-				pl.dailyMultiplier += 1;
-				pl.upgrades.oneTime.push(this.id);
-				writeStats(players);
+				ply.dailymultiplier += 1;
+				ply.upgrades.oneTime.push(this.id);
 			}
 		},
 		{
@@ -162,11 +119,8 @@ module.exports = {
 				return false;
 			},
 			onBuy: function(ply){
-				const players = retrieveStats()
-				let pl = findPly(ply,players);
-				pl.sacrificeMultiplier += 6;
-				pl.upgrades.oneTime.push(this.id);
-				writeStats(players);
+				ply.sacrificemultiplier += 6;
+				ply.upgrades.oneTime.push(this.id);
 			}
 		},
 		{
@@ -176,18 +130,14 @@ module.exports = {
 			cost: 50000,
 			requirements: function(ply){
 				if (hasUpgrade(5,ply)){
-					let pl = findPly(ply);
-					if (pl.cultists.length > 4) return true;
+					if (JSON.parse(ply.cultists).length > 4) return true;
 					return false;
 				}
 				return false;
 			},
 			onBuy: function(ply){
-				const players = retrieveStats();
-				let pl = findPly(ply,players);
-				pl.dailyMultiplier += 4;
-				pl.upgrades.oneTime.push(this.id);
-				writeStats(players);
+				ply.dailymultiplier += 4;
+				ply.upgrades.oneTime.push(this.id);
 			}
 		},
 		{
@@ -197,17 +147,13 @@ module.exports = {
 			cost: 300000,
 			requirements: function(ply){
 				if (hasUpgrade(7,ply)){
-					let pl = findPly(ply);
-					if (pl.cultists.length > 9) return true
+					if (JSON.parse(ply.cultists).length > 9) return true
 				}
 				return false;
 			},
 			onBuy: function(ply){
-				const players = retrieveStats();
-				let pl = findPly(ply,players);
-				pl.dailyMultiplier += 10;
-				pl.upgrades.oneTime.push(this.id);
-				writeStats(players);
+				ply.dailymultiplier += 10;
+				ply.upgrades.oneTime.push(this.id);
 			}
 		},
 		{
@@ -216,16 +162,12 @@ module.exports = {
 			description: "Cultists create 20% more sacrifices",
 			cost: 20000,
 			requirements: function(ply){
-				let pl = findPly(ply);
-				if (pl.cultists.length != 0) return true;
+				if (JSON.parse(ply.cultists).length != 0) return true;
 				return false;
 			},
 			onBuy: function(ply){
-				const players = retrieveStats();
-				let pl = findPly(ply, players);
-				pl.cultSacMult += 0.2;
-				pl.upgrades.oneTime.push(this.id);
-				writeStats(players);
+				ply.cultsacmult += 0.2;
+				ply.upgrades.oneTime.push(this.id);
 			}
 		},
 		{
@@ -237,11 +179,8 @@ module.exports = {
 				return true
 			},
 			onBuy: function(ply){
-				const players = retrieveStats();
-				let pl = findPly(ply, players);
-				pl.sacSpeed *= 0.9;
-				pl.upgrades.oneTime.push(this.id);
-				writeStats(players);
+				ply.sacspeed *= 0.9;
+				ply.upgrades.oneTime.push(this.id);
 			}
 		},
 		{
@@ -254,11 +193,8 @@ module.exports = {
 				return false;
 			},
 			onBuy: function(ply){
-				const players = retrieveStats();
-				let pl = findPly(ply, players);
-				pl.sacSpeed *= 0.8;
-				pl.upgrades.oneTime.push(this.id);
-				writeStats(players);
+				ply.sacspeed *= 0.8;
+				ply.upgrades.oneTime.push(this.id);
 			}
 		}
 	],
@@ -271,14 +207,9 @@ module.exports = {
 			requirements: function(ply){
 				return true;
 			},
-			onBuy: function(ply){
-				const players = retrieveStats();
-				let pl = findPly(ply,players);
-				let num = pushRepeatableUpgrade(this.id,pl);
-		
-				pl.sacrificeMax += 5;
-				
-				writeStats(players);
+			onBuy: function(ply){;
+				pushRepeatableUpgrade(this.id,ply);
+				ply.sacrificemax += 5;
 			}
 		},
 		{
@@ -293,14 +224,8 @@ module.exports = {
 				return false;
 			},
 			onBuy: function(ply){
-				const players = retrieveStats();
-				let pl = findPly(ply,players);
-				let num = pushRepeatableUpgrade(this.id,pl);
-		
-				pl.sacrificeMax += 20;
-			
-				let JSONstr = JSON.stringify(players,null,2);
-				writeStats(players);
+				pushRepeatableUpgrade(this.id,ply);
+				ply.sacrificemax += 20;
 			}
 		},
 		{
@@ -315,14 +240,8 @@ module.exports = {
 				return false;
 			},
 			onBuy: function(ply){
-				const players = retrieveStats();
-				let pl = findPly(ply,players);
-				let num = pushRepeatableUpgrade(this.id,pl);
-		
-				pl.sacrificeMax += 100;
-			
-				let JSONstr = JSON.stringify(players,null,2);
-				writeStats(players);
+				pushRepeatableUpgrade(this.id,ply);
+				ply.sacrificemax += 100;
 			}
 		},
 		{
@@ -337,13 +256,8 @@ module.exports = {
 				return false;
 			},
 			onBuy: function(ply){
-				const players = retrieveStats();
-				let pl = findPly(ply,players);
-				pushRepeatableUpgrade(this.id,pl);
-		
-				pl.sacrificeMax += 1000;
-			
-				writeStats(players);
+				pushRepeatableUpgrade(this.id,ply);	
+				ply.sacrificemax += 1000;
 			}
 		},
 		{
@@ -352,20 +266,14 @@ module.exports = {
 			description: "Increase cultist capacity by 3",
 			cost: 12500,
 			requirements: function(ply){
-				const players = retrieveStats();
-				let pl = findPly(ply, players);
-				if (pl.cultists.length > 1 && (hasRepeatableUpgrade(6,ply)*2) +2 > hasRepeatableUpgrade(5,ply)){
+				if (JSON.parse(ply.cultists).length > 1 && (hasRepeatableUpgrade(6,ply)*2) +2 > hasRepeatableUpgrade(5,ply)){
 					return true;
 				}
 				return false;
 			},
 			onBuy: function(ply){
-				const players = retrieveStats();
-				let pl = findPly(ply,players);
-				pushRepeatableUpgrade(this.id,pl);
-				pl.maxCultists += 3;
-
-				writeStats(players);
+				pushRepeatableUpgrade(this.id,ply);
+				ply.maxcultists += 3;
 			}
 		},
 		{
@@ -380,7 +288,7 @@ module.exports = {
 				return false;
 			},
 			onBuy: function(ply){
-				pushRepeatableUpgrade(this.id,pl);
+				pushRepeatableUpgrade(this.id,ply);
 			} //Doesn't actually need to do anything, since the effect is in the cult leader requirements
 		},
 		{
@@ -389,16 +297,12 @@ module.exports = {
 			description: "Allows assinging an extra sacrificer",
 			cost: 10000,
 			requirements: function(ply){
-				let pl = findPly(ply);
-				if (pl.cultists.length != 0) return true;
+				if (JSON.parse(ply.cultists).length != 0) return true;
 				return false;
 			},
 			onBuy: function(ply){
-				const players = retrieveStats();
-				let pl = findPly(ply, players);
-				pl.maxSacrificers += 1;
-				pushRepeatableUpgrade(this.id,pl);
-				writeStats(players);
+				ply.maxsacrificers += 1;
+				pushRepeatableUpgrade(this.id,ply);
 			}
 		},
 		{
@@ -407,16 +311,52 @@ module.exports = {
 			description: "Allows assinging an extra researcher",
 			cost: 10000,
 			requirements: function(ply){
-				let pl = findPly(ply);
-				if (pl.cultists.length != 0) return true;
+				if (JSON.parse(ply.cultists).length != 0) return true;
 				return false;
 			},
 			onBuy: function(ply){
-				const players = retrieveStats();
-				let pl = findPly(ply, players);
-				pl.maxResearchers += 1;
-				pushRepeatableUpgrade(this.id,pl);
-				writeStats(players);
+				ply.maxresearchers += 1;
+				pushRepeatableUpgrade(this.id,ply);
+			}
+		},
+		{
+			name: "Raise Standards",
+			id: 9,
+			description: "Increase Sacrifice yield by 25%, but sacrificing takes an additional 50% longer",
+			cost: 25000,
+			requirements: function(ply){
+				return true;
+			},
+			onBuy: function(ply){
+				ply.sacmult = Number(ply.sacmult) + 0.25;
+				ply.sacspeedadd = Number(ply.sacspeedadd) + 3.5;
+				pushRepeatableUpgrade(this.id,ply);
+			}
+		},
+		{
+			name: "Lower Standards",
+			id: 10,
+			description: "Remove one 'Raise Standards' upgrade.",
+			cost: 0,
+			requirements: function(ply){
+				if (hasRepeatableUpgrade(9,ply) > 0) return true;
+				return false;
+			},
+			onBuy: function(ply){
+				ply.sacmult = Number(ply.sacmult);
+				ply.sacspeedadd = Number(ply.sacspeedadd);
+				ply.sacmult -= 0.25;
+				ply.sacspeedadd -= 3.5;
+				let x=0;
+				for (let upgr of ply.upgrades.repeatable){
+					if (upgr.id == 9){
+						upgr.number--;
+						if (upgr.number == 0){
+							ply.upgrades.repeatable.splice(x,1);
+						}
+					}
+					x++
+				}
 			}
 		}
 	]

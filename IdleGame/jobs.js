@@ -1,4 +1,3 @@
-const f2 = require('../commands/IdleGame/functions.js');
 const f = require('../functions.js');
 const fs = require('fs');
 const armour = require('./armour.js');

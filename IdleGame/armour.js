@@ -2,7 +2,6 @@
 const TYPE_HEAVY = 'heavy';
 const TYPE_LIGHT = 'light';
 const TYPE_MAGIC = 'magic';
-const f2 = require('../commands/IdleGame/functions.js');
 const f = require('../functions.js');
 
 module.exports = {
