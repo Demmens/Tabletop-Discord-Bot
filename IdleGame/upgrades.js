@@ -44,7 +44,7 @@ module.exports = {
 			name: "Quality Corpses",
 			id: 1,
 			description: "+30% money from offerings",
-			cost: 3000,
+			cost: 6000,
 			requirements: function(ply){
 				return true;
 			},
@@ -71,7 +71,7 @@ module.exports = {
 			name: "Higher Quality Corpses",
 			id:3,
 			description: "+50% money from offerings",
-			cost:7000,
+			cost:15000,
 			requirements: function(ply){
 				if (hasUpgrade(1,ply)) return true;
 				return false;
@@ -320,7 +320,7 @@ module.exports = {
 			description: "Allows assinging an extra sacrificer",
 			cost: 10000,
 			requirements: function(ply){
-				if (JSON.parse(ply.cultists).length != 0) return true;
+				if (JSON.parse(ply.cultists).length > 1) return true;
 				return false;
 			},
 			onBuy: function(ply){
@@ -334,7 +334,7 @@ module.exports = {
 			description: "Allows assinging an extra researcher",
 			cost: 10000,
 			requirements: function(ply){
-				if (JSON.parse(ply.cultists).length != 0) return true;
+				if (JSON.parse(ply.cultists).length > 1) return true;
 				return false;
 			},
 			onBuy: function(ply){
@@ -348,7 +348,7 @@ module.exports = {
 			description: "Increase Sacrifice yield by 25%, but sacrificing takes an additional 50% longer",
 			cost: 25000,
 			requirements: function(ply){
-				return true;
+				if (hasRepeatableUpgrade(9,ply)*hasResearch() < )
 			},
 			onBuy: function(ply){
 				ply.sacmult = Number(ply.sacmult) + 0.25;
@@ -381,6 +381,9 @@ module.exports = {
 					x++
 				}
 			}
+		},
+		{
+			name: ''
 		}
 	]
 }
