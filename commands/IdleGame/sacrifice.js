@@ -26,6 +26,8 @@ class SacrificeCommand extends Command {
 		if (!ply) return message.channel.send(`${us} You must create a cult before you can make sacrifices. Type /CreateCult to get started.`)
 		ply.sacrifices = Number(ply.sacrifices);
 		ply.sacrificemax = Number(ply.sacrificemax);
+		ply.sacrificespeedadd = Number(ply.sacrificespeedadd);
+		ply.sacrificespeedmult = Number(ply.sacrificespeedmult);
 
 		if (ply.sacrifices >= ply.sacrificemax){
 			return message.channel.send(`${us} You do not have any more space to store sacrifices. /offer to offer them to the bot or increase your storage in the /shop.`)
@@ -44,7 +46,7 @@ class SacrificeCommand extends Command {
 		const goat = '<:goat:779324716468666398>';
 		const skull = '<:skull:779325626330775600>';
 
-		const sacSpeed = ply.sacrificespeedmult*(sacTime+(ply.sacspeedadd*1000));
+		const sacSpeed = ply.sacrificespeedmult*(sacTime+(ply.sacrificespeedadd*1000));
 		const barLength = 4;
 		const finalDur = 0;
 		let ogBar = '';
