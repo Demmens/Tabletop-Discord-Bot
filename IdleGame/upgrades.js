@@ -49,6 +49,7 @@ module.exports = {
 				return true;
 			},
 			onBuy: function(ply){
+				ply.offermultiplier = Number(ply.offermultiplier);
 				ply.offermultiplier += 0.3;
 				ply.upgrades.oneTime.push(this.id);		
 			}
@@ -76,6 +77,7 @@ module.exports = {
 				return false;
 			},
 			onBuy: function(ply){
+				ply.offermultiplier = Number(ply.offermultiplier);
 				ply.offermultiplier += 0.5;
 				ply.upgrades.oneTime.push(this.id);
 			}
