@@ -168,6 +168,7 @@ module.exports = {
 				return false;
 			},
 			onBuy: function(ply){
+				ply.cultsacmult = Number(ply.cultsacmult);
 				ply.cultsacmult += 0.2;
 				ply.upgrades.oneTime.push(this.id);
 			}
@@ -181,6 +182,7 @@ module.exports = {
 				return true
 			},
 			onBuy: function(ply){
+				ply.sacspeed = Number(ply.sacspeed);
 				ply.sacspeed *= 0.9;
 				ply.upgrades.oneTime.push(this.id);
 			}
@@ -195,6 +197,7 @@ module.exports = {
 				return false;
 			},
 			onBuy: function(ply){
+				ply.sacspeed = Number(ply.sacspeed);
 				ply.sacspeed *= 0.8;
 				ply.upgrades.oneTime.push(this.id);
 			}
@@ -211,6 +214,7 @@ module.exports = {
 			},
 			onBuy: function(ply){;
 				pushRepeatableUpgrade(this.id,ply);
+				ply.sacrificemax = Number(ply.sacrificemax);
 				ply.sacrificemax += 5;
 			}
 		},
@@ -227,6 +231,7 @@ module.exports = {
 			},
 			onBuy: function(ply){
 				pushRepeatableUpgrade(this.id,ply);
+				ply.sacrificemax = Number(ply.sacrificemax);
 				ply.sacrificemax += 20;
 			}
 		},
@@ -243,6 +248,7 @@ module.exports = {
 			},
 			onBuy: function(ply){
 				pushRepeatableUpgrade(this.id,ply);
+				ply.sacrificemax = Number(ply.sacrificemax);
 				ply.sacrificemax += 100;
 			}
 		},
@@ -259,6 +265,7 @@ module.exports = {
 			},
 			onBuy: function(ply){
 				pushRepeatableUpgrade(this.id,ply);	
+				ply.sacrificemax = Number(ply.sacrificemax);
 				ply.sacrificemax += 1000;
 			}
 		},
