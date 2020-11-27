@@ -176,7 +176,6 @@ class IGShopCommand extends Command {
 			
 			for (let i of upgrades.oneTime){ //Run through all one time purchase upgrades
 				let hasUpgr = false;
-				let reqTbl = i.requirements;
 				let hasReq = false;
 				for (let j of ply.upgrades.oneTime){ //Run through all one time upgrades the player owns
 					if (i.id == j){ //Check for matches.

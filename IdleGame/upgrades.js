@@ -382,9 +382,6 @@ module.exports = {
 					x++
 				}
 			}
-		},
-		{
-			name: ''
 		}
 	]
 }
