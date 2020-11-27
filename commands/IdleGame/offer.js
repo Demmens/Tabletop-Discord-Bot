@@ -13,11 +13,12 @@ class OfferCommand extends Command {
 	async exec(message, args) {
 		const us = message.author;
 		const ply = await f.getCult(us);
+		const DB = this.client.db;
 		if (!ply) return
 		ply.money = Number(ply.money);
 		let daily = 50; //Percentage of sacrifice money gained for the daily reward
-		const sacGainMin = 80; //Min money gained for sacrifice
-		const sacGainMax = 300; //Max money gained for sacrifice
+		const sacGainMin = 130; //Min money gained for sacrifice
+		const sacGainMax = 250; //Max money gained for sacrifice
 
 		function generateMoney() {		
 			let sacGainDifference = sacGainMax - sacGainMin;
@@ -43,12 +44,17 @@ class OfferCommand extends Command {
 			if (ply.lastused != curDate){
 				daily *= ply.dailymultiplier;
 				ply.lastused = curDate;
-				message.channel.send(`${us} +${daily}% (£${Math.ceil(total*daily/100)}) for first offering of the day.`);
+				message.channel.send(`${us} +${daily}% (£${f.numberWithCommas(Math.ceil(total*daily/100))}) for first offering of the day.`);
 				ply.money += Math.ceil(total*daily/100);
 			}
-
-			f.writeCults(us.id,'money',ply.money);
-			f.writeCults(us.id,'sacrifices',0);
+			let query = `
+			UPDATE cults
+			SET money = ${ply.money},
+			sacrifices = 0,
+			lastused = '${curDate}'
+			WHERE owner_id = ${ply.owner_id}
+			`
+			DB.query(query);
 		}
 	}
 }

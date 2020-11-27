@@ -81,7 +81,7 @@ class CultCommand extends Command {
 						start: message => {
 							let emb = new Discord.MessageEmbed()
 							.setTitle(cultist.name)
-							.setDescription(`${f.createCultistStatString(cultist)}\nSell Price: £${cultist.value/2}\n-------------------------\n1 - Give Job\n2 - Rename\n3 - Upgrade\n4 - Equip\n5 - Sell`)
+							.setDescription(`${f.createCultistStatString(cultist)}\nSell Price: £${f.numberWithCommas(cultist.value/2)}\n-------------------------\n1 - Give Job\n2 - Rename\n3 - Upgrade\n4 - Equip\n5 - Sell`)
 							.setFooter("Type 'cancel' to cancel");
 							return emb;
 						},

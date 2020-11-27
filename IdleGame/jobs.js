@@ -1,5 +1,4 @@
 const f = require('../functions.js');
-const fs = require('fs');
 const armour = require('./armour.js');
 const weapons = require('./weapons.js');
 
@@ -7,10 +6,16 @@ let lastTrigger = Date.now();
 let lastSacrifice = Date.now();
 setInterval(TriggerJobs, 10000); //Loop every 10 seconds so we can get the cultists to automate stuff.
 
-function TriggerJobs(){
-	let players = JSON.parse(fs.readFileSync('IdleGame/stats.json'));
-
+async function TriggerJobs(){
+	
+	let players = await f.getCults();
 	for (let ply of players){
+		ply.cultists = JSON.parse(ply.cultists);
+		ply.items = JSON.parse(ply.items);
+		ply.upgrades = JSON.parse(ply.upgrades);
+		ply.money = Number(ply.money);
+		ply.sacrifices = Number(ply.sacrifices);
+		ply.sacrificemax = Number(ply.sacrificemax);
 		for (let cult of ply.cultists){ 
 
 			let difference = Date.now() - cult.lastAction;
@@ -33,8 +38,8 @@ function TriggerJobs(){
 					}
 					stat = Math.ceil(Math.pow(stat, 2) / 5);
 					ply.sacrifices += stat;
-					if (ply.sacrifices > ply.sacrificeMax){
-						ply.sacrifices = ply.sacrificeMax;
+					if (ply.sacrifices > ply.sacrificemax){
+						ply.sacrifices = ply.sacrificemax;
 					}
 					cult.lastAction = Date.now();
 				}
@@ -49,19 +54,19 @@ function TriggerJobs(){
 					cult.lastAction = Date.now();
 				}
 			}
-			if (cult.job == 'Explorer' && Math.random()*20+cha >= 20 && difference >= 180000 / wis){ //Luck based on charisma, speed based on wisdom
+			if (cult.job == 'Explorer' && Math.random()*20+cha >= 20 && difference >= 18000000 / wis){ //Luck based on charisma, speed based on wisdom
 				let item;
 				let item2;
 				item = weapons.generateRandomItem();
 				item2 = armour.generateRandomArmour();
-				if (item2.value < item) item = item2; //Generate 2 items and take the lowest value of the two.
+				if (item2.value < item.value) item = item2; //Generate 2 items and take the lowest value of the two.
 
 				ply.items.weapons.push(item);
 			}
 		}
-	}
-	if (players.length !=0){
-		lastTrigger = Date.now();
-		fs.writeFileSync('IdleGame/stats.json', JSON.stringify(players, null, 2));
+		ply.items = JSON.stringify(ply.items);
+		ply.upgrades = JSON.stringify(ply.upgrades);
+		ply.cultists = JSON.stringify(ply.cultists);
+		f.fullWriteCults(ply);
 	}
 }

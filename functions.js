@@ -391,6 +391,10 @@ module.exports = {
 		else return ply.rows[0];
 	},
 
+	getCults: async function(){
+		return (await DB.query(`select * from cults`)).rows;
+	},
+
 	writeCults: async function(ownerID, field, entry){
 		const query = `
 		UPDATE cults
