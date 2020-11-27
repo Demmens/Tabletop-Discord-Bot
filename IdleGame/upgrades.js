@@ -348,7 +348,8 @@ module.exports = {
 			description: "Increase Sacrifice yield by 25%, but sacrificing takes an additional 50% longer",
 			cost: 25000,
 			requirements: function(ply){
-				if (hasRepeatableUpgrade(9,ply)*hasResearch() < )
+				if (hasResearch((hasRepeatableUpgrade(9,ply)*100)^1.2,ply)) return true;
+				return false;
 			},
 			onBuy: function(ply){
 				ply.sacmult = Number(ply.sacmult) + 0.25;
