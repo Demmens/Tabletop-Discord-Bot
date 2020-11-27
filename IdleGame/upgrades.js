@@ -338,7 +338,7 @@ module.exports = {
 			},
 			onBuy: function(ply){
 				ply.sacmult = Number(ply.sacmult) + 0.25;
-				ply.sacspeedadd = Number(ply.sacrificespeedadd) + 3.5;
+				ply.sacrificespeedadd = Number(ply.sacrificespeedadd) + 3.5;
 				pushRepeatableUpgrade(this.id,ply);
 			}
 		},
@@ -353,9 +353,9 @@ module.exports = {
 			},
 			onBuy: function(ply){
 				ply.sacmult = Number(ply.sacmult);
-				ply.sacspeedadd = Number(ply.sacspeedadd);
+				ply.sacrificespeedadd = Number(ply.sacrificespeedadd);
 				ply.sacmult -= 0.25;
-				ply.sacspeedadd -= 3.5;
+				ply.sacrificespeedadd -= 3.5;
 				let x=0;
 				for (let upgr of ply.upgrades.repeatable){
 					if (upgr.id == 9){
