@@ -338,7 +338,7 @@ module.exports = {
 			},
 			onBuy: function(ply){
 				ply.sacmult = Number(ply.sacmult) + 0.25;
-				ply.sacspeedadd = Number(ply.sacspeedadd) + 3.5;
+				ply.sacspeedadd = Number(ply.sacrificespeedadd) + 3.5;
 				pushRepeatableUpgrade(this.id,ply);
 			}
 		},
