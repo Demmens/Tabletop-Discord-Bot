@@ -88,7 +88,7 @@ module.exports = {
 			description: "+2 sacrifices from sacrifices",
 			cost: 50000,
 			requirements: function(ply){
-				if (hasUpgrade(2,ply) && hasResearch(100,ply)){
+				if (hasUpgrade(2,ply) && hasResearch(10,ply)){
 					return true;
 				}
 				return false;
@@ -117,7 +117,7 @@ module.exports = {
 			description: "+6 sacrifices from sacrifices",
 			cost: 750000,
 			requirements: function(ply){
-				if (hasUpgrade(4,ply) && hasResearch(1000, ply)) return true;
+				if (hasUpgrade(4,ply) && hasResearch(100, ply)) return true;
 				return false;
 			},
 			onBuy: function(ply){
@@ -182,8 +182,8 @@ module.exports = {
 				return true
 			},
 			onBuy: function(ply){
-				ply.sacspeed = Number(ply.sacspeed);
-				ply.sacspeed *= 0.9;
+				ply.sacrificespeedmult = Number(ply.sacrificespeedmult);
+				ply.sacrificespeedmult *= 0.9;
 				ply.upgrades.oneTime.push(this.id);
 			}
 		},
@@ -197,8 +197,22 @@ module.exports = {
 				return false;
 			},
 			onBuy: function(ply){
-				ply.sacspeed = Number(ply.sacspeed);
-				ply.sacspeed *= 0.8;
+				ply.sacrificespeedmult = Number(ply.sacrificespeedmult);
+				ply.sacrificespeedmult *= 0.8;
+				ply.upgrades.oneTime.push(this.id);
+			}
+		},
+		{
+			name: 'Endless corpses',
+			id: 12,
+			description: "+20 sacrifices per sacrifice",
+			cost:500000,
+			requirements: function(ply){
+				if (hasUpgrade(6,ply) && hasResearch(1000,ply)) return true;
+				return false;
+			},
+			onBuy: function(ply){
+				ply.sacrificemultiplier += 20;
 				ply.upgrades.oneTime.push(this.id);
 			}
 		}

@@ -30,19 +30,18 @@ class CreateCultCommand extends Command {
 		if (args.name){
 			const us = message.author;
 
-			const query = `
-			INSERT INTO cults(owner_id,name)
-			VALUES (${us.id},'${args.name}')
-			`
-			try{
-				await this.client.db.query(query);
-				return message.channel.send(`${us} Your cult '${args.name}' has successfully been created`)
-			}
-			catch(err){
-				console.error(err);
-				return message.channel.send(`${us} Something went wrong.`)
-			}
 			
+			let firstCultist = f.CreateCultist();
+			while (firstCultist.value > 60000) firstCultist = f.CreateCultist();
+			let cultists = [];
+			cultists.push(firstCultist);
+			let query = `
+			INSERT INTO cults(owner_id,name, cultists)
+			VALUES (${us.id},'${args.name}', '${JSON.stringify(cultists)}')
+			`
+
+			await this.client.db.query(query);
+			return message.channel.send(`${us} Your cult '${args.name}' has successfully been created`)
 		}
 	}
 }

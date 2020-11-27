@@ -45,6 +45,7 @@ class IGShopCommand extends Command {
 
 		const us = message.author;
 		var ply = await f.getCult(us);
+		if (!ply) return message.channel.send(`${us} you must first create a cult. Type /CreateCult to get started`)
 		let query = `
 				SELECT * FROM itemshop
 				WHERE guild_id = ${message.guild.id}
