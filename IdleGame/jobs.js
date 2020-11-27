@@ -16,6 +16,7 @@ async function TriggerJobs(){
 		ply.money = Number(ply.money);
 		ply.sacrifices = Number(ply.sacrifices);
 		ply.sacrificemax = Number(ply.sacrificemax);
+		ply.research = Number(ply.research);
 		for (let cult of ply.cultists){ 
 
 			let difference = Date.now() - cult.lastAction;
