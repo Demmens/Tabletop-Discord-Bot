@@ -287,7 +287,7 @@ module.exports = {
 			name: "Cult leader",
 			id: 5,
 			description: "Increase cultist capacity by 3",
-			cost: 12500,
+			cost: 125000,
 			requirements: function(ply){
 				if (JSON.parse(ply.cultists).length > 1 && (hasRepeatableUpgrade(6,ply)*2) +2 > hasRepeatableUpgrade(5,ply)){
 					return true;
