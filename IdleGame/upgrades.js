@@ -115,7 +115,7 @@ module.exports = {
 			name: "Corpse reservoirs",
 			id: 6,
 			description: "+6 sacrifices from sacrifices",
-			cost: 750000,
+			cost: 350000,
 			requirements: function(ply){
 				if (hasUpgrade(4,ply) && hasResearch(100, ply)) return true;
 				return false;
@@ -129,7 +129,7 @@ module.exports = {
 			name: "Sermons",
 			id: 7,
 			description: "Earn 400% more money from daily bonuses",
-			cost: 50000,
+			cost: 750000,
 			requirements: function(ply){
 				if (hasUpgrade(5,ply)){
 					if (JSON.parse(ply.cultists).length > 4) return true;
@@ -146,7 +146,7 @@ module.exports = {
 			name: "Ceremonies",
 			id: 8,
 			description: "Earn 1000% more money from daily bonuses",
-			cost: 300000,
+			cost: 3000000,
 			requirements: function(ply){
 				if (hasUpgrade(7,ply)){
 					if (JSON.parse(ply.cultists).length > 9) return true
@@ -206,7 +206,7 @@ module.exports = {
 			name: 'Endless corpses',
 			id: 12,
 			description: "+20 sacrifices per sacrifice",
-			cost:500000,
+			cost:1000000,
 			requirements: function(ply){
 				if (hasUpgrade(6,ply) && hasResearch(1000,ply)) return true;
 				return false;
