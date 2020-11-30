@@ -17,6 +17,7 @@ async function TriggerJobs(){
 		ply.sacrifices = Number(ply.sacrifices);
 		ply.sacrificemax = Number(ply.sacrificemax);
 		ply.research = Number(ply.research);
+		ply.rewards = JSON.parse(ply.rewards);
 		for (let cult of ply.cultists){ 
 
 			let difference = Date.now() - cult.lastAction;
@@ -32,13 +33,9 @@ async function TriggerJobs(){
 					if (tr.name == "Bloodthirsty") difference *= 1.2;
 					if (tr.name == "Haemophobic") difference *= 0.8;
 				}
-				if (difference*(Math.pow(dex,0.5)) >= 60000){
-					let stat = str;
-					if (dex > stat){
-						stat = dex; //Create sacrifices based on strength or dex stat.
-					}
-					stat = Math.ceil(Math.pow(stat, 2) / 5);
-					ply.sacrifices += stat;
+				if (difference*(Math.pow(dex,0.5)) >= 60000){ //Speed based on dex, amount based on strength.
+					str = Math.ceil(Math.pow(str, 2) / 5);
+					ply.sacrifices += str;
 					if (ply.sacrifices > ply.sacrificemax){
 						ply.sacrifices = ply.sacrificemax;
 					}
@@ -50,7 +47,7 @@ async function TriggerJobs(){
 					if (tr.name == "Academic") difference *= 1.2;
 					if (tr.name == "Disorganised") difference *= 0.8;
 				}
-				if (difference >= 180000 / wis){ //Research speed is based on wis
+				if (difference*Math.pow(wis,0.5) >= 180000){ //Research speed is based on wis
 					ply.research += Math.ceil(Math.pow(int, 2) / 5); //Research amount is based on int
 					cult.lastAction = Date.now();
 				}
@@ -63,12 +60,13 @@ async function TriggerJobs(){
 					item2 = armour.generateRandomArmour();
 					if (item2.value < item.value) item = item2; //Generate 2 items and take the lowest value of the two.
 
-					ply.items.weapons.push(item);
+					ply.rewards.push(item);
 					cult.lastAction = Date.now();
 				}
 			}
 		}
 		ply.items = JSON.stringify(ply.items);
+		ply.rewards = JSON.stringify(ply.rewards);
 		ply.upgrades = JSON.stringify(ply.upgrades);
 		ply.cultists = JSON.stringify(ply.cultists);
 		f.fullWriteCults(ply);

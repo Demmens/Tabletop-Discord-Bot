@@ -426,12 +426,10 @@ module.exports = {
 		maxResearchers = ${ply.maxresearchers},
 		upgrades = '${ply.upgrades}',
 		items = '${ply.items}',
-		cultists = '${ply.cultists}'
+		cultists = '${ply.cultists}',
+		rewards = '${ply.rewards}'
 		WHERE owner_id = ${ply.owner_id}
 		`;
-		/*
-		
-		*/
 		DB.query(query);
 	},
 

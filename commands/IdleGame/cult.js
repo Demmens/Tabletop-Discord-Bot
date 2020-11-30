@@ -17,13 +17,16 @@ class CultCommand extends Command {
 		const mem = message.member;
 		let pl = (await DB.query(`SELECT * FROM cults WHERE owner_id = ${us.id}`)).rows[0]
 		if (!pl) return message.channel.send(`${us} You don't have a cult. Type /CreateCult to get started.`)
+		pl.rewards = JSON.parse(pl.rewards);
+		let rew = '';
+		if (pl.rewards.length != 0) rew = ` (${pl.rewards.length})`;
 		const cultMenu = yield{
-			type: Argument.range('integer',0,6),
+			type: Argument.range('integer',0,7),
 			prompt: {
 				start: message => {
 					let emb = new Discord.MessageEmbed()
 					.setTitle(pl.name)
-					.setDescription(`1 - Rename\n2 - Cultists\n3 - Inventory\n4 - Balance\n5 - Upgrades`)
+					.setDescription(`1 - Rename\n2 - Cultists\n3 - Inventory\n4 - Balance\n5 - Upgrades\n6 - Rewards${rew}`)
 					.setFooter(`Type 'cancel' to cancel`);
 
 					return emb;
@@ -47,6 +50,40 @@ class CultCommand extends Command {
 			}
 			DB.query(`UPDATE cults SET name = '${renameCult}' WHERE owner_id = ${pl.owner_id}`);	
 			return message.channel.send(`${us} Successfully renamed your cult to ${renameCult}`);
+		} else if (cultMenu == 6){
+			if (pl.rewards.length == 0) return message.channel.send(`${us} You have no rewards to claim`)
+			let rewardStr = '';
+			for (let rew of pl.rewards) rewardStr += `${rew.name}\n`;
+			const rewardEmb = yield{
+				type: 'yes/no',
+				prompt: {
+					start: message => {
+						let emb = new Discord.MessageEmbed()
+						.setTitle('Claim Rewards?')
+						.setDescription(rewardStr)
+						return emb;
+					},
+					retry: message => us.toString()+' Please enter `yes` or `no`',
+					prompt: true
+				}
+			}
+			if (rewardEmb.toLowerCase() == 'yes'){
+				pl.items = JSON.parse(pl.items);
+				for (let rew of pl.rewards){
+					if (rew.damage)	pl.items.weapons.push(rew);
+					if (rew.equip) pl.items.armour.push(rew);
+				}
+				pl.rewards = '[]';
+				pl.items = JSON.stringify(pl.items);
+				let query = `
+				UPDATE cults
+				SET rewards = ${pl.rewards},
+				items = ${pl.items}
+				WHERE owner_id = ${pl.owner_id}
+				`
+				DB.query(query);
+				return message.channel.send(`${us} Successfully claimed your rewards`);
+			} else return message.channel.send(`${us} Your rewards were not claimed`);
 		} else if (cultMenu == 2){
 			pl.cultists = JSON.parse(pl.cultists);
 			let cultistStr = "";
