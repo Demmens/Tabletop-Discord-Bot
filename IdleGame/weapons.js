@@ -91,7 +91,7 @@ module.exports = {
 			item.value *= suffix.value;
 		}
 
-		item.value = Math.floor(item.value*20)*250;
+		item.value = Math.floor(item.value*20)*5000;
 		item.damage = Math.floor(item.damage*10);
 
 		return item;

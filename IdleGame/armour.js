@@ -109,7 +109,7 @@ module.exports = {
 		if (prefix.addEffect) armour.effects.push(prefix.addEffect);
 		if (suffix.addEffect) armour.effects.push(suffix.addEffect);
 
-		armour.value = Math.floor(20*base.multiplier*prefix.value*suffix.value*material.value)*250;
+		armour.value = Math.floor(20*base.multiplier*prefix.value*suffix.value*material.value)*2500;
 
 		return armour;
 	},

@@ -51,26 +51,30 @@ class IGShopCommand extends Command {
 				WHERE guild_id = ${message.guild.id}
 				`;
 		let shop = (await DB.query(query)).rows[0];
-		if (!shop){
+		let idleGame = (await DB.query(`SELECT * FROM idlegame`)).rows[0];
+		idleGame.nextcultistid = Number(idleGame.nextcultistid);
+		idleGame.nextitemid = Number(idleGame.nextitemid);
+		if (!shop){ //if the shop doesn't exist.
 			shop = {
 				guild_id: message.guild.id,
-				cultistshop: `{"date":0,"nextId":1}`,
-				weaponshop: `{"date":0,"nextId":1}`,
-				armourshop: `{"date":0,"nextId":1}`,
-				miscshop: `{"date":0,"nextId":1}`,
+				cultistshop: `{"date":0}`,
+				weaponshop: `{"date":0}`,
+				armourshop: `{"date":0}`,
+				miscshop: `{"date":0}`,
 				isNewShop: true
 			}
 		}
 		const numCultists = 10; //Number of cultists in the shop
 
 		if (shopMenu == 2){
+			console.log(JSON.stringify(shop))
 			let cultshop = JSON.parse(shop.cultistshop)
-			if (cultshop.date != curDate){
+			if (cultshop.date != curDate){ //If the shop is outdated
 				cultshop.cultists = [];
 				for (let i=0;i<numCultists;i++){
 					let cultist = f.CreateCultist();
-					cultist.id = cultshop.nextId;
-					cultshop.nextId++;
+					cultist.id = idleGame.nextcultistid
+					idleGame.nextcultistid++;
 					cultshop.cultists.push(cultist);
 				}
 				let query;
@@ -89,6 +93,7 @@ class IGShopCommand extends Command {
 					`
 				}
 				DB.query(query);
+				DB.query(`UPDATE idlegame SET nextcultistid = ${idleGame.nextcultistid}`);
 			} 
 			
 			let plyCultists = JSON.parse(ply.cultists)
@@ -267,9 +272,9 @@ class IGShopCommand extends Command {
 				if (weaponTbl.date != curDate){
 					weaponTbl.weapons = [];
 					for (let i=0;i<10;i++){
-						let newItem = weapons.generateRandomItem(weaponTbl.nextId);
+						let newItem = weapons.generateRandomItem(idleGame.nextitemid);
 						weaponTbl.weapons.push(newItem);
-						weaponTbl.nextId ++;
+						idleGame.nextitemid++;
 					}
 					weaponTbl.weapons.sort(function(a,b){
 						if (a.value > b.value){
@@ -282,7 +287,7 @@ class IGShopCommand extends Command {
 						query = `
 						INSERT INTO itemshop(
 						guild_id,cultistshop,weaponshop,armourshop,miscshop)
-						VALUES (${shop.guild_id},'${shop.cultshop}','${JSON.stringify(weaponTbl)}','${shop.armourshop}','${shop.miscshop}')
+						VALUES (${shop.guild_id},'${shop.cultistshop}','${JSON.stringify(weaponTbl)}','${shop.armourshop}','${shop.miscshop}')
 						`;
 					} else{
 						query = `
@@ -292,6 +297,7 @@ class IGShopCommand extends Command {
 						`
 					}
 					DB.query(query);
+					DB.query(`UPDATE idlegame SET nextitemid = ${idleGame.nextitemid}`);
 				}
 				let wepStr = "";
 				let x=0;
@@ -372,9 +378,9 @@ class IGShopCommand extends Command {
 				if (armourTbl.date != curDate){
 					armourTbl.armour = [];
 					for (let i=0;i<10;i++){
-						let newItem = armour.generateRandomArmour(armourTbl.nextId);
+						let newItem = armour.generateRandomArmour(idleGame.nextitemid);
 						armourTbl.armour.push(newItem);
-						armourTbl.nextId ++;
+						idleGame.nextitemid ++;
 					}
 					armourTbl.armour.sort(function(a,b){
 						if (a.value > b.value){
@@ -387,7 +393,7 @@ class IGShopCommand extends Command {
 						query = `
 						INSERT INTO itemshop(
 						guild_id,cultistshop,weaponshop,armourshop,miscshop)
-						VALUES (${shop.guild_id},'${shop.cultshop}','${shop.weaponshop}','${JSON.stringify(armourTbl)}','${shop.miscshop}')
+						VALUES (${shop.guild_id},'${shop.cultistshop}','${shop.weaponshop}','${JSON.stringify(armourTbl)}','${shop.miscshop}')
 						`;
 					} else{
 						query = `
@@ -397,6 +403,7 @@ class IGShopCommand extends Command {
 						`
 					}
 					DB.query(query);
+					DB.query(`UPDATE idlegame SET nextitemid = ${idleGame.nextitemid}`);
 				}
 				let armStr = "";
 				let x=0;
