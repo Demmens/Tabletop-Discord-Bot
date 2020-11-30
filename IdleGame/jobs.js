@@ -4,7 +4,7 @@ const weapons = require('./weapons.js');
 
 let lastTrigger = Date.now();
 let lastSacrifice = Date.now();
-setInterval(TriggerJobs, 10000); //Loop every 10 seconds so we can get the cultists to automate stuff.
+setInterval(TriggerJobs, 1000); //Loop every second so we can get the cultists to automate stuff.
 
 async function TriggerJobs(){
 	
@@ -32,7 +32,7 @@ async function TriggerJobs(){
 					if (tr.name == "Bloodthirsty") difference *= 1.2;
 					if (tr.name == "Haemophobic") difference *= 0.8;
 				}
-				if (difference >= 60000){
+				if (difference*(Math.pow(dex,0.5)) >= 60000){
 					let stat = str;
 					if (dex > stat){
 						stat = dex; //Create sacrifices based on strength or dex stat.
@@ -56,9 +56,7 @@ async function TriggerJobs(){
 				}
 			}
 			if (cult.job == 'Explorer'){ //Luck based on charisma, speed based on wisdom
-				console.log(difference);
-				if  ((Math.random()*20)+cha >= 20 && difference >= 3600000 / wis){
-					console.log('item generated');
+				if  ((Math.random()*20)+cha >= 20 && difference*(Math.pow(wis,0.5)) >= 3600000 ){ //every hour, 5% chance to generate an item (if wis/cha are 1.)
 					let item;
 					let item2;
 					item = weapons.generateRandomItem();
