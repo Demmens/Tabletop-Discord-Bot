@@ -57,7 +57,7 @@ async function TriggerJobs(){
 			}
 			if (cult.job == 'Explorer'){ //Luck based on charisma, speed based on wisdom
 				console.log(difference);
-				if  ((Math.random()*20)+cha >= 20 && difference >= 18000000 / wis){
+				if  ((Math.random()*20)+cha >= 20 && difference >= 3600000 / wis){
 					console.log('item generated');
 					let item;
 					let item2;
