@@ -77,8 +77,8 @@ class CultCommand extends Command {
 				pl.items = JSON.stringify(pl.items);
 				let query = `
 				UPDATE cults
-				SET rewards = ${pl.rewards},
-				items = ${pl.items}
+				SET rewards = '${pl.rewards}',
+				items = '${pl.items}'
 				WHERE owner_id = ${pl.owner_id}
 				`
 				DB.query(query);
