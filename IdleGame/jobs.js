@@ -55,14 +55,19 @@ async function TriggerJobs(){
 					cult.lastAction = Date.now();
 				}
 			}
-			if (cult.job == 'Explorer' && Math.random()*20+cha >= 20 && difference >= 18000000 / wis){ //Luck based on charisma, speed based on wisdom
-				let item;
-				let item2;
-				item = weapons.generateRandomItem();
-				item2 = armour.generateRandomArmour();
-				if (item2.value < item.value) item = item2; //Generate 2 items and take the lowest value of the two.
+			if (cult.job == 'Explorer'){ //Luck based on charisma, speed based on wisdom
+				console.log(difference);
+				if  ((Math.random()*20)+cha >= 20 && difference >= 18000000 / wis){
+					console.log('item generated');
+					let item;
+					let item2;
+					item = weapons.generateRandomItem();
+					item2 = armour.generateRandomArmour();
+					if (item2.value < item.value) item = item2; //Generate 2 items and take the lowest value of the two.
 
-				ply.items.weapons.push(item);
+					ply.items.weapons.push(item);
+					cult.lastAction = Date.now();
+				}
 			}
 		}
 		ply.items = JSON.stringify(ply.items);
