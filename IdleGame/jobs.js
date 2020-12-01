@@ -53,7 +53,7 @@ async function TriggerJobs(){
 				}
 			}
 			if (cult.job == 'Explorer'){ //Luck based on charisma, speed based on wisdom
-				if  ((Math.random()*20)+cha >= 20 && difference*(Math.pow(wis,0.5)) >= 3600000 ){ //every hour, 5% chance to generate an item (if wis/cha are 1.)
+				if  ((Math.random()*20)+cha >= 20 && difference*(Math.pow(wis,0.5)) >= 7200000 ){ //every 2 hours, 5% chance to generate an item (if wis/cha are 1.)
 					let item;
 					let item2;
 					item = weapons.generateRandomItem();

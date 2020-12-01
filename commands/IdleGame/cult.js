@@ -135,7 +135,7 @@ class CultCommand extends Command {
 							start: message => {
 								let emb = new Discord.MessageEmbed()
 								.setTitle(`Select a job`)
-								.setDescription(`1 - Sacrificer (str/dex)\n2 - Researcher (int/wis)\n3 - Explorer (wis/cha)`)
+								.setDescription(`1 - Sacrificer (str/dex)\n2 - Researcher (int/wis)\n3 - Explorer (wis/cha)\n4 - Warrior`)
 								.setFooter(`type 'cancel' to cancel`);
 
 								return emb;
@@ -150,19 +150,24 @@ class CultCommand extends Command {
 						for (let i of pl.cultists) if (i.job == job) num++;
 						if (job == 'Sacrificer') if (num < pl.maxsacrificers) return true;
 						if (job == 'Researcher') if (num < pl.maxresearchers) return true;
-						if (job == 'Explorer') if (num < pl.partysize) return true;
+						if (job == 'Explorer') return true;
+						if (job == 'Warrior') if (num < 3) return true;
 						return false
 					}
 					if (job == 1){
 						if (hasJobSpace('Sacrificer', pl)) cultist.job = 'Sacrificer';
-						else return message.channel.send(`${us} You do not have any free altars. Buy more from the /shop.`)	
+						else return message.channel.send(`${us} You do not have any free altars. Buy more from the /shop.`);	
 					}
 					if (job == 2){
 						if (hasJobSpace('Researcher', pl)) cultist.job = 'Researcher';
-						else return message.channel.send(`${us} You do not have any free libraries. Buy more from the /shop.`)
+						else return message.channel.send(`${us} You do not have any free libraries. Buy more from the /shop.`);
 					}
 					if (job == 3){
 						cultist.job = "Explorer";
+					}
+					if (job == 4){
+						if (hasJobSpace('Warrior', pl)) cultist.job = 'Warrior';
+						else return message.channel.send(`${us} You may only have three warriors.`);
 					}
 					DB.query(`UPDATE cults SET cultists = '${JSON.stringify(pl.cultists)}' WHERE owner_id = ${pl.owner_id}`);
 					return message.channel.send(`${us} ${cultist.name} is now a ${cultist.job}`);
@@ -393,7 +398,7 @@ class CultCommand extends Command {
 						let query = `
 						UPDATE cults
 						SET money = ${pl.money},
-						cultists = ${JSON.stringify(pl.cultists)}
+						cultists = '${JSON.stringify(pl.cultists)}'
 						WHERE owner_id = ${pl.owner_id}
 						`
 						DB.query(query);
