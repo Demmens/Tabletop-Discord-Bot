@@ -22,7 +22,6 @@ class BaltopCommand extends Command {
 			}
 			arr.push(obj);
 		}
-		console.log(arr)
 		arr.sort(function(a,b){return b.money-a.money})
 		let balStr = '';
 		for (let i=0;i<10;i++){

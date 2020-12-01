@@ -67,7 +67,6 @@ class IGShopCommand extends Command {
 		const numCultists = 10; //Number of cultists in the shop
 
 		if (shopMenu == 2){
-			console.log(JSON.stringify(shop))
 			let cultshop = JSON.parse(shop.cultistshop)
 			if (cultshop.date != curDate){ //If the shop is outdated
 				cultshop.cultists = [];

@@ -303,7 +303,6 @@ class CultCommand extends Command {
 						old = equip.armour.body;
 						equip.armour.body = arm;
 						equipTbl = pl.items.armour;
-						console.log(`old.name = ${old.name}`);
 					}
 					if (region == 'hands'){
 						old = equip.armour.hands;
