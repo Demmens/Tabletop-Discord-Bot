@@ -4,7 +4,7 @@ const weapons = require('./weapons.js');
 
 let lastTrigger = Date.now();
 let lastSacrifice = Date.now();
-setInterval(TriggerJobs, 1000); //Loop every second so we can get the cultists to automate stuff.
+setInterval(TriggerJobs, 10000); //Loop every 10 seconds so we can get the cultists to automate stuff.
 
 async function TriggerJobs(){
 	
