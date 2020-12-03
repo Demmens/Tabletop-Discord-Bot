@@ -74,10 +74,9 @@ module.exports = {
 		item.name = '';
 		item.id = id;
 		item.base = base.id;
-		item.prefix = prefix.id;
-		item.suffix = suffix.id;
 
 		if (prefix){
+			item.prefix = prefix.id;
 			item.name += prefix.name;
 			item.damage *= prefix.damage;
 			item.value *= prefix.value;
@@ -87,6 +86,7 @@ module.exports = {
 		item.name += material.name + base.name;
 
 		if (suffix){
+			item.suffix = suffix.id;
 			item.name += suffix.name;
 			if (suffix.overrideDamage) item.dmgType = suffix.overrideDamage;
 			item.damage *= suffix.damage;
