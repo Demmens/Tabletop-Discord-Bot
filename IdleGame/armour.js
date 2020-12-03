@@ -96,26 +96,18 @@ module.exports = {
 		armour.type = base.type;
 		if (prefix.overrideType) armour.type = prefix.overrideType;
 		armour.equip = base.equip;
+		armour.base = base.id;
+		armour.prefix = prefix.id;
+		armour.suffix = suffix.id;
 
-		armour.resistances = [];
-		if (prefix.addResistance) armour.resistances.push(prefix.addResistance);
-		if (suffix.addResistance) armour.resistances.push(suffix.addResistance);
-
-		armour.effectImmunities = [];
-		if (prefix.effectImmunity) armour.effectImmunities.push(prefix.effectImmunity);
-		if (suffix.effectImmunity) armour.effectImmunities.push(suffix.effectImmunity);
-
-		armour.effects = [];
-		if (prefix.addEffect) armour.effects.push(prefix.addEffect);
-		if (suffix.addEffect) armour.effects.push(suffix.addEffect);
-
-		armour.value = Math.floor(20*base.multiplier*prefix.value*suffix.value*material.value)*2500;
+		armour.value = Math.floor(40*base.multiplier*prefix.value*suffix.value*material.value)*2500;
 
 		return armour;
 	},
 
 	bases: [
 		{
+			id: 1,
 			names: ['Helmet', 'Coif', 'Mask'],
 			type: TYPE_HEAVY,
 			equip: 'head',
@@ -123,6 +115,7 @@ module.exports = {
 			material: 'metal'
 		},
 		{
+			id: 2,
 			names: ['Chestplate', 'Cuirass', 'Plate', 'Mail'],
 			type: TYPE_HEAVY,
 			equip: 'body',
@@ -130,6 +123,7 @@ module.exports = {
 			material: 'metal'
 		},
 		{
+			id: 3,
 			names: ['Greaves', 'Leggings'],
 			type: TYPE_HEAVY,
 			equip: 'legs',
@@ -137,6 +131,7 @@ module.exports = {
 			material: 'metal'
 		},
 		{
+			id: 4,
 			names: ['Sabatons', 'Boots'],
 			type: TYPE_HEAVY,
 			equip: 'feet',
@@ -144,6 +139,7 @@ module.exports = {
 			material: 'metal'
 		},
 		{
+			id: 5,
 			names: ['Gauntlets', 'Gloves'],
 			type: TYPE_HEAVY,
 			equip: 'hands',
@@ -151,6 +147,7 @@ module.exports = {
 			material: 'metal'
 		},
 		{
+			id: 6,
 			names: ['Hat', 'Hood'],
 			type: TYPE_LIGHT,
 			equip: 'head',
@@ -158,6 +155,7 @@ module.exports = {
 			material: 'leather'
 		},
 		{
+			id: 7,
 			names: ['Cowl', 'Cloak', 'Armour'],
 			type: TYPE_LIGHT,
 			equip: 'body',
@@ -165,6 +163,7 @@ module.exports = {
 			material: 'leather'
 		},
 		{
+			id: 8,
 			names: ['Trousers','Greaves','Slacks'],
 			type: TYPE_LIGHT,
 			equip: 'legs',
@@ -172,6 +171,7 @@ module.exports = {
 			material: 'leather'
 		},
 		{
+			id: 9,
 			names: ['Gloves'],
 			type: TYPE_LIGHT,
 			equip: 'hands',
@@ -179,6 +179,7 @@ module.exports = {
 			material: 'leather'
 		},
 		{
+			id: 10,
 			names: ['Robes'],
 			type: TYPE_MAGIC,
 			equip: 'body',
@@ -187,7 +188,8 @@ module.exports = {
 		}
 	],
 	prefixes: [
-		{
+		{	
+			id: 1,
 			name: 'Ethereal ',
 			overrideType: TYPE_MAGIC,
 			value: 2.5,
@@ -196,6 +198,7 @@ module.exports = {
 			abundance: 4
 		},
 		{
+			id: 2,
 			name: 'Guarding ',
 			value: 1.5,
 			multiplier: 1.3,
@@ -203,6 +206,7 @@ module.exports = {
 			abundance: 15
 		},
 		{
+			id: 3,
 			name: 'Warding ',
 			value: 2.2,
 			multiplier: 1.6,
@@ -210,6 +214,7 @@ module.exports = {
 			abundance: 7
 		},
 		{
+			id: 4,
 			name: 'Damaged ',
 			value: 0.8,
 			multiplier: 0.7,
@@ -217,6 +222,7 @@ module.exports = {
 			abundance: 15
 		},
 		{
+			id: 5,
 			name: 'Inert ',
 			value: 0.5,
 			multiplier: 0.3,
@@ -224,6 +230,7 @@ module.exports = {
 			abundance: 5
 		},
 		{
+			id: 6,
 			name: 'Weightless ',
 			overrideType: TYPE_LIGHT,
 			value: 2,
@@ -232,6 +239,7 @@ module.exports = {
 			abundance: 3
 		},
 		{
+			id: 7,
 			name: 'Padded ',
 			addResistance: 'bludgeoning',
 			value: 1.5,
@@ -240,6 +248,7 @@ module.exports = {
 			abundance: 10
 		},
 		{
+			id: 8,
 			name: 'Ancient ',
 			value: 1.8,
 			multiplier: 0.8,
@@ -247,6 +256,7 @@ module.exports = {
 			abundance: 2
 		},
 		{
+			id: 9,
 			name: 'Ancient ',
 			value: 2,
 			multiplier: 1.2,
@@ -256,6 +266,7 @@ module.exports = {
 	],
 	suffixes: [
 		{
+			id: 1,
 			name: ' of Fire',
 			value: 1.4,
 			abundance: 4,
@@ -263,6 +274,7 @@ module.exports = {
 			effectImmunity: 'burn'
 		},
 		{
+			id: 2,
 			name: ' of Ice',
 			value: 1.3,
 			abundance: 7,
@@ -270,6 +282,7 @@ module.exports = {
 			effectImmunity: 'slow'
 		},
 		{
+			id: 3,
 			name: ' of Lightning',
 			value: 1.5,
 			abundance: 4,
@@ -277,6 +290,7 @@ module.exports = {
 			effectImmunity: 'stun'
 		},
 		{
+			id: 4,
 			name: ' of Light',
 			value: 2,
 			abundance: 1,
@@ -284,6 +298,7 @@ module.exports = {
 			addEffect: 'blind'
 		},
 		{
+			id: 5,
 			name: ' of Dark',
 			value: 2,
 			abundance: 1,
@@ -291,12 +306,14 @@ module.exports = {
 			effectImmunity: 'blind'
 		},
 		{
+			id: 6,
 			name: ' of Earth',
 			value: 1.3,
 			abundance: 6,
 			addResistance: 'bludgeoning'
 		},
 		{
+			id: 7,
 			name: ' of Thorns',
 			value: 1.2,
 			abundance: 7,

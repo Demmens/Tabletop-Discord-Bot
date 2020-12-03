@@ -73,7 +73,9 @@ module.exports = {
 		item.stat = base.stat;
 		item.name = '';
 		item.id = id;
-		item.prefix = prefix;
+		item.base = base.id;
+		item.prefix = prefix.id;
+		item.suffix = suffix.id;
 
 		if (prefix){
 			item.name += prefix.name;
@@ -99,30 +101,54 @@ module.exports = {
 
 	bases: [
 		{
+			id: 1,
 			name: 'Shortsword',
 			stat: ['str','dex'],
 			damage: 'slashing',
 			type: TYPE_ONEHANDED,
 			multiplier: 1,
-			material: 'metal'
+			material: 'metal',
+			hitText: [
+				"CULTIST quickly slashes at ENEMY, swiftly slicing it for",
+				"CULTIST leaps forward and swings their sword at ENEMY, cutting through them for"
+			],
+			missText: [
+				"CULTIST swipes at ENEMY, but their swing goes wide.",
+				"CULTIST slashes at ENEMY, but it swiftly dodges the attack."
+			]
 		},
 		{
+			id: 2,
 			name: 'Longsword',
 			stat: ['str','dex'],
 			damage: 'slashing',
 			type: TYPE_ONEHANDED,
 			multiplier: 1.2,
-			material: 'metal'
+			material: 'metal',
+			hitText: [
+				"CULTIST slashes at ENEMY with their longsword, slicing it for",
+				"CULTIST leaps forward and swings their longsword at ENEMY, cutting it for"
+			],
+			missText: [
+				"CULTIST swipes at ENEMY, but their swing goes wide.",
+				"CULTIST slashes at ENEMY, but it swiftly dodges the attack."
+			]
 		},
 		{
+			id: 3,
 			name: 'Greatsword',
 			stat: ['str','dex'],
 			damage: 'slashing',
 			type: TYPE_TWOHANDED,
 			multiplier: 1.8,
-			material: 'metal'
+			material: 'metal',
+			hitText: [
+				"CULTIST brings their greatsword down on ENEMY, dealing",
+				"CULTIST swings their greatsword around"
+			]
 		},
 		{
+			id: 4,
 			name: 'Warhammer',
 			stat: ['str'],
 			damage: 'bludgeoning',
@@ -131,6 +157,7 @@ module.exports = {
 			material: 'metal'
 		},
 		{
+			id: 5,
 			name: 'Spear',
 			stat: ['str','dex'],
 			damage: 'piercing',
@@ -139,6 +166,7 @@ module.exports = {
 			material: 'metal'
 		},
 		{
+			id: 6,
 			name: 'Dagger',
 			stat: ['dex'],
 			damage: 'piercing',
@@ -147,6 +175,7 @@ module.exports = {
 			material: 'metal'
 		},
 		{
+			id: 7,
 			name: 'Rapier',
 			stat: ['dex'],
 			damage: 'piercing',
@@ -155,6 +184,7 @@ module.exports = {
 			material: 'metal'
 		},
 		{
+			id: 8,
 			name: 'Mace',
 			stat: ['str'],
 			damage: 'bludgeoning',
@@ -163,6 +193,7 @@ module.exports = {
 			material: 'metal'
 		},
 		{
+			id: 9,
 			name: 'Spellbook',
 			stat: ['int'],
 			type: TYPE_MAGIC,
@@ -170,6 +201,7 @@ module.exports = {
 			material: 'magic'
 		},
 		{
+			id: 10,
 			name: 'Staff',
 			stat: ['wis'],
 			type: TYPE_MAGIC,
@@ -177,6 +209,7 @@ module.exports = {
 			material: 'magic'
 		},
 		{
+			id: 11,
 			name: 'Symbol',
 			stat: ['cha'],
 			type: TYPE_MAGIC,
@@ -184,6 +217,7 @@ module.exports = {
 			material: 'magic'
 		},
 		{
+			id: 12,
 			name: 'Crossbow',
 			stat: ['dex'],
 			type: TYPE_RANGED,
@@ -192,6 +226,7 @@ module.exports = {
 			material: 'wood'
 		},
 		{
+			id: 13,
 			name: 'Longbow',
 			stat: ['dex'],
 			type: TYPE_RANGED,
@@ -200,6 +235,7 @@ module.exports = {
 			material: 'wood'
 		},
 		{
+			id: 14,
 			name: 'Shortbow',
 			stat: ['dex'],
 			type: TYPE_RANGED,
@@ -208,6 +244,7 @@ module.exports = {
 			material: 'wood'
 		},
 		{
+			id: 15,
 			name: 'Javelin',
 			stat: ['str'],
 			type: TYPE_THROWN,
@@ -218,6 +255,7 @@ module.exports = {
 	],
 	prefixes: [
 		{
+			id: 1,
 			name: 'Ancient ',
 			damage: 0.5,
 			value: 2,
@@ -225,6 +263,7 @@ module.exports = {
 			types: [TYPE_ONEHANDED, TYPE_RANGED, TYPE_THROWN, TYPE_TWOHANDED]
 		},
 		{
+			id: 2,
 			name: 'Ancient ',
 			damage: 1.3,
 			value: 2.5,
@@ -232,6 +271,7 @@ module.exports = {
 			types: [TYPE_MAGIC]
 		},
 		{
+			id: 3,
 			name: 'Rusty ',
 			damage: 0.5,
 			value: 0.5,
@@ -239,6 +279,7 @@ module.exports = {
 			types: [TYPE_ONEHANDED, TYPE_THROWN, TYPE_TWOHANDED]
 		},
 		{
+			id: 4,
 			name: 'Jagged ',
 			damage: 1.2,
 			value: 1.2,
@@ -246,6 +287,7 @@ module.exports = {
 			types: [TYPE_ONEHANDED, TYPE_THROWN, TYPE_TWOHANDED]
 		},
 		{
+			id: 5,
 			name: 'Crooked ',
 			damage: 0.7,
 			value: 0.7,
@@ -253,6 +295,7 @@ module.exports = {
 			types: [TYPE_ONEHANDED, TYPE_THROWN, TYPE_TWOHANDED, TYPE_RANGED, TYPE_MAGIC]
 		},
 		{
+			id: 6,
 			name: 'Sharp ',
 			damage: 1.2,
 			value: 1.1,
@@ -260,6 +303,7 @@ module.exports = {
 			types: [TYPE_ONEHANDED, TYPE_THROWN, TYPE_TWOHANDED]
 		},
 		{
+			id: 7,
 			name: 'Fierce ',
 			damage: 1.3,
 			value: 1,
@@ -267,6 +311,7 @@ module.exports = {
 			types: [TYPE_ONEHANDED, TYPE_TWOHANDED, TYPE_RANGED, TYPE_THROWN, TYPE_MAGIC]
 		},
 		{
+			id: 8,
 			name: 'Godly ',
 			damage: 1.6,
 			value: 1.5,
@@ -274,6 +319,7 @@ module.exports = {
 			types: [TYPE_ONEHANDED, TYPE_TWOHANDED, TYPE_RANGED, TYPE_THROWN, TYPE_MAGIC]
 		},
 		{
+			id: 9,
 			name: 'Demonic ',
 			damage: 1.4,
 			value: 1.4,
@@ -281,6 +327,7 @@ module.exports = {
 			types: [TYPE_ONEHANDED, TYPE_TWOHANDED, TYPE_RANGED, TYPE_THROWN, TYPE_MAGIC]
 		},
 		{
+			id: 10,
 			name: 'Weightless ',
 			damage: 0.7,
 			value: 1.2,
@@ -289,6 +336,7 @@ module.exports = {
 			overrideType: TYPE_ONEHANDED
 		},
 		{
+			id: 11,
 			name: 'Inert ',
 			damage: 0.2,
 			value: 0.1,
@@ -296,6 +344,7 @@ module.exports = {
 			types: [TYPE_MAGIC]
 		},
 		{
+			id: 12,
 			name: 'Oversized ',
 			damage: 2.5,
 			value: 1.2,
@@ -304,6 +353,7 @@ module.exports = {
 			overrideType: TYPE_TWOHANDED
 		},
 		{
+			id: 13,
 			name: 'Shoddy ',
 			damage: 0.6,
 			value: 0.7,
@@ -311,6 +361,7 @@ module.exports = {
 			types: [TYPE_ONEHANDED, TYPE_TWOHANDED, TYPE_THROWN, TYPE_MAGIC, TYPE_RANGED]
 		},
 		{
+			id: 14,
 			name: 'Accurate ',
 			damage: 1.3,
 			value: 1.3,
@@ -318,6 +369,7 @@ module.exports = {
 			types: [TYPE_RANGED, TYPE_THROWN]
 		},
 		{
+			id: 15,
 			name: 'Broken ',
 			damage: 0.4,
 			value: 0.3,
@@ -327,6 +379,7 @@ module.exports = {
 	],
 	suffixes: [
 		{
+			id: 1,
 			name: ' of Fire',
 			damage: 1.2,
 			value: 1.4,
@@ -334,6 +387,7 @@ module.exports = {
 			overrideDamage: 'fire'
 		},
 		{
+			id: 2,
 			name: ' of Ice',
 			damage: 1,
 			value: 1.3,
@@ -341,6 +395,7 @@ module.exports = {
 			overrideDamage: 'cold'
 		},
 		{
+			id: 3,
 			name: ' of Lightning',
 			damage: 1.3,
 			value: 1.5,
@@ -348,6 +403,7 @@ module.exports = {
 			overrideDamage: 'lightning'
 		},
 		{
+			id: 4,
 			name: ' of Light',
 			damage: 1.5,
 			value: 2,
@@ -355,6 +411,7 @@ module.exports = {
 			overrideDamage: 'radiant'
 		},
 		{
+			id: 5,
 			name: ' of Dark',
 			damage: 1.5,
 			value: 2,
@@ -362,6 +419,7 @@ module.exports = {
 			overrideDamage: 'necrotic'
 		},
 		{
+			id: 6,
 			name: ' of Earth',
 			damage: 1.2,
 			value: 1.3,
@@ -369,6 +427,7 @@ module.exports = {
 			overrideDamage: 'bludgeoning'
 		},
 		{
+			id: 7,
 			name: ' of Thorns',
 			damage: 1.1,
 			value: 1.2,
@@ -452,7 +511,7 @@ module.exports = {
 				name: 'Legendary ',
 				damage: 8,
 				abundance: 1,
-				value: 35
+				value: 300
 			}
 		]
 	}
