@@ -44,7 +44,7 @@ class SacrificeCommand extends Command {
 		const bc = '<:black_circle:779325534340907047>';
 		const blood = '<:drop_of_blood:779325626330775600>';
 		const goat = '<:goat:779324716468666398>';
-		const skull = '<:skull:779325626330775600>';
+		const skull = '<:skull_crossbones:784352196321869866>';
 
 		const sacSpeed = ply.sacrificespeedmult*(sacTime+(ply.sacrificespeedadd*1000));
 		const barLength = 4;

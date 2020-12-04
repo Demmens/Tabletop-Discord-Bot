@@ -152,21 +152,15 @@ module.exports = {
 	},
 
 	//Determine attack strength
-	calcAttackBonus: function(cultist){
-		let ab = 0;
+	calcAttackStat: function(cultist, wep){
 
-		for (let wep of cultist.equipment.weapons){
-
-			let highestStat=0;
-			for (let st of wep.stat){
-				let stat = getStatFromString(st);
-				if (stat > highestStat) highestStat = stat;
-			}
-
-			ab += highestStat+(wep.damage/2); //Change this damage calc later.
+		let highestStat=0;
+		for (let st of wep.stat){
+			let stat = this.getStatFromString(st, cultist);
+			if (stat > highestStat) highestStat = stat;
 		}
 
-		return ab;
+		return highestStat;
 	},
 
 	//Create player

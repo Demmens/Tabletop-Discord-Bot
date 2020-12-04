@@ -231,7 +231,13 @@ class CultCommand extends Command {
 					}
 					
 					let curEquip = equipped[equipMenu-1];
-					let equipType = equipped[equipMenu-1].equip;
+					let equipType;
+					if (equipMenu == 1) equipType = 'head';
+					if (equipMenu == 2) equipType = 'body';
+					if (equipMenu == 3) equipType = 'hands';
+					if (equipMenu == 4) equipType = 'legs';
+					if (equipMenu == 5) equipType = 'feet';
+					if (equipMenu > 5) equipType = 'weapon';
 					if (!equipType) equipType = 'weapon';
 					let armTbl = [];
 					if (equipType == 'weapon'){
@@ -286,9 +292,12 @@ class CultCommand extends Command {
 					pl = await f.getCult(us);
 					pl.items = JSON.parse(pl.items);
 					pl.cultists = JSON.parse(pl.cultists);
+					for (let ct of pl.cultists){
+						if (ct.id == cultist.id) cultist = ct;
+					}
 					let arm = armTbl[chooseEquip-1];
 					let region = arm.equip;
-					if ((arm.type == 'One Handed' || arm.type == 'Thrown')&& arm.name != 'none') region = 1;
+					if (arm.type == 'One Handed' || arm.type == 'Thrown') region = 1;
 					else if (arm.damage) region = 2;
 					let equip = cultist.equipment;
 					let old; //The item you're replacing
@@ -326,7 +335,7 @@ class CultCommand extends Command {
 							old = old2; //Remove the primary weapon instead.
 							equip.weapons[0] = {name:'none'} //Clear this slot.
 						}
-						old2 = []; //We should never have to remove two weapons when equipping a one-handed weapon.
+						old2 = {}; //We should never have to remove two weapons when equipping a one-handed weapon.
 						equip.weapons[equipMenu-6] = arm;
 						equipTbl = pl.items.weapons;
 					}
@@ -347,9 +356,8 @@ class CultCommand extends Command {
 						}
 						x++;
 					}
-					if (!old) old = [];
-					if (!old2) old2 = []; //To prevent errors when fetching the id.
-
+					if (!old) old = {};
+					if (!old2) old2 = {}; //To prevent errors when fetching the id.
 						let placed = '';
 					if (old.id){
 						equipTbl.push(old);
@@ -697,17 +705,23 @@ class CultCommand extends Command {
 						else{
 							if (itm.damage){ //Have to do weapons and armour separately for this one.
 								let wep;
+								let pl = await f.getCult(us);
+								pl.items = JSON.parse(pl.items);
+								pl.money = Number(pl.money);
 								for (let weapon of pl.items.weapons){
 									if (weapon.id == itm.id) wep = weapon;
 								}
-
+								let oldPref;
 								if (wep.prefix){
-									wep.damage = Math.floor(wep.damage / wep.prefix.damage); //Revert changes to stats made by prefix.
-									wep.value = Math.floor(wep.value / wep.prefix.value); // This will over time reduce stats of the weapon slowly, but this works thematically so I'm keeping it.
+									for (let pref of wepStats.prefixes){ //Find the prefix the weapon has.
+										if (pref.id == wep.prefix) oldPref = pref;
+									}
+									wep.damage = Math.floor(wep.damage / oldPref.damage); //Revert changes to stats made by prefix.
+									wep.value = Math.floor(wep.value / oldPref.value); // This will over time reduce stats of the weapon slowly, but this works thematically so I'm keeping it.
 								}
 								
 								for (let base of wepStats.bases){
-									if (wep.name.search(base.name) != -1){
+									if (base.id == wep.base){
 										wep.type = base.type; //Make sure to revert type back to what it should be if prefix overrode it
 									}
 								}
@@ -725,13 +739,8 @@ class CultCommand extends Command {
 								wep.value = Math.floor(wep.value*pref.value/250)*250;
 								if (pref.overrideType) wep.type = pref.overrideType;
 								let oldName = wep.name;
-								let namePieces = wep.name.split(" ");
-								let newName = pref.name;
-								for (let i =0; i<namePieces.length; i++){
-									if (i == namePieces.length -1) newName += namePieces[i];
-									else if (i != 0 || !wep.prefix) newName += `${namePieces[i]} `;
-								}
-								wep.prefix = pref;
+								let newName = wep.name.replace(oldPref.name,pref.name);
+								wep.prefix = pref.id;
 								wep.name = newName;
 								pl.money -= Math.floor(wep.value/750)*250;
 								let query = `
@@ -739,7 +748,7 @@ class CultCommand extends Command {
 								SET money = ${pl.money},
 								items = '${JSON.stringify(pl.items)}'
 								WHERE owner_id = ${pl.owner_id}
-								`
+								`;
 								DB.query(query);
 								return message.channel.send(`${us} Reforged \`${oldName}\` into \`${newName}\``)
 							}
