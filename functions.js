@@ -1,5 +1,8 @@
 const fs = require('fs');
 const { Client } = require('pg');
+const {Argument} = require('discord-akairo');
+const Discord = require('discord.js');
+const pageSize = 8;
 var dbURL;
 try{
 	dbURL = require('./token.json').dbURL;
@@ -115,6 +118,57 @@ module.exports = {
 	//|---------------------|\\
 	//| Idle Game Functions |\\
 	//|---------------------|\\
+
+	getPageContents: function(page,arr){
+		let contents = [];
+		for (let i=(page*pageSize); i<((page+1)*pageSize); i++){
+			if (i < arr.length){
+				contents.push(arr[i]);
+			}
+		}
+		return contents;
+	},
+
+	createPage: function(page, arr, us, title){
+		let x = 0;
+		let pageStr = '';
+		let conts = this.getPageContents(page,arr)
+
+
+		for (let itm of conts){
+			x++;
+			pageStr += `${x} - ${itm.name}\n`;
+		}
+		let minNum = -1;
+		let footer = '';
+		if (page != 0){
+			minNum = 0;
+			footer += '0 - Previous page. '
+		}
+		let maxNum = 2;
+		if ((page+1)*pageSize < arr.length){
+			maxNum = 1;
+			footer += `${pageSize+1} - Next page. `
+		}
+		footer += `\nType 'cancel' to cancel.`
+
+		const finalPage = {
+			type: Argument.range('integer',minNum,conts.length+maxNum,true),
+			prompt: {
+				start: message => {
+					let emb = new Discord.MessageEmbed()
+					.setTitle(`${title} (Page ${page+1}/${Math.ceil(arr.length/pageSize)})`)
+					.setDescription(pageStr)
+					.setFooter(footer);
+					return emb;
+				},
+				retry: message => `${us} Please enter a valid number.`,
+				prompt: true
+			}
+		}
+
+		return finalPage;
+	},
 
 	//Create list of items for use as an embed description
 	createItemList: function(arr){

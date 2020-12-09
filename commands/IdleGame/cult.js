@@ -3,6 +3,7 @@ const Discord = require("discord.js");
 const f = require('../../functions.js');
 const wepStats = require('../../IdleGame/weapons.js');
 const armStats = require('../../IdleGame/armour.js');
+const pageSize = 8;
 
 class CultCommand extends Command {
 	constructor() {
@@ -52,22 +53,24 @@ class CultCommand extends Command {
 			return message.channel.send(`${us} Successfully renamed your cult to ${renameCult}`);
 		} else if (cultMenu == 6){
 			if (pl.rewards.length == 0) return message.channel.send(`${us} You have no rewards to claim`)
-			let rewardStr = '';
-			for (let rew of pl.rewards) rewardStr += `${rew.name}\n`;
-			const rewardEmb = yield{
-				type: 'yes/no',
-				prompt: {
-					start: message => {
-						let emb = new Discord.MessageEmbed()
-						.setTitle('Claim Rewards?')
-						.setDescription(rewardStr)
-						return emb;
-					},
-					retry: message => us.toString()+' Please enter `yes` or `no`',
-					prompt: true
+			let page = 0;
+			let rewardEmb = 0;
+
+			while (rewardEmb == 0 || rewardEmb == pageSize+1){
+				let minNum = 'claim';
+				let maxNum = 'claim';
+				if ((page+1)*pageSize < pl.rewards.length) maxNum = pageSize+1;
+				if (page != 0) minNum = 0;
+				let pageEmbed = f.createPage(page, pl.rewards,us,`Type 'claim' to claim rewards`);
+				rewardEmb = yield{
+					type: [[minNum.toString()], ['claim'], [maxNum.toString()]],
+					prompt: pageEmbed.prompt
 				}
+				if (rewardEmb == 0) page--;
+				if (rewardEmb == pageSize+1) page++;
 			}
-			if (rewardEmb.toLowerCase() == 'yes'){
+
+			if (rewardEmb.toLowerCase() == 'claim'){
 				pl.items = JSON.parse(pl.items);
 				for (let rew of pl.rewards){
 					if (rew.damage)	pl.items.weapons.push(rew);
@@ -86,29 +89,23 @@ class CultCommand extends Command {
 			} else return message.channel.send(`${us} Your rewards were not claimed`);
 		} else if (cultMenu == 2){
 			pl.cultists = JSON.parse(pl.cultists);
-			let cultistStr = "";
-			let x = 0;
-
-			for (let cult of pl.cultists){
-				x++;
-				cultistStr += `${x} - ${cult.name}\n`;
-			}
 
 			if (pl.cultists.toString() != [].toString()){
-				let cultist = yield{
-					type: Argument.range('integer',0,pl.cultists.length,true),
-					prompt: {
-						start: message => {
-							let emb = new Discord.MessageEmbed()
-							.setTitle(`${pl.name}'s Cultists`)
-							.setDescription(cultistStr)
-							.setFooter("Type 'cancel' to cancel");
-							return emb;
-						},
-						retry: message => `${us} Please enter a valid number.`,
-						prompt: true					
+
+				let cultist = 0;
+				let page = 0;
+				while (cultist == 0 || cultist > pageSize){
+					let pageEmbed = f.createPage(page,pl.cultists,us,`${pl.name}'s Cultists`);
+					cultist = yield{
+						type: pageEmbed.type,
+						prompt:pageEmbed.prompt
 					}
+					if (cultist == 0) page--;
+					if (cultist > pageSize) page++;
 				}
+				cultist += (page*pageSize);
+
+
 				const cultistNum = cultist-1
 				cultist = pl.cultists[cultistNum];
 
@@ -255,7 +252,34 @@ class CultCommand extends Command {
 						return message.channel.send(`${us} You have no equipment of that type.`);
 					}
 
-					let armStr = '';
+					if (curEquip.id){
+						armTbl.push({
+							name: 'none',
+							equip: equipType,
+							type: 'One Handed'
+						})
+					}
+
+					let newArmTbl = [...armTbl];
+					for (let arm of newArmTbl){
+						if (equipType == 'weapon') arm.name += ` - ${arm.damage} damage`
+						else if (name != 'none') arm.name += ` - ${arm.defence} defence`
+					}
+
+					let chooseEquip = 0;
+					let page = 0;
+					while (chooseEquip == 0 || chooseEquip > pageSize){
+						let pageEmbed = f.createPage(page,newArmTbl,us,`${pl.name}'s Cultists`);
+						chooseEquip = yield{
+							type: pageEmbed.type,
+							prompt:pageEmbed.prompt
+						}
+						if (chooseEquip == 0) page--;
+						if (chooseEquip > pageSize) page++;
+					}
+					chooseEquip += (page*pageSize);
+
+					/*let armStr = '';
 					let x = 1;
 					for (let i of armTbl){
 						if (equipType == 'weapon'){
@@ -264,16 +288,6 @@ class CultCommand extends Command {
 							armStr += `${x} - ${i.name} - ${i.defence} defence\n`;
 						}
 						x++;
-					}
-
-					if (curEquip.id){
-						armTbl.push({
-							name: 'none',
-							equip: equipType,
-							type: 'One Handed'
-						})
-
-						armStr += `${x} - Unequip`
 					}
 
 					const chooseEquip = yield{
@@ -289,6 +303,7 @@ class CultCommand extends Command {
 							}
 						}
 					}
+					*/
 					pl = await f.getCult(us);
 					pl.items = JSON.parse(pl.items);
 					pl.cultists = JSON.parse(pl.cultists);
@@ -449,27 +464,19 @@ class CultCommand extends Command {
 					if (itmArr.length == 0) return message.channel.send(`${us} You have no armour in your inventory.`);
 					itmType = 'Armour';
 				}
-				let itmStr = '';
-				let x = 1;
-				for (let it of itmArr){
-					itmStr += `${x} - ${it.name}\n`;
-					x++;
-				}
-
-				let itmMenu = yield{
-					type: Argument.range('integer',0,itmArr.length,true),
-					prompt:{
-						start: message => {
-							let emb = new Discord.MessageEmbed()
-							.setTitle(itmType)
-							.setDescription(itmStr)
-							.setFooter(`type 'cancel' to cancel`);
-							return emb;
-						},
-						retry: message => `${us} Please enter a valid number`,
-						prompt: true
+				let itmMenu = 0;
+				let page = 0;
+				while (itmMenu == 0 || itmMenu > pageSize){
+					let pageEmbed = f.createPage(page,itmArr,us,`${pl.name}'s Cultists`);
+					itmMenu = yield{
+						type: pageEmbed.type,
+						prompt:pageEmbed.prompt
 					}
+					if (itmMenu == 0) page--;
+					if (itmMenu > pageSize) page++;
 				}
+				itmMenu += (page*pageSize);
+
 				itm = itmArr[itmMenu-1]
 				let desc;
 				if (itmType == 'Weapons'){
