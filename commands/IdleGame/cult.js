@@ -188,216 +188,199 @@ class CultCommand extends Command {
 //----------------------------------------------------------------------------------------------//
 //              Equip
 				if (action == 4){
-					pl.items = JSON.parse(pl.items);
-					let equipStr = '';
-					let armour = cultist.equipment.armour;
-					const wep1 = cultist.equipment.weapons[0];
-					const wep2 = cultist.equipment.weapons[1];
+					while (true){
+						let pl = await f.getCult(us);
+						pl.cultists = JSON.parse(pl.cultists);
+						cultist = pl.cultists[cultistNum];
+						pl.items = JSON.parse(pl.items);
+						let equipStr = '';
+						let armour = cultist.equipment.armour;
+						const wep1 = cultist.equipment.weapons[0];
+						const wep2 = cultist.equipment.weapons[1];
 
-					let equipped = [];
-					equipped.push(armour.head);
-					equipped.push(armour.body);
-					equipped.push(armour.hands);
-					equipped.push(armour.legs);
-					equipped.push(armour.feet);
-					equipped.push(wep1);
-					equipped.push(wep2);
-					equipStr += `1 - Head - ${equipped[0].name}\n`;
-					equipStr += `2 - Body - ${equipped[1].name}\n`;
-					equipStr += `3 - Hands - ${equipped[2].name}\n`;
-					equipStr += `4 - Legs - ${equipped[3].name}\n`;
-					equipStr += `5 - Feet - ${equipped[4].name}\n`;
-					equipStr += `6 - Weapon1 - ${equipped[5].name}\n`;
-					equipStr += `7 - Weapon2 - ${equipped[6].name}\n`;
-					equipStr += ``
-					
-					const equipMenu = yield{
-						type: Argument.range('integer', 0,8),
-						prompt: {
-							start: message => {
-								let emb = new Discord.MessageEmbed()
-								.setTitle('Equip')
-								.setDescription(equipStr)
-								.setFooter('type \'cancel\' to cancel.')
+						let equipped = [];
+						equipped.push(armour.head);
+						equipped.push(armour.body);
+						equipped.push(armour.hands);
+						equipped.push(armour.legs);
+						equipped.push(armour.feet);
+						equipped.push(wep1);
+						equipped.push(wep2);
+						equipStr += `1 - Head - ${equipped[0].name}\n`;
+						equipStr += `2 - Body - ${equipped[1].name}\n`;
+						equipStr += `3 - Hands - ${equipped[2].name}\n`;
+						equipStr += `4 - Legs - ${equipped[3].name}\n`;
+						equipStr += `5 - Feet - ${equipped[4].name}\n`;
+						equipStr += `6 - Weapon1 - ${equipped[5].name}\n`;
+						equipStr += `7 - Weapon2 - ${equipped[6].name}\n`;
+						equipStr += ``
+						
+						const equipMenu = yield{
+							type: Argument.range('integer', 0,8),
+							prompt: {
+								start: message => {
+									let emb = new Discord.MessageEmbed()
+									.setTitle('Equip')
+									.setDescription(equipStr)
+									.setFooter('type \'cancel\' to cancel.')
 
-								return emb;
-							},
-							retry: message => `${us} Please enter a valid number`,
-							prompt: true
+									return emb;
+								},
+								retry: message => `${us} Please enter a valid number`,
+								prompt: true
+							}
 						}
-					}
-					
-					let curEquip = equipped[equipMenu-1];
-					let equipType;
-					if (equipMenu == 1) equipType = 'head';
-					if (equipMenu == 2) equipType = 'body';
-					if (equipMenu == 3) equipType = 'hands';
-					if (equipMenu == 4) equipType = 'legs';
-					if (equipMenu == 5) equipType = 'feet';
-					if (equipMenu > 5) equipType = 'weapon';
-					if (!equipType) equipType = 'weapon';
-					let armTbl = [];
-					if (equipType == 'weapon'){
-						for (let i of pl.items.weapons){
-							armTbl.push(i);
-						}
-					} else{
-						for (let i of pl.items.armour){
-							if (i.equip == equipType){
+						
+						let curEquip = equipped[equipMenu-1];
+						let equipType;
+						if (equipMenu == 1) equipType = 'head';
+						if (equipMenu == 2) equipType = 'body';
+						if (equipMenu == 3) equipType = 'hands';
+						if (equipMenu == 4) equipType = 'legs';
+						if (equipMenu == 5) equipType = 'feet';
+						if (equipMenu > 5) equipType = 'weapon';
+						if (!equipType) equipType = 'weapon';
+						let armTbl = [];
+						if (equipType == 'weapon'){
+							for (let i of pl.items.weapons){
 								armTbl.push(i);
 							}
-						}
-					}
-					if (!curEquip.id && armTbl.length == 0){
-						return message.channel.send(`${us} You have no equipment of that type.`);
-					}
-
-					if (curEquip.id){
-						armTbl.push({
-							name: 'none',
-							equip: equipType,
-							type: 'One Handed'
-						})
-					}
-
-					let newArmTbl = [...armTbl];
-					for (let arm of newArmTbl){
-						if (equipType == 'weapon') arm.name += ` - ${arm.damage} damage`
-						else if (name != 'none') arm.name += ` - ${arm.defence} defence`
-					}
-
-					let chooseEquip = 0;
-					let page = 0;
-					while (chooseEquip == 0 || chooseEquip > pageSize){
-						let pageEmbed = f.createPage(page,newArmTbl,us,`${pl.name}'s Cultists`);
-						chooseEquip = yield{
-							type: pageEmbed.type,
-							prompt:pageEmbed.prompt
-						}
-						if (chooseEquip == 0) page--;
-						if (chooseEquip > pageSize) page++;
-					}
-					chooseEquip += (page*pageSize);
-
-					/*let armStr = '';
-					let x = 1;
-					for (let i of armTbl){
-						if (equipType == 'weapon'){
-							armStr += `${x} - ${i.name} - ${i.damage} damage\n`;
 						} else{
-							armStr += `${x} - ${i.name} - ${i.defence} defence\n`;
-						}
-						x++;
-					}
-
-					const chooseEquip = yield{
-						type: Argument.range('integer',0,armTbl.length,true),
-						prompt: {
-							start: message => {
-								let emb = new Discord.MessageEmbed()
-								.setTitle('Equip '+equipType)
-								.setDescription(armStr)
-								.setFooter('type \'cancel\' to cancel')
-
-								return emb;
+							for (let i of pl.items.armour){
+								if (i.equip == equipType){
+									armTbl.push(i);
+								}
 							}
 						}
-					}
-					*/
-					pl = await f.getCult(us);
-					pl.items = JSON.parse(pl.items);
-					pl.cultists = JSON.parse(pl.cultists);
-					for (let ct of pl.cultists){
-						if (ct.id == cultist.id) cultist = ct;
-					}
-					let arm = armTbl[chooseEquip-1];
-					let region = arm.equip;
-					if (arm.type == 'One Handed' || arm.type == 'Thrown') region = 1;
-					else if (arm.damage) region = 2;
-					let equip = cultist.equipment;
-					let old; //The item you're replacing
-					let old2; //If we're replacing more than one item
-					let equipTbl;
-					if (region == 'head'){
-						old = equip.armour.head;
-						equip.armour.head = arm;
-						equipTbl = pl.items.armour;
-					} 
-					if (region == 'body'){
-						old = equip.armour.body;
-						equip.armour.body = arm;
-						equipTbl = pl.items.armour;
-					}
-					if (region == 'hands'){
-						old = equip.armour.hands;
-						equip.armour.hands = arm;
-						equipTbl = pl.items.armour;
-					} 
-					if (region == 'legs'){
-						old = equip.armour.legs;
-						equip.armour.legs = arm;
-						equipTbl = pl.items.armour;
-					}
-					if (region == 'feet'){
-						old = equip.armour.feet;
-						equip.armourfeet = arm;
-						equipTbl = pl.items.armour;
-					}
-					if (region == 1){ //Equipping a one-handed weapon
-						old = equip.weapons[equipMenu-6];
-						old2 = equip.weapons[0]; //Need to check the primary weapon isn't two-handed
-						if (old2.type != 'Thrown' && old2.type != 'One Handed'){
-							old = old2; //Remove the primary weapon instead.
-							equip.weapons[0] = {name:'none'} //Clear this slot.
+						let loop = false;
+						if (!curEquip.id && armTbl.length == 0){
+							message.channel.send(`${us} You have no equipment of that type.`);
+							loop = true;
 						}
-						old2 = {}; //We should never have to remove two weapons when equipping a one-handed weapon.
-						equip.weapons[equipMenu-6] = arm;
-						equipTbl = pl.items.weapons;
-					}
-					if (region == 2){ //Equipping a two-handed weapon
-						old = equip.weapons[0];
-						old2 = equip.weapons[1];
-						equip.weapons[0] = arm;
-						equip.weapons[1] = {
-							name: 'none',
-							damage: 0
-						};
-						equipTbl = pl.items.weapons;
-					}
-					x = 0;
-					for (let i of equipTbl){
-						if (i.id == arm.id){
-							equipTbl.splice(x,1);
-						}
-						x++;
-					}
-					if (!old) old = {};
-					if (!old2) old2 = {}; //To prevent errors when fetching the id.
-						let placed = '';
-					if (old.id){
-						equipTbl.push(old);
-						placed = ` Placed ${old.name} in your bag.`;
-					} if (old2.id){
-						equipTbl.push(old2);
-						if (!old.name || old.name == 'none'){
-							placed = ` Placed ${old2.name} in your bag.`;
-						}else {
-							placed = ` Placed ${old.name} and ${old2.name} in your bag.`;
-						}
-					}
-					let mes;
-					if (!arm.id){
-						mes = `${us} Unequipped ${old.name} and placed it in your bag.`;
-					} else mes = `${us} Equipped ${cultist.name} with ${arm.name}.${placed}`;
-					let query = `
-					UPDATE cults
-					SET items = '${JSON.stringify(pl.items)}',
-					cultists = '${JSON.stringify(pl.cultists)}'
-					WHERE owner_id = ${pl.owner_id}
-					`
-					DB.query(query);
-					return message.channel.send(mes);
 
+						if (!loop){
+							if (curEquip.id){
+								armTbl.unshift({
+									name: 'none',
+									equip: equipType,
+									type: 'One Handed'
+								})
+							}
+
+							let newArmTbl = JSON.parse(JSON.stringify(armTbl)); //copy by value.
+							for (let arm of newArmTbl){
+								if (equipType == 'weapon') arm.name += ` - ${arm.damage} damage`
+								else if (arm.name != 'none') arm.name += ` - ${arm.defence} defence`
+								else arm.name = 'Unequip';
+							}
+
+							let chooseEquip = 0;
+							let page = 0;
+							while (chooseEquip == 0 || chooseEquip > pageSize){
+								let pageEmbed = f.createPage(page,newArmTbl,us,equipType);
+								chooseEquip = yield{
+									type: pageEmbed.type,
+									prompt:pageEmbed.prompt
+								}
+								if (chooseEquip == 0) page--;
+								if (chooseEquip > pageSize) page++;
+							}
+							chooseEquip += (page*pageSize);
+							pl = await f.getCult(us);
+							pl.items = JSON.parse(pl.items);
+							pl.cultists = JSON.parse(pl.cultists);
+							for (let ct of pl.cultists){
+								if (ct.id == cultist.id) cultist = ct;
+							}
+							let arm = armTbl[chooseEquip-1];
+							let region = arm.equip;
+							if (equipType == 'weapon' && (arm.type == 'One Handed' || arm.type == 'Thrown')) region = 1;
+							else if (arm.damage) region = 2;
+							let equip = cultist.equipment;
+							let old; //The item you're replacing
+							let old2; //If we're replacing more than one item
+							let equipTbl;
+							if (region == 'head'){
+								old = equip.armour.head;
+								equip.armour.head = arm;
+								equipTbl = pl.items.armour;
+							} 
+							if (region == 'body'){
+								old = equip.armour.body;
+								equip.armour.body = arm;
+								equipTbl = pl.items.armour;
+							}
+							if (region == 'hands'){
+								old = equip.armour.hands;
+								equip.armour.hands = arm;
+								equipTbl = pl.items.armour;
+							} 
+							if (region == 'legs'){
+								old = equip.armour.legs;
+								equip.armour.legs = arm;
+								equipTbl = pl.items.armour;
+							}
+							if (region == 'feet'){
+								old = equip.armour.feet;
+								equip.armour.feet = arm;
+								equipTbl = pl.items.armour;
+							}
+							if (region == 1){ //Equipping a one-handed weapon
+								old = equip.weapons[equipMenu-6];
+								old2 = equip.weapons[0]; //Need to check the primary weapon isn't two-handed
+								if (old2.type != 'Thrown' && old2.type != 'One Handed'){
+									old = old2; //Remove the primary weapon instead.
+									equip.weapons[0] = {name:'none'} //Clear this slot.
+								}
+								old2 = {}; //We should never have to remove two weapons when equipping a one-handed weapon.
+								equip.weapons[equipMenu-6] = arm;
+								equipTbl = pl.items.weapons;
+							}
+							if (region == 2){ //Equipping a two-handed weapon
+								old = equip.weapons[0];
+								old2 = equip.weapons[1];
+								equip.weapons[0] = arm;
+								equip.weapons[1] = {
+									name: 'none',
+									damage: 0
+								};
+								equipTbl = pl.items.weapons;
+							}
+							let x = 0;
+							for (let i of equipTbl){
+								if (i.id == arm.id){
+									equipTbl.splice(x,1);
+								}
+								x++;
+							}
+							if (!old) old = {};
+							if (!old2) old2 = {}; //To prevent errors when fetching the id.
+								let placed = '';
+							if (old.id){
+								equipTbl.push(old);
+								placed = ` Placed ${old.name} in your bag.`;
+							} if (old2.id){
+								equipTbl.push(old2);
+								if (!old.name || old.name == 'none'){
+									placed = ` Placed ${old2.name} in your bag.`;
+								}else {
+									placed = ` Placed ${old.name} and ${old2.name} in your bag.`;
+								}
+							}
+							let mes;
+							if (!arm.id){
+								mes = `${us} Unequipped ${old.name} and placed it in your bag.`;
+							} else mes = `${us} Equipped ${cultist.name} with ${arm.name}.${placed}`;
+							let query = `
+							UPDATE cults
+							SET items = '${JSON.stringify(pl.items)}',
+							cultists = '${JSON.stringify(pl.cultists)}'
+							WHERE owner_id = ${pl.owner_id}
+							`
+							await DB.query(query);
+							message.channel.send(mes);
+						}
+					}
 				}
 //----------------------------------------------------------------------------------------------//
 //              Sell
