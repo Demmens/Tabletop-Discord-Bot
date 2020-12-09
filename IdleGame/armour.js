@@ -6,14 +6,8 @@ const f = require('../functions.js');
 
 module.exports = {
 
-	generateRandomArmour: function(id,guaranteePrefix, guaranteeSuffix){
-		const prefixChance = 0.35;
-		const suffixChance = 0.2;
-
-		let armour = {};
-		let base = f.arrRandom(this.bases); //Pick a random base item
+	randomiseMaterial: function(base){
 		let material;
-
 		if (base.material == 'metal'){
 			material = this.materials.metals;
 		} else if (base.material == 'leather'){
@@ -29,58 +23,53 @@ module.exports = {
 				matTbl.push(i);
 			}
 		}
-		material = f.arrRandom(matTbl);
+		return f.arrRandom(matTbl);
+	},
 
-		let prefix;
-		//Randomise prefix
-		if (guaranteePrefix || Math.random()<= prefixChance){
-			let prefTbl = [];
-			for (let i of this.prefixes){
-				let hasType;
-				if (i.types){
-					for (let j of i.types){ //Prefixes can only be applied to the correct armour type
-						if (j == base.type){
-							hasType == true;
-						}
-					}
-				} else hasType = true; //If the types are not specified, assume it can apply to any type.
-				if (hasType){
-					for (let j=0;j<i.abundance;j++){ //Take rarity into account.
-						prefTbl.push(i);
+	randomisePrefix: function(base){
+		let prefTbl = [];
+		for (let i of this.prefixes){
+			let hasType;
+			if (i.types){
+				for (let j of i.types){ //Prefixes can only be applied to the correct armour type
+					if (j == base.type){
+						hasType = true;
 					}
 				}
-			}
-			prefix = f.arrRandom(prefTbl);
-		}
-		
-		let suffix;
-		//Randomise suffix
-		if (guaranteeSuffix || Math.random()<= suffixChance){		
-			let suffTbl = [];
-			for (let i of this.suffixes){
-				let hasType;
-				if (i.types){
-					for (let j of i.types){ //Suffixes can only be applied to the correct armour type
-						if (j == base.type){
-							hasType == true;
-						}
-					}
-				} else hasType = true; //If the types are not specified, assume it can apply to any type.
-				if (hasType){
-					for (let j=0;j<i.abundance;j++){ //Take rarity into account.
-						suffTbl.push(i);
-					}
+			} else hasType = true; //If the types are not specified, assume it can apply to any type.
+			if (hasType){
+				for (let j=0;j<i.abundance;j++){ //Take rarity into account.
+					prefTbl.push(i);
 				}
 			}
-			suffix = f.arrRandom(suffTbl);
 		}
+		return f.arrRandom(prefTbl);
+	},
 
-		if (!suffix){
-			suffix = {
-				name:'',
-				value:1
+	randomiseSuffix: function(base){
+		let suffTbl = [];
+		for (let i of this.suffixes){
+			let hasType;
+			if (i.types){
+				for (let j of i.types){ //Suffixes can only be applied to the correct armour type
+					if (j == base.type){
+						hasType == true;
+					}
+				}
+			} else hasType = true; //If the types are not specified, assume it can apply to any type.
+			if (hasType){
+				for (let j=0;j<i.abundance;j++){ //Take rarity into account.
+					suffTbl.push(i);
+				}
 			}
 		}
+		return f.arrRandom(suffTbl);
+	},
+
+	generateItem: function(id,base,material,prefix,suffix){
+		let armour = {};
+
+		let of = ' '
 		if (!prefix){
 			prefix = {
 				name:'',
@@ -88,9 +77,14 @@ module.exports = {
 				multiplier:1,
 			}
 		}
+		if (!suffix){
+			suffix = {
+				name:'',
+				value:1
+			}
+		} else of = ' of '
 
-		//Create stats
-		armour.name = prefix.name + material.name + f.arrRandom(base.names) + suffix.name;
+		armour.name = prefix.name + ' ' + material.name + ' ' + f.arrRandom(base.names) + of + suffix.name;
 		armour.id = id;
 		armour.defence = Math.floor(base.multiplier * prefix.multiplier * material.modifier * 10);
 		armour.type = base.type;
@@ -101,6 +95,33 @@ module.exports = {
 		armour.suffix = suffix.id;
 
 		armour.value = Math.floor(40*base.multiplier*prefix.value*suffix.value*material.value)*2500;
+		return armour;
+	},
+
+	generateRandomArmour: function(id,guaranteePrefix, guaranteeSuffix){
+		const prefixChance = 0.35;
+		const suffixChance = 0.2;
+
+		//Randomise base
+		let base = f.arrRandom(this.bases); 
+
+		//Randomise material
+		const material = this.randomiseMaterial(base);
+
+		let prefix;
+		//Randomise prefix
+		if (guaranteePrefix || Math.random() <= prefixChance){
+			prefix = this.randomisePrefix(base);
+		}
+		
+		let suffix;
+		//Randomise suffix
+		if (guaranteeSuffix || Math.random()<= suffixChance){		
+			suffix = this.randomiseSuffix(base);
+		}
+
+		//Create stats
+		let armour = this.generateItem(id,base,material,prefix,suffix);
 
 		return armour;
 	},
@@ -190,7 +211,7 @@ module.exports = {
 	prefixes: [
 		{	
 			id: 1,
-			name: 'Ethereal ',
+			name: 'Ethereal',
 			overrideType: TYPE_MAGIC,
 			value: 2.5,
 			multiplier: 1,
@@ -199,7 +220,7 @@ module.exports = {
 		},
 		{
 			id: 2,
-			name: 'Guarding ',
+			name: 'Guarding',
 			value: 1.5,
 			multiplier: 1.3,
 			types: [TYPE_LIGHT, TYPE_HEAVY, TYPE_MAGIC],
@@ -207,7 +228,7 @@ module.exports = {
 		},
 		{
 			id: 3,
-			name: 'Warding ',
+			name: 'Warding',
 			value: 2.2,
 			multiplier: 1.6,
 			types: [TYPE_LIGHT, TYPE_HEAVY, TYPE_MAGIC],
@@ -215,7 +236,7 @@ module.exports = {
 		},
 		{
 			id: 4,
-			name: 'Damaged ',
+			name: 'Damaged',
 			value: 0.8,
 			multiplier: 0.7,
 			types: [TYPE_LIGHT, TYPE_HEAVY, TYPE_MAGIC],
@@ -223,7 +244,7 @@ module.exports = {
 		},
 		{
 			id: 5,
-			name: 'Inert ',
+			name: 'Inert',
 			value: 0.5,
 			multiplier: 0.3,
 			types: [TYPE_MAGIC],
@@ -231,7 +252,7 @@ module.exports = {
 		},
 		{
 			id: 6,
-			name: 'Weightless ',
+			name: 'Weightless',
 			overrideType: TYPE_LIGHT,
 			value: 2,
 			multiplier: 1,
@@ -240,7 +261,7 @@ module.exports = {
 		},
 		{
 			id: 7,
-			name: 'Padded ',
+			name: 'Padded',
 			addResistance: 'bludgeoning',
 			value: 1.5,
 			multiplier: 1,
@@ -249,7 +270,7 @@ module.exports = {
 		},
 		{
 			id: 8,
-			name: 'Ancient ',
+			name: 'Ancient',
 			value: 1.8,
 			multiplier: 0.8,
 			types: [TYPE_HEAVY, TYPE_LIGHT],
@@ -257,7 +278,7 @@ module.exports = {
 		},
 		{
 			id: 9,
-			name: 'Ancient ',
+			name: 'Ancient',
 			value: 2,
 			multiplier: 1.2,
 			types: [TYPE_MAGIC],
@@ -267,7 +288,7 @@ module.exports = {
 	suffixes: [
 		{
 			id: 1,
-			name: ' of Fire',
+			name: 'Fire',
 			value: 1.4,
 			abundance: 4,
 			addResistance: 'fire',
@@ -275,7 +296,7 @@ module.exports = {
 		},
 		{
 			id: 2,
-			name: ' of Ice',
+			name: 'Ice',
 			value: 1.3,
 			abundance: 7,
 			addResistance: 'cold',
@@ -283,7 +304,7 @@ module.exports = {
 		},
 		{
 			id: 3,
-			name: ' of Lightning',
+			name: 'Lightning',
 			value: 1.5,
 			abundance: 4,
 			addResistance: 'lightning',
@@ -291,7 +312,7 @@ module.exports = {
 		},
 		{
 			id: 4,
-			name: ' of Light',
+			name: 'Light',
 			value: 2,
 			abundance: 1,
 			addResistance: 'radiant',
@@ -299,7 +320,7 @@ module.exports = {
 		},
 		{
 			id: 5,
-			name: ' of Dark',
+			name: 'Dark',
 			value: 2,
 			abundance: 1,
 			addResistance: 'necrotic',
@@ -307,14 +328,14 @@ module.exports = {
 		},
 		{
 			id: 6,
-			name: ' of Earth',
+			name: 'Earth',
 			value: 1.3,
 			abundance: 6,
 			addResistance: 'bludgeoning'
 		},
 		{
 			id: 7,
-			name: ' of Thorns',
+			name: 'Thorns',
 			value: 1.2,
 			abundance: 7,
 			addEffect: 'thorns'
@@ -323,25 +344,25 @@ module.exports = {
 	materials: {
 		metals:	[
 			{
-				name: "Iron ",
+				name: "Iron",
 				modifier: 1,
 				abundance: 64,
 				value: 1
 			},
 			{
-				name: "Steel ",
+				name: "Steel",
 				modifier: 2,
 				abundance: 16,
 				value: 5
 			},
 			{
-				name: "Orichalcum ",
+				name: "Orichalcum",
 				modifier: 4,
 				abundance: 4,
 				value: 35
 			},
 			{
-				name: "Adamantite ",
+				name: "Adamantite",
 				modifier: 8,
 				abundance: 1,
 				value: 300
@@ -349,25 +370,31 @@ module.exports = {
 		],
 		leathers: [
 			{
-				name: "Cloth ",
+				name: "Cloth",
 				modifier: 1,
-				abundance: 64,
+				abundance: 32,
 				value: 1
 			},
 			{
-				name: "Leather ",
+				name: "Fur",
+				modifier: 1,
+				abundance: 32,
+				value: 1
+			},
+			{
+				name: "Leather",
 				modifier: 2,
-				abundance: 16,
+				abundance: 10,
 				value: 5
 			},
 			{
-				name: "Ogreskin ",
+				name: "Ogreskin",
 				modifier: 4,
 				abundance: 4,
 				value: 35
 			},
 			{
-				name: "Dragonhide ",
+				name: "Dragonhide",
 				modifier: 8,
 				abundance: 1,
 				value: 300
@@ -375,25 +402,25 @@ module.exports = {
 		],
 		magic: [
 			{
-				name: "Common ",
+				name: "Common",
 				modifier: 1,
 				abundance: 64,
 				value: 1
 			},
 			{
-				name: "Rare ",
+				name: "Rare",
 				modifier: 2,
 				abundance: 16,
 				value: 5
 			},
 			{
-				name: "Epic ",
+				name: "Epic",
 				modifier: 4,
 				abundance: 4,
 				value: 35
 			},
 			{
-				name: "Legendary ",
+				name: "Legendary",
 				modifier: 8,
 				abundance: 1,
 				value: 300

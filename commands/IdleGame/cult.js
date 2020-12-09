@@ -480,13 +480,7 @@ class CultCommand extends Command {
 					}
 					desc = `${itm.damage} ${itm.dmgType} damage\nType: ${itm.type}\nStat: ${statStr}`
 				} else {
-					let resStr = '';
-					for (let res of itm.resistances){
-						resStr += res;
-						if (res != itm.resistances[itm.resistances.length-1]) statStr += `, `;
-					}
-					if (resStr == '') resStr = 'none';
-					desc = `${itm.defence} defence\nType: ${itm.type}\nEquip region: ${itm.equip}\nResistances: ${resStr}`
+					desc = `${itm.defence} defence\nType: ${itm.type}\nEquip region: ${itm.equip}`
 				}
 
 				const itmAction = yield{

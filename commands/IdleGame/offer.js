@@ -37,7 +37,7 @@ class OfferCommand extends Command {
 			}
 			total *= ply.offermultiplier;
 
-			message.channel.send(`${us} Your offering of ${f.numberWithCommas(ply.sacrifices)} sacrifices has been rewarded. You gain £${f.numberWithCommas(Math.ceil(total))}.`);
+			message.channel.send(`${us} Your offering of ${f.numberWithCommas(ply.sacrifices)} sacrifices has been rewarded. You gain £${f.numberWithCommas(Math.ceil(total))} (Total: £${f.numberWithCommas(ply.money + Math.ceil(total))}).`);
 
 			ply.money += Math.ceil(total);
 

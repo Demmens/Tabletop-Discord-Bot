@@ -43,7 +43,7 @@ module.exports = {
 		let newArr = [];
 		while (arr.length > 0){
 			let k = Math.floor(Math.random()*arr.length);
-			let v = arr[num];
+			let v = arr[k];
 			arr.splice(k,1)
 			newArr.push(v);
 		}
@@ -52,12 +52,7 @@ module.exports = {
 
 	//Replace hyphens and underscores with spaces
 	replaceHyphens: function(str){
-		let splt = str.split(/[_|-]/);
-		let msg = "";
-		for(let i of splt){
-			msg += i;
-		}
-		return msg;
+		return str.replace(/[_|-]/,' ');
 	},
 
 	//Separate thousands by commas in a number

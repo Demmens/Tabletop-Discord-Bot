@@ -8,50 +8,36 @@ const TYPE_RANGED = 'Ranged';
 
 module.exports = {
 
-	generateRandomItem: function(id,guaranteePrefix, guaranteeSuffix){
-		let prefixChance = 0.35 //Change to balance
-		let suffixChance = 0.1
-
-		if (guaranteePrefix) prefixChance = 1;
-		if (guaranteeSuffix) suffixChance = 1;
-
-		let item = {};
-		let num = Math.floor(Math.random()*this.bases.length);
-		let base = this.bases[num];
-		if (base.type == TYPE_MAGIC) suffixChance = 1; //Magic weapons will always have a suffix
-
-		let prefix;
-		let suffix;
-		let material;
-
-		//This is probably a terrible way of randomising with different weights, but I can't think of anything better rn.
-		if (Math.random() <= prefixChance){
-			let prefixTbl = [];
-			for (let i of this.prefixes){
-				let canHave;
-				for (let j of i.types){
-					if (j == base.type) canHave = true;
-				}
-				if (canHave){
-					for (let j=0; j<i.abundance; j++){
-						prefixTbl.push(i); //Create table so we can give the correct probabilities
-					}
-				}
+//This is probably a terrible way of randomising with different weights, but I can't think of anything better rn.
+	randomisePrefix: function(base){
+		let prefixTbl = [];
+		for (let i of this.prefixes){
+			let canHave;
+			for (let j of i.types){
+				if (j == base.type) canHave = true;
 			}
-			num = Math.floor(Math.random()*prefixTbl.length);
-			prefix = prefixTbl[num];
-		}
-		if (Math.random() <= suffixChance){
-			let suffixTbl = [];
-			for (let i of this.suffixes){
+			if (canHave){
 				for (let j=0; j<i.abundance; j++){
-					suffixTbl.push(i); //Create table so we can give the correct probabilities
+					prefixTbl.push(i); //Create table so we can give the correct probabilities
 				}
 			}
-			num = Math.floor(Math.random()*suffixTbl.length);
-			suffix = suffixTbl[num];
 		}
+		num = Math.floor(Math.random()*prefixTbl.length);
+		return prefixTbl[num];
+	},
 
+	randomiseSuffix: function(base){
+		let suffixTbl = [];
+		for (let i of this.suffixes){
+			for (let j=0; j<i.abundance; j++){
+				suffixTbl.push(i); //Create table so we can give the correct probabilities
+			}
+		}
+		num = Math.floor(Math.random()*suffixTbl.length);
+		return suffixTbl[num];
+	},
+
+	randomiseMaterial: function(base){
 		let materialTbl = [];
 		let mat;
 		if (base.material == 'metal') mat = this.materials.metals;
@@ -64,8 +50,11 @@ module.exports = {
 			}
 		}
 		num = Math.floor(Math.random()*materialTbl.length);
-		material = materialTbl[num];
+		return materialTbl[num];
+	},
 
+	generateItem: function(id,base,material,prefix,suffix){
+		let item = {};
 		item.damage = base.multiplier*material.damage;
 		item.value = material.value*base.multiplier;
 		item.dmgType = base.damage;
@@ -83,11 +72,12 @@ module.exports = {
 			if (prefix.overrideType) item.type = prefix.overrideType;	
 		}
 
-		item.name += material.name + base.name;
+		item.name += ' ' + material.name + ' ' + base.name;
+
 
 		if (suffix){
 			item.suffix = suffix.id;
-			item.name += suffix.name;
+			item.name += ' of '+suffix.name;
 			if (suffix.overrideDamage) item.dmgType = suffix.overrideDamage;
 			item.damage *= suffix.damage;
 			item.value *= suffix.value;
@@ -95,8 +85,32 @@ module.exports = {
 
 		item.value = Math.floor(item.value*20)*5000;
 		item.damage = Math.floor(item.damage*10);
-
 		return item;
+	},
+
+	generateRandomItem: function(id,guaranteePrefix, guaranteeSuffix){
+		const prefixChance = 0.35 //Change to balance
+		const suffixChance = 0.1
+
+		if (guaranteePrefix) prefixChance = 1;
+		if (guaranteeSuffix) suffixChance = 1;
+
+		let base = f.arrRandom(this.bases);
+		if (base.type == TYPE_MAGIC) suffixChance = 1; //Magic weapons will always have a suffix
+
+		let prefix;
+		let suffix;
+
+		if (Math.random() <= prefixChance){
+			prefix = this.randomisePrefix(base);
+		}
+		if (Math.random() <= suffixChance){
+			suffix = this.randomiseSuffix(base);
+		}
+
+		const material = this.randomiseMaterial(base);
+
+		return generateItem(id,base,material,prefix,suffix);
 	},
 
 	bases: [
@@ -109,12 +123,12 @@ module.exports = {
 			multiplier: 1,
 			material: 'metal',
 			hitText: [
-				"CULTIST quickly slashes at ENEMY, swiftly slicing it for",
-				"CULTIST leaps forward and swings their sword at ENEMY, cutting through them for"
+				"CULTIST quickly slashes at ENEMY with their shortsword, swiftly slicing it for",
+				"CULTIST leaps forward and swings their shortsword at ENEMY, cutting through them for"
 			],
 			missText: [
-				"CULTIST swipes at ENEMY, but their swing goes wide.",
-				"CULTIST slashes at ENEMY, but it swiftly dodges the attack."
+				"CULTIST swipes at ENEMY with their shortsword, but their swing goes wide.",
+				"CULTIST slashes at ENEMY with their shortsword, but it swiftly dodges the attack."
 			]
 		},
 		{
@@ -130,8 +144,8 @@ module.exports = {
 				"CULTIST leaps forward and swings their longsword at ENEMY, cutting it for"
 			],
 			missText: [
-				"CULTIST swipes at ENEMY, but their swing goes wide.",
-				"CULTIST slashes at ENEMY, but it swiftly dodges the attack."
+				"CULTIST swipes at ENEMYwith their longsword, but their swing goes wide.",
+				"CULTIST slashes at ENEMY with their longsword, but it swiftly dodges the attack."
 			]
 		},
 		{
@@ -144,7 +158,11 @@ module.exports = {
 			material: 'metal',
 			hitText: [
 				"CULTIST brings their greatsword down on ENEMY, dealing",
-				"CULTIST swings their greatsword around"
+				"CULTIST swings their greatsword around, cutting into ENEMY for"
+			],
+			missText: [
+				"CULTIST brings their greatsword down, but ENEMY dodges out of the way.",
+				"CULTIST sweeps their greatsword at ENEMY, but it narrowly misses."
 			]
 		},
 		{
@@ -154,7 +172,15 @@ module.exports = {
 			damage: 'bludgeoning',
 			type: TYPE_TWOHANDED,
 			multiplier: 2,
-			material: 'metal'
+			material: 'metal',
+			hitText: [
+				"CULTIST brings their warhammer down on ENEMY, crushing them for",
+				"ENEMY is crushed by CULTIST's warhammer, taking"
+			],
+			missText: [
+				"CULTIST smashes their warhammer into the ground, narrowly missing ENEMY",
+				"CULTIST swings their warhammer at ENEMY, but it switfly dodges the attack."
+			]
 		},
 		{
 			id: 5,
@@ -163,7 +189,16 @@ module.exports = {
 			damage: 'piercing',
 			type: TYPE_TWOHANDED,
 			multiplier: 1.6,
-			material: 'metal'
+			material: 'metal',
+			hitText: [
+				"CULTIST thrusts their spear at ENEMY, spiking them for",
+				"CULTIST lunges at ENEMY, spearing them for",
+				"CULTIST skewers ENEMY with their spear for"
+			],
+			missText: [
+				"CULTIST thrusts at ENEMY with their spear, but misses.",
+				"CULTIST lunges at ENEMY with their spear, but they quickly dodge the attack."
+			]
 		},
 		{
 			id: 6,
@@ -172,7 +207,15 @@ module.exports = {
 			damage: 'piercing',
 			type: TYPE_THROWN,
 			multiplier: 0.7,
-			material: 'metal'
+			material: 'metal',
+			hitText: [
+				"CULTIST throws a dagger at ENEMY, directly hitting them for",
+				"CULTIST swiftly lets loose a dagger from their hand, piercing ENEMY for"
+			],
+			missText: [
+				"CULTIST throws a dagger towards ENEMY, but it narrowly misses.",
+				"CULTIST lets loose a dagger from their hand, but ENEMY dodges the attack."
+			]
 		},
 		{
 			id: 7,
@@ -181,7 +224,15 @@ module.exports = {
 			damage: 'piercing',
 			type: TYPE_ONEHANDED,
 			multiplier: 1.1,
-			material: 'metal'
+			material: 'metal',
+			hitText: [
+				"CULTIST lunges at ENEMY with their rapier, stabbing them for",
+				"CULTIST dodges an attack by ENEMY, then quickly ripostes for"
+			],
+			missText: [
+				"CULTIST thrusts at ENEMY with their rapier, but the attack is blocked.",
+				"CULTIST lunges at ENEMY with their rapier, but is parried."
+			]
 		},
 		{
 			id: 8,
@@ -190,7 +241,15 @@ module.exports = {
 			damage: 'bludgeoning',
 			type: TYPE_ONEHANDED,
 			multiplier: 1.2,
-			material: 'metal'
+			material: 'metal',
+			hitText: [
+				"CULTIST slams their mace into ENEMY, dealing",
+				"CULTIST swings their mace at ENEMY, smacking them for"
+			],
+			missText: [
+				"CULTIST swings their mace at ENEMY, but misses.",
+				"CULTIST brings their mace down on ENEMY, but the attack is swiftly dodged."
+			]
 		},
 		{
 			id: 9,
@@ -223,7 +282,15 @@ module.exports = {
 			type: TYPE_RANGED,
 			damage: 'piercing',
 			multiplier: 1.6,
-			material: 'wood'
+			material: 'wood',
+			hitText: [
+				"CULTIST lets loose a bolt at ENEMY, directly hitting them for",
+				"CULTIST aims and fires a bolt at ENEMY. The bolt flies and hits them cleanly for"
+			],
+			missText: [
+				"CULTIST lets loose a bolt at ENEMY, but the shot goes wide.",
+				"CULTIST aims and fires a bolt at ENEMY, but they swiftly dodge the attack."
+			]
 		},
 		{
 			id: 13,
@@ -232,7 +299,15 @@ module.exports = {
 			type: TYPE_RANGED,
 			damage: 'piercing',
 			multiplier: 2,
-			material: 'wood'
+			material: 'wood',
+			hitText: [
+				"CULTIST holds their longbow up and looses an arrow, landing a clean shot on ENEMY for",
+				"CULTIST aims their longbow and fires an arrow, directly hitting ENEMY for"
+			],
+			missText:[
+				"CULTIST looses an arrow at ENEMY, but the shot goes wide.",
+				"CULTIST aims and fires their longbow at ENEMY, but the arrow clatters to the ground."
+			]
 		},
 		{
 			id: 14,
@@ -241,7 +316,15 @@ module.exports = {
 			type: TYPE_RANGED,
 			damage: 'piercing',
 			multiplier: 1.4,
-			material: 'wood'
+			material: 'wood',
+			hitText: [
+				"CULTIST knocks and looses an arrow from their shortbow, cleanly shooting ENEMY for",
+				"CULTIST draws and fires an arrow at ENEMY from their shortbow, directly hitting them for"
+			],
+			missText: [
+				"CULTIST knocks and looses an arrow at ENEMY from their shortbow, but the shot goes wide.",
+				"CULTIST draws and fires an arrow at ENEMY from their shortbow, but the arrow is quickly dodged."
+			]
 		},
 		{
 			id: 15,
@@ -250,13 +333,55 @@ module.exports = {
 			type: TYPE_THROWN,
 			damage: 'piercing',
 			multiplier: 0.8,
-			material: 'metal'
+			material: 'metal',
+			hitText: [
+				"CULTIST launches their javelin towards ENEMY, directly spearing them for",
+				"CULTIST hurls a javelin at ENEMY, cleanly skewering them for"
+			],
+			missText: [
+				"CULTIST lanches their javelin towards ENEMY, but it sticks in the ground right next to them",
+				"CULTIST hurls a javelin at ENEMY, but they swiftly dodge."
+			]
+		},
+		{
+			id: 16,
+			name: 'Greataxe',
+			stat: ['str'],
+			type: TYPE_TWOHANDED,
+			damage: 'slashing',
+			multiplier: 2.1,
+			material: 'metal',
+			hitText: [
+				"CULTIST slams their greataxe down into ENEMY, cleaving them for",
+				"CULTIST sweeps wildly at ENEMY with their greataxe, lacerating them for"
+			],
+			missText: [
+				"CULTIST slams their greataxe down at ENEMY, but the attack is swiftly dodged",
+				"CULTIST sweeps wildly at ENEMY with their greataxe, but they dodge the attack."
+			]
+		},
+		{
+			id: 17,
+			name: 'Battleaxe',
+			stat: ['str'],
+			type: TYPE_ONEHANDED,
+			damage: 'slashing',
+			multiplier: 1.15,
+			material: 'metal',
+			hitText: [
+				"CULTIST slashes at ENEMY with their battleaxe, cleaving them for",
+				"CULTIST hacks away at ENEMY with their battleaxe, goring them for"
+			],
+			missText: [
+				"CULTIST slashes at ENEMY with their battleaxe, but the attack is dodged.",
+				"CULTIST hacks away at ENEMY with their battleaxe, but they swiftly dodge the attack."
+			]
 		}
 	],
 	prefixes: [
 		{
 			id: 1,
-			name: 'Ancient ',
+			name: 'Ancient',
 			damage: 0.5,
 			value: 2,
 			abundance: 1,
@@ -264,7 +389,7 @@ module.exports = {
 		},
 		{
 			id: 2,
-			name: 'Ancient ',
+			name: 'Ancient',
 			damage: 1.3,
 			value: 2.5,
 			abundance: 1,
@@ -272,7 +397,7 @@ module.exports = {
 		},
 		{
 			id: 3,
-			name: 'Rusty ',
+			name: 'Rusty',
 			damage: 0.5,
 			value: 0.5,
 			abundance: 10,
@@ -280,7 +405,7 @@ module.exports = {
 		},
 		{
 			id: 4,
-			name: 'Jagged ',
+			name: 'Jagged',
 			damage: 1.2,
 			value: 1.2,
 			abundance: 3,
@@ -288,7 +413,7 @@ module.exports = {
 		},
 		{
 			id: 5,
-			name: 'Crooked ',
+			name: 'Crooked',
 			damage: 0.7,
 			value: 0.7,
 			abundance: 7,
@@ -296,7 +421,7 @@ module.exports = {
 		},
 		{
 			id: 6,
-			name: 'Sharp ',
+			name: 'Sharp',
 			damage: 1.2,
 			value: 1.1,
 			abundance: 5,
@@ -304,7 +429,7 @@ module.exports = {
 		},
 		{
 			id: 7,
-			name: 'Fierce ',
+			name: 'Fierce',
 			damage: 1.3,
 			value: 1,
 			abundance: 5,
@@ -312,7 +437,7 @@ module.exports = {
 		},
 		{
 			id: 8,
-			name: 'Godly ',
+			name: 'Godly',
 			damage: 1.6,
 			value: 1.5,
 			abundance: 1,
@@ -320,7 +445,7 @@ module.exports = {
 		},
 		{
 			id: 9,
-			name: 'Demonic ',
+			name: 'Demonic',
 			damage: 1.4,
 			value: 1.4,
 			abundance: 2,
@@ -328,7 +453,7 @@ module.exports = {
 		},
 		{
 			id: 10,
-			name: 'Weightless ',
+			name: 'Weightless',
 			damage: 0.7,
 			value: 1.2,
 			abundance: 2,
@@ -337,7 +462,7 @@ module.exports = {
 		},
 		{
 			id: 11,
-			name: 'Inert ',
+			name: 'Inert',
 			damage: 0.2,
 			value: 0.1,
 			abundance: 10,
@@ -345,7 +470,7 @@ module.exports = {
 		},
 		{
 			id: 12,
-			name: 'Oversized ',
+			name: 'Oversized',
 			damage: 2.5,
 			value: 1.2,
 			abundance: 2,
@@ -354,7 +479,7 @@ module.exports = {
 		},
 		{
 			id: 13,
-			name: 'Shoddy ',
+			name: 'Shoddy',
 			damage: 0.6,
 			value: 0.7,
 			abundance: 10,
@@ -362,7 +487,7 @@ module.exports = {
 		},
 		{
 			id: 14,
-			name: 'Accurate ',
+			name: 'Accurate',
 			damage: 1.3,
 			value: 1.3,
 			abundance: 5,
@@ -370,7 +495,7 @@ module.exports = {
 		},
 		{
 			id: 15,
-			name: 'Broken ',
+			name: 'Broken',
 			damage: 0.4,
 			value: 0.3,
 			abundance: 7,
@@ -380,83 +505,117 @@ module.exports = {
 	suffixes: [
 		{
 			id: 1,
-			name: ' of Fire',
+			name: 'Fire',
 			damage: 1.2,
 			value: 1.4,
 			abundance: 4,
-			overrideDamage: 'fire'
+			overrideDamage: 'fire',
+			hitText: [
+				"CULTIST raises their ITEM and a searing ray of fire bursts forth at ENEMY, burning them for",
+				"CULTIST chants under their breath and a large ball of fire launches at ENEMY, searing them for",
+				"CULTIST's eyes glow a deep red, and the ground underneath ENEMY erupts with a geyser of fire, scorching them for"
+			]
 		},
 		{
 			id: 2,
-			name: ' of Ice',
+			name: 'Ice',
 			damage: 1,
 			value: 1.3,
 			abundance: 7,
-			overrideDamage: 'cold'
+			overrideDamage: 'cold',
+			hitText: [
+				"CULTIST raises their ITEM and a bright blue light bursts forth at ENEMY, scorching them with frost for",
+				"CULTIST's eyes glow a bright blue, and a large ice spike bursts from the ground underneath ENEMY, dealing",
+				"CULTIST chants under their breath and the air around ENEMY turns to searing frost, burning them for"
+			]
 		},
 		{
 			id: 3,
-			name: ' of Lightning',
+			name: 'Lightning',
 			damage: 1.3,
 			value: 1.5,
 			abundance: 4,
-			overrideDamage: 'lightning'
+			overrideDamage: 'lightning',
+			hitText: [
+				"CULTIST chants under their breath, and a burst of demonic lightning forks forward into ENEMY, dealing",
+				"CULTIST raises their ITEM and a burning ball of electricity fires forward into ENEMY for",
+				"CULTIST's eyes glow a bright yellow, and the ground beneath ENEMY erupts with crackling lightning, scorching them for"
+			]
 		},
 		{
 			id: 4,
-			name: ' of Light',
+			name: 'Light',
 			damage: 1.5,
 			value: 2,
 			abundance: 1,
-			overrideDamage: 'radiant'
+			overrideDamage: 'radiant',
+			hitText: [
+				"CULTIST raises their ITEM and a beam of brilliant light shoots into ENEMY, blinding them for",
+				"CULTIST's eyes glow a burning white, and an arrow of angelic light shoots forth into ENEMY for",
+				"CULTIST chants under their breath, and a beam of scorching light strikes ENEMY from the heavens, dealing"
+			]
 		},
 		{
 			id: 5,
-			name: ' of Dark',
+			name: 'Dark',
 			damage: 1.5,
 			value: 2,
 			abundance: 1,
-			overrideDamage: 'necrotic'
+			overrideDamage: 'necrotic',
+			hitText: [
+				"CULTIST's eyes turn pitch black, and multiple shadowy tenticles surround and pummel ENEMY for",
+				"CULTIST chants under their breath, and the energy from ENEMY seems to drain and wither, dealing",
+				"CULTIST raises their ITEM and a shadowy beam of death shoots into ENEMY, draining them for"
+			]
 		},
 		{
 			id: 6,
-			name: ' of Earth',
+			name: 'Earth',
 			damage: 1.2,
 			value: 1.3,
 			abundance: 6,
-			overrideDamage: 'bludgeoning'
+			overrideDamage: 'bludgeoning',
+			hitText: [
+				"CULTIST's eyes glow a deep green, and many boulders raise around them, firing into ENEMY for",
+				"CULTIST raises their ITEM and a boulder manifests infront of them, launching at ENEMY and dealing",
+				"CULTIST chants under their breath, and the ground underneath ENEMY erupts into shards of stone, dealing"
+			]
 		},
 		{
 			id: 7,
-			name: ' of Thorns',
+			name: 'Thorns',
 			damage: 1.1,
 			value: 1.2,
 			abundance: 7,
-			overrideDamage: 'piercing'
+			overrideDamage: 'piercing',
+			hitText: [
+				"CULTIST chants under their breath, and multiple thorny vines burst from the ground around ENEMY, lacerating them for",
+				"CULTIST raises their ITEM and they become surrounded by thorns, which all shoot towards ENEMY, stabbing them for"
+			]
 		}
 	],
 	materials: {
 		metals:	[
 			{
-				name: "Iron ",
+				name: "Iron",
 				damage: 1,
 				abundance: 64,
 				value: 1
 			},
 			{
-				name: "Steel ",
+				name: "Steel",
 				damage: 2,
 				abundance: 16,
 				value: 5
 			},
 			{
-				name: "Orichalcum ",
+				name: "Orichalcum",
 				damage: 4,
 				abundance: 4,
 				value: 35
 			},
 			{
-				name: "Adamantite ",
+				name: "Adamantite",
 				damage: 8,
 				abundance: 1,
 				value: 300
@@ -464,25 +623,25 @@ module.exports = {
 		],
 		woods: [
 			{
-				name: "Oak ",
+				name: "Oak",
 				damage:1,
 				abundance: 64,
 				value: 1
 			},
 			{
-				name: 'Carved ',
+				name: 'Carved',
 				damage: 2,
 				abundance: 16,
 				value: 5
 			},
 			{
-				name: 'Ornate ',
+				name: 'Ornate',
 				damage: 4,
 				abundance: 4,
 				value: 35
 			},
 			{
-				name: 'Master crafted ',
+				name: 'Master Crafted',
 				damage: 8,
 				abundance: 1,
 				value: 300
@@ -490,25 +649,25 @@ module.exports = {
 		],
 		magic: [
 			{
-				name: 'Common ',
+				name: 'Common',
 				damage: 1,
 				abundance: 64,
 				value: 1
 			},
 			{
-				name: 'Rare ',
+				name: 'Rare',
 				damage: 2,
 				abundance: 16,
 				value: 5
 			},
 			{
-				name: 'Epic ',
+				name: 'Epic',
 				damage: 4,
 				abundance: 4,
 				value: 35
 			},
 			{
-				name: 'Legendary ',
+				name: 'Legendary',
 				damage: 8,
 				abundance: 1,
 				value: 300
