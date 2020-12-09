@@ -4,6 +4,7 @@ const TYPE_TWOHANDED = 'Two Handed';
 const TYPE_THROWN = 'Thrown';
 const TYPE_MAGIC = 'Magic';
 const TYPE_RANGED = 'Ranged';
+const f = require('../functions.js')
 
 
 module.exports = {
@@ -89,8 +90,8 @@ module.exports = {
 	},
 
 	generateRandomItem: function(id,guaranteePrefix, guaranteeSuffix){
-		const prefixChance = 0.35 //Change to balance
-		const suffixChance = 0.1
+		let prefixChance = 0.35 //Change to balance
+		let suffixChance = 0.1
 
 		if (guaranteePrefix) prefixChance = 1;
 		if (guaranteeSuffix) suffixChance = 1;
@@ -110,7 +111,7 @@ module.exports = {
 
 		const material = this.randomiseMaterial(base);
 
-		return generateItem(id,base,material,prefix,suffix);
+		return this.generateItem(id,base,material,prefix,suffix);
 	},
 
 	bases: [
