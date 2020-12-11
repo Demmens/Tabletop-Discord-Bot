@@ -34,10 +34,6 @@ class ChallengeCommand extends Command {
 			monstArr.push(new monster);
 		}
 
-		if (challengedRecently.has(us.id)) return;
-
-		challengedRecently.add(us.id);
-
 		const level = yield{
 			type: Argument.range('integer',-1,highestLevel, true),
 			prompt:{
@@ -61,6 +57,11 @@ class ChallengeCommand extends Command {
 		}
 
 		if (characters.length == 0) return message.channel.send(`${us} You do not have any warriors. Assign some in the /cult`);
+		
+		if (challengedRecently.has(us.id)) return;
+
+		challengedRecently.add(us.id);
+
 		for (let war of characters){
 			let secondPass = false; //If they have any melee weapon, they're on the front line
 			for (let wep of war.equipment.weapons){

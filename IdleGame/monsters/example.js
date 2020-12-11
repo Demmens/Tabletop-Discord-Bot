@@ -3,19 +3,19 @@ const Monster = require('../Monster');
 class EXAMPLE extends Monster {
 	constructor(){
 		super({
-			name = '', //Name
-			plural = null, //Plural name
-			hp = 1, //Health
-			defence = 1,
-			minNumber = 1, //Min number of monsters that can spawn
-			maxNumber = 1, //Max number of monsters that can spawn
-			speed = 0, //How early in initiative the monster goes
-			weaknesses = [], //Damage types the monster is weak to
-			resistances = [], // Damage types the monster resists
-			level = -1, //Level combats the monster appears in.
-			emote = '💢', //Emote for combat log.
-			turns = 1, //Number of attacks per round the monster has.
-			attacks = [ //Attacks
+			name: '', //Name
+			plural: null, //Plural name
+			hp: 1, //Health
+			defence: 1,
+			minNumber: 1, //Min number of monsters that can spawn
+			maxNumber: 1, //Max number of monsters that can spawn
+			speed: 0, //How early in initiative the monster goes
+			weaknesses: [], //Damage types the monster is weak to
+			resistances: [], // Damage types the monster resists
+			level: -1, //Level combats the monster appears in.
+			emote: '💢', //Emote for combat log.
+			turns: 1, //Number of attacks per round the monster has.
+			attacks: [ //Attacks
 				{
 					hit: [], //Text for attacks hitting.
 					miss: [], //Text for missing.
@@ -25,7 +25,7 @@ class EXAMPLE extends Monster {
 					targets: 1 //How many enemies the attack hits.
 				}
 			], 
-			drops = [ //Loot
+			drops: [ //Loot
 				{
 					name: 'Money', //Drop money
 					minNumber: 0, //Min money it can drop
@@ -65,4 +65,4 @@ class EXAMPLE extends Monster {
 	}
 }
 
-module.exports = Dragon;
+module.exports = EXAMPLE;
