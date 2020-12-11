@@ -294,9 +294,9 @@ class CultCommand extends Command {
 
 							let newArmTbl = JSON.parse(JSON.stringify(armTbl)); //copy by value.
 							for (let arm of newArmTbl){
-								if (equipType == 'weapon') arm.name += ` - ${arm.damage} damage`
-								else if (arm.name != 'none') arm.name += ` - ${arm.defence} defence`
-								else arm.name = 'Unequip';
+								if (arm.name == 'none' && !arm.base) arm.name = `Unequip`;
+								else if (equipType == 'weapon') arm.name += ` - ${arm.damage} damage`;
+								else arm.name += ` - ${arm.defence} defence`;
 							}
 
 							let chooseEquip = 0;

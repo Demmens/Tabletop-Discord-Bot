@@ -89,14 +89,20 @@ module.exports = {
 		return item;
 	},
 
+	randomiseBase: function(){
+		let base = {id:0};
+		while (base.id <= 0) base = f.arrRandom(this.bases);
+		return base;
+	},
+
 	generateRandomItem: function(id,guaranteePrefix, guaranteeSuffix){
 		let prefixChance = 0.35 //Change to balance
 		let suffixChance = 0.1
 
 		if (guaranteePrefix) prefixChance = 1;
 		if (guaranteeSuffix) suffixChance = 1;
+		let base = this.randomiseBase();
 
-		let base = f.arrRandom(this.bases);
 		if (base.type == TYPE_MAGIC) suffixChance = 1; //Magic weapons will always have a suffix
 
 		let prefix;
@@ -115,6 +121,24 @@ module.exports = {
 	},
 
 	bases: [
+		{
+			id: 0,
+			name: 'Fists',
+			stat: ['str'],
+			damage: 'bludgeoning',
+			type: TYPE_ONEHANDED,
+			multiplier: 1,
+			hitText: [
+				"CULTIST throws a punch at ENEMY, clocking them for",
+				"CULTIST jabs at ENEMY with their fists, pummelling them for",
+				"CULTIST throws a right hook at ENEMY, hitting them for",
+			],
+			missText: [
+				"CULTIST throws a punch at ENEMY, but their swing goes wide.",
+				"CULTIST punches ENEMY, but it shrugs off the damage",
+				"CULTIST throws a right hook at ENEMY, but the attack is swiftly dodged"
+			]
+		},
 		{
 			id: 1,
 			name: 'Shortsword',
@@ -340,7 +364,7 @@ module.exports = {
 				"CULTIST hurls a javelin at ENEMY, cleanly skewering them for"
 			],
 			missText: [
-				"CULTIST lanches their javelin towards ENEMY, but it sticks in the ground right next to them",
+				"CULTIST launches their javelin towards ENEMY, but it sticks in the ground right next to them",
 				"CULTIST hurls a javelin at ENEMY, but they swiftly dodge."
 			]
 		},

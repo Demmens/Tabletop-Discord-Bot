@@ -19,6 +19,7 @@ class ChallengeCommand extends Command {
 	async *args(message){
 		const DB = this.client.db;
 		const us = message.author;
+		if (challengedRecently.has(us.id)) return;
 		let ply = await f.getCult(us);
 		ply.cultists = JSON.parse(ply.cultists);
 		const highestLevel = 10;
@@ -57,8 +58,6 @@ class ChallengeCommand extends Command {
 		}
 
 		if (characters.length == 0) return message.channel.send(`${us} You do not have any warriors. Assign some in the /cult`);
-		
-		if (challengedRecently.has(us.id)) return;
 
 		challengedRecently.add(us.id);
 
@@ -413,7 +412,6 @@ class ChallengeCommand extends Command {
 		}
 
 		async function giveRewards(monster){
-			challengedRecently.delete(us.id);
 			ply = await f.getCult(us);
 			ply.money = Number(ply.money);
 			ply.items = JSON.parse(ply.items);
@@ -499,8 +497,25 @@ class ChallengeCommand extends Command {
 				if (log.length > logsize) log.splice(0,1); //Keep only the last few statements in the log.
 			}
 			else {
+				let emptyhands = 0;
+				let shouldAttack;
 				for (let wep of attacker.equipment.weapons){
-					if (wep.name != 'none' && wep.base){
+					shouldAttack = false;
+					if (wep.name != 'none' && wep.base){ //If it's a valid weapon, make an attack with it.
+						shouldAttack = true;
+					} else{
+						emptyhands++;
+						if (emptyhands == 2){ //If both hands are empty, cultist attacks with their fists.
+							wep = {
+								damage: 1,
+								base: 0,
+								stat: ['str'],
+								dmgType: 'bludgeoning'
+							}
+							shouldAttack = true;
+						}
+					}
+					if (shouldAttack){
 						dmgInfo = cultistAttack(attacker, wep);
 						log.push(dmgInfo.text);
 						if (dmgInfo.target.hp <= dmgInfo.damage){
@@ -559,6 +574,7 @@ class ChallengeCommand extends Command {
 				if (init >= initiativeTable.length) init = 0;
 				setTimeout(doAttack,4000, init)
 			} else {
+				challengedRecently.delete(us.id);
 				if (totalMonsterHealth <= 0){
 					giveRewards(monster);
 				}
