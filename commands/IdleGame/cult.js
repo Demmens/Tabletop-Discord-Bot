@@ -16,8 +16,8 @@ class CultCommand extends Command {
 		const DB = this.client.db;
 		const us = message.author;
 		const mem = message.member;
-		let pl = (await DB.query(`SELECT * FROM cults WHERE owner_id = ${us.id}`)).rows[0]
-		if (!pl) return message.channel.send(`${us} You don't have a cult. Type /CreateCult to get started.`)
+		var pl = await f.getCult(us);
+		if (!pl) return message.channel.send(`${us} You don't have a cult. Type /CreateCult to get started.`);
 		pl.rewards = JSON.parse(pl.rewards);
 		let rew = '';
 		if (pl.rewards.length != 0) rew = ` (${pl.rewards.length})`;
@@ -36,6 +36,7 @@ class CultCommand extends Command {
 				prompt: true
 			}
 		}
+
 		let sellItm;
 		let reforgeItm;
 		let eqCultist;
@@ -91,15 +92,39 @@ class CultCommand extends Command {
 			pl.cultists = JSON.parse(pl.cultists);
 
 			if (pl.cultists.toString() != [].toString()){
+				let cultCopy = JSON.parse(JSON.stringify(pl.cultists));
+				for (let cultist of cultCopy){
+					let cultName = '**';
+					let stat = cultist.stats;
+					let stats = [];
+					stats.push({name:'str',value:stat.str});
+					stats.push({name:'dex',value:stat.dex});
+					stats.push({name:'con',value:stat.con});
+					stats.push({name:'int',value:stat.int});
+					stats.push({name:'wis',value:stat.wis});
+					stats.push({name:'cha',value:stat.cha});
+					let bst = 0;
+					let highest = {value:0};
+					let highest2 = {value:0};
+					for (let st of stats){
+						bst += st.value;
+						if (st.value > highest.value){
+							highest2 = highest;
+							highest = st;
+						} else if (st.value > highest2.value) highest2 = st;
+					}
 
+					cultName += `${cultist.name}**`;
+					cultName += ` - ${highest.name} ${highest2.name}`
+					cultName += ` (bst ${bst})`
+					cultist.job != 'none' ? cultName += ` - ${cultist.job}` : cultName += ` - Unassigned`;
+					cultist.name = cultName;
+				}
 				let cultist = 0;
 				let page = 0;
 				while (cultist == 0 || cultist > pageSize){
-					let pageEmbed = f.createPage(page,pl.cultists,us,`${pl.name}'s Cultists`);
-					cultist = yield{
-						type: pageEmbed.type,
-						prompt:pageEmbed.prompt
-					}
+					let pageEmbed = f.createPage(page,cultCopy,us,`${pl.name}'s Cultists`);
+					cultist = yield pageEmbed;
 					if (cultist == 0) page--;
 					if (cultist > pageSize) page++;
 				}

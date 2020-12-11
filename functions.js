@@ -180,14 +180,6 @@ module.exports = {
 		return arrStr;
 	},
 
-	retrieveStats: function(){
-		return JSON.parse(fs.readFileSync('IdleGame/stats.json'));
-	},
-
-	writeStats: function(players){
-		fs.writeFileSync('IdleGame/stats.json', JSON.stringify(players, null, 2));
-	},
-
 	getStatFromString: function(str, cultist){
 		let stat;
 		if (str == 'str') stat = cultist.stats.str;
