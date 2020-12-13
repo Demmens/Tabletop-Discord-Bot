@@ -85,7 +85,7 @@ module.exports = {
 		{
 			name: "Even more Corpses",
 			id: 4,
-			description: "+2 sacrifices from sacrifices",
+			description: "Increase sacrifice yield by 2",
 			cost: 50000,
 			requirements: function(ply){
 				if (hasUpgrade(2,ply) && hasResearch(10,ply)){
@@ -114,7 +114,7 @@ module.exports = {
 		{
 			name: "Corpse reservoirs",
 			id: 6,
-			description: "+6 sacrifices from sacrifices",
+			description: "Increase sacrifice yield by 6",
 			cost: 350000,
 			requirements: function(ply){
 				if (hasUpgrade(4,ply) && hasResearch(100, ply)) return true;
@@ -190,7 +190,7 @@ module.exports = {
 		{
 			name: 'In the Rhythm',
 			id: 11,
-			description: "Decreases sacrifice time by 20%",
+			description: "Decrease sacrifice time by 20%",
 			cost: 65000,
 			requirements: function(ply){
 				if (hasUpgrade(10,ply)) return true;
@@ -205,7 +205,7 @@ module.exports = {
 		{
 			name: 'Endless corpses',
 			id: 12,
-			description: "+20 sacrifices per sacrifice",
+			description: "Increase sacrifice yield by 20",
 			cost:1000000,
 			requirements: function(ply){
 				if (hasUpgrade(6,ply) && hasResearch(1000,ply)) return true;
@@ -381,6 +381,20 @@ module.exports = {
 					}
 					x++
 				}
+			}
+		},
+		{
+			name: 'Filling the Shelves',
+			id: 11,
+			description: 'Increase sacrifice yield by 1% of your current sacrifices.',
+			cost: 10000000,
+			requirements: function(ply){
+				if (hasUpgrade(12,ply) && hasRepeatableUpgrade(11,ply) <= 20 && hasResearch((hasRepeatableUpgrade(11,ply)*1000)^1.2,ply)) return true;
+				return false;
+			},
+			onBuy: function(ply){
+				ply.percentsac = Number(ply.percentsac)+1;
+				pushRepeatableUpgrade(this.id,ply);
 			}
 		}
 	]

@@ -27,7 +27,7 @@ class ChallengeCommand extends Command {
 		const weaknessIncrease = 1.5;
 
 		let monstArr = [];
-		const dir = fs.readdirSync('IdleGame/monsters');
+		const dir = fs.readdirSync('IdleGame/monsters'); //retrieve all monsters
 		for (let file of dir){
 			let filepath = path.join('../../IdleGame/monsters',file);
 			filepath = filepath.replace(path.extname(filepath), '');
@@ -41,13 +41,11 @@ class ChallengeCommand extends Command {
 				start: message => `${us} What level combat do you wish to fight?`,
 				retry: message => `${us} Please enter a number between 0 and ${highestLevel}`,
 				prompt:true
-			}
+			}//Choose combat level
 		}
 
 		let monsters = [];
-		for (let mon of monstArr){
-			if (mon.level == level) monsters.push(mon);
-		}
+		for (let mon of monstArr) if (mon.level == level) monsters.push(mon);
 		if (monsters.length == 0) return message.channel.send(`${us} There are no monsters of that level yet. Try a different level.`);
 		const monster = f.arrRandom(monsters); //Select a monster of that level at random to fight.
 		const numMonsters = Math.floor(Math.random()*(1 + monster.maxNumber - monster.minNumber)) + monster.minNumber;
@@ -59,9 +57,9 @@ class ChallengeCommand extends Command {
 
 		if (characters.length == 0) return message.channel.send(`${us} You do not have any warriors. Assign some in the /cult`);
 
-		challengedRecently.add(us.id);
+		challengedRecently.add(us.id); //Make sure they can't spam the command.
 
-		for (let war of characters){
+		for (let war of characters){ //Determine front or backline
 			let secondPass = false; //If they have any melee weapon, they're on the front line
 			for (let wep of war.equipment.weapons){
 				let base;
@@ -120,18 +118,16 @@ class ChallengeCommand extends Command {
 			}
 		}
 		characters.sort(function(a,b){return b.initiative - a.initiative})
-		let initString = '';
 		let initTbl = [];
 		let initiativeTable = [];
 		let x = 1;
 		for (let char of characters){
 			if (char.speed && numMonsters != 1){
-				char.name += ` ${x}`;
+				char.name += ` ${x}`; //Identify each monster.
 				x++;
 			} else if (char.speed){
-				char.name = `the ${char.name}`;
+				char.name = `the ${char.name}`; //if it's the only monster, their name has 'the' at the start for grammar purposes.
 			}
-			initString += `${char.name}\n`
 			let details = {
 				name: char.name,
 				hp: char.hp,
@@ -175,9 +171,10 @@ class ChallengeCommand extends Command {
 		function monsterAttack(monster){
 			let usedAttacks = 0;
 			let attack;
+			let rand = Math.random();
 			for (let at of monster.attacks){ //Randomise which attack is used.
 				usedAttacks += at.chance;
-				if (Math.random() <= usedAttacks && !attack) attack = at;
+				if (rand <= usedAttacks && !attack) attack = at;
 			}
 			let frontline = [];
 			let backline = [];
@@ -224,12 +221,12 @@ class ChallengeCommand extends Command {
 			}
 			avDmg = Math.floor(avDmg/targetsHit);
 			if (!monster.emote) monster.emote = monstEmote;
-			let text = `${monster.emote} `;
+			let text = '';
 			if (avDmg == 0){
 				text += f.arrRandom(attack.miss);
 			}
 			else{
-				text += f.arrRandom(attack.hit);
+				text +=f.arrRandom(attack.hit);
 			}
 			if (targetsHit > 1){
 				text = text.replace('CULTIST', 'the party');
@@ -240,6 +237,7 @@ class ChallengeCommand extends Command {
 			}
 			if (avDmg != 0) text += ` ${avDmg} ${attack.type} damage.`;
 			text = text.replace('ENEMY', monster.name);
+			text = `${monster.emote} `+f.capitalise(text);
 			return {fullDmgInfo, text};
 		}
 
@@ -260,7 +258,7 @@ class ChallengeCommand extends Command {
 			for (let pref of weaponTbl.prefixes){
 				if (pref.id == wep.prefix) prefix = pref;
 			}
-			let text = `${cultEmote} `;
+			let text = '';
 			let dmg = calcDamage(ab+wep.damage,target.defence);
 			if (!base.hitText && dmg < Math.floor((ab+wep.damage)/10)) dmg = Math.floor((ab+wep.damage)/10);
 			for (let res of monster.resistances){
@@ -283,6 +281,7 @@ class ChallengeCommand extends Command {
 			text = text.replace('CULTIST', cultist.name);
 			text = text.replace('ENEMY', target.name);
 			text = text.replace('ITEM', base.name.toLowerCase());
+			text = `${cultEmote} ` + f.capitalise(text);
 			let dmgInfo = {};
 			dmgInfo.text = text;
 			dmgInfo.damage = dmg;
@@ -294,7 +293,7 @@ class ChallengeCommand extends Command {
 
 		for (let char of characters){
 			if (char.speed) totalMonsterHealth += char.hp;
-			if (char.equipment) totalCultistHealth += char.hp;
+			if (char.equipment) totalCultistHealth += char.hp;//Total monster + character hp.
 		}
 
 		let emb = new Discord.MessageEmbed()
@@ -446,7 +445,6 @@ class ChallengeCommand extends Command {
 						for (let i=0;i<num;i++){
 							if (i==0 || rew.chance > Math.random()){ //Run the chance each time.
 								let wep = await createItemReward(rew,weaponTbl);
-								console.log(`wep = `+JSON.stringify(wep));
 								if (wep){
 									ply.items.weapons.push(wep);
 									rewMessage += `> ${wep.name}\n`;
@@ -471,7 +469,7 @@ class ChallengeCommand extends Command {
 			let dmgInfo;
 			const logsize = 4;
 			
-			if (attacker.speed){
+			if (attacker.speed){ //if the attacker is a monster.
 				let x = monsterAttack(attacker);
 				let fullDmgInfo = x.fullDmgInfo;
 				let text = x.text;
@@ -480,7 +478,7 @@ class ChallengeCommand extends Command {
 				for (let dmgInfo of fullDmgInfo){ //Go through all targets of the attack.
 					if (dmgInfo.target.hp <= dmgInfo.damage){ //if the attack does more damage than the target has hp
 						dmgInfo.damage = dmgInfo.target.hp;
-						f.removeA(initiativeTable, dmgInfo.target);
+						f.removeA(initiativeTable, dmgInfo.target);//Remove the dead character from possible targets.
 						dead.push(`\n${skull} ${dmgInfo.target.name} dies.`)
 					}
 					dmgInfo.target.hp -= dmgInfo.damage;
@@ -492,11 +490,11 @@ class ChallengeCommand extends Command {
 				for (let deadtext of dead){
 					text += deadtext;
 				}
-				text = text.charAt(0).toUpperCase() + text.slice(1);
+				text = f.capitalise(text);
 				log.push(text);
 				if (log.length > logsize) log.splice(0,1); //Keep only the last few statements in the log.
 			}
-			else {
+			else { //If the attacker is a cultist.
 				let emptyhands = 0;
 				let shouldAttack;
 				for (let wep of attacker.equipment.weapons){
@@ -516,14 +514,14 @@ class ChallengeCommand extends Command {
 						}
 					}
 					if (shouldAttack){
+						console.log(`${attacker.name} is attacking`)
 						dmgInfo = cultistAttack(attacker, wep);
 						log.push(dmgInfo.text);
 						if (dmgInfo.target.hp <= dmgInfo.damage){
 							dmgInfo.damage = dmgInfo.target.hp;
 							f.removeA(initiativeTable, dmgInfo.target);
 							let dt = dmgInfo.target.name;
-							dt = dt.charAt(0).toUpperCase() + dt.slice(1);
-							log.push(`${skull} ${dt} dies.`)
+							log.push(`${skull} ${f.capitalise(dt)} dies.`)
 						}
 						dmgInfo.target.hp -= dmgInfo.damage;
 						totalMonsterHealth -= dmgInfo.damage;
@@ -547,11 +545,10 @@ class ChallengeCommand extends Command {
 				}
 				if (char.hp <= 0) hpStr;
 				let name = char.name;
-				if (name.startsWith('the ')){
+				if (name.startsWith('the ')){ //Remove 'the' from monsters in the initiative list.
 					name = monster.name;
-					name = name.charAt(0).toUpperCase() + name.slice(1);
 				}
-				initStr += `**${name}**\n${hpStr}\n`;
+				initStr += `**${f.capitalise(name)}**\n${hpStr}\n`;
 			}
 			let logStr = '';
 			for (let l of log) logStr += `${l}\n`;

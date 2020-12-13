@@ -3,6 +3,7 @@ const Discord = require("discord.js");
 const f = require('../../functions.js');
 const wepStats = require('../../IdleGame/weapons.js');
 const armStats = require('../../IdleGame/armour.js');
+const upgrStats = require('../../IdleGame/upgrades.js');
 const pageSize = 8;
 
 class CultCommand extends Command {
@@ -27,7 +28,7 @@ class CultCommand extends Command {
 				start: message => {
 					let emb = new Discord.MessageEmbed()
 					.setTitle(pl.name)
-					.setDescription(`1 - Rename\n2 - Cultists\n3 - Inventory\n4 - Balance\n5 - Upgrades\n6 - Rewards${rew}`)
+					.setDescription(`1 - Rename\n2 - Cultists\n3 - Inventory\n4 - Rewards${rew}`)
 					.setFooter(`Type 'cancel' to cancel`);
 
 					return emb;
@@ -41,8 +42,8 @@ class CultCommand extends Command {
 		let reforgeItm;
 		let eqCultist;
 		let itm;
-		if (cultMenu == 1){
-			const renameCult = yield{
+		if (cultMenu == 1){ // Menu - Rename
+			let renameCult = yield{
 				type: 'string',
 				prompt: {
 					start: message => `${us} Enter a new name for your cult`,
@@ -50,50 +51,15 @@ class CultCommand extends Command {
 					prompt: true
 				}
 			}
+			renameCult = renameCult.replace(`'`, '`');//stop dodginess hopefully.
 			DB.query(`UPDATE cults SET name = '${renameCult}' WHERE owner_id = ${pl.owner_id}`);	
 			return message.channel.send(`${us} Successfully renamed your cult to ${renameCult}`);
-		} else if (cultMenu == 6){
-			if (pl.rewards.length == 0) return message.channel.send(`${us} You have no rewards to claim`)
-			let page = 0;
-			let rewardEmb = 0;
-
-			while (rewardEmb == 0 || rewardEmb == pageSize+1){
-				let minNum = 'claim';
-				let maxNum = 'claim';
-				if ((page+1)*pageSize < pl.rewards.length) maxNum = pageSize+1;
-				if (page != 0) minNum = 0;
-				let pageEmbed = f.createPage(page, pl.rewards,us,`Type 'claim' to claim rewards`);
-				rewardEmb = yield{
-					type: [[minNum.toString()], ['claim'], [maxNum.toString()]],
-					prompt: pageEmbed.prompt
-				}
-				if (rewardEmb == 0) page--;
-				if (rewardEmb == pageSize+1) page++;
-			}
-
-			if (rewardEmb.toLowerCase() == 'claim'){
-				pl.items = JSON.parse(pl.items);
-				for (let rew of pl.rewards){
-					if (rew.damage)	pl.items.weapons.push(rew);
-					if (rew.equip) pl.items.armour.push(rew);
-				}
-				pl.rewards = '[]';
-				pl.items = JSON.stringify(pl.items);
-				let query = `
-				UPDATE cults
-				SET rewards = '${pl.rewards}',
-				items = '${pl.items}'
-				WHERE owner_id = ${pl.owner_id}
-				`
-				DB.query(query);
-				return message.channel.send(`${us} Successfully claimed your rewards`);
-			} else return message.channel.send(`${us} Your rewards were not claimed`);
-		} else if (cultMenu == 2){
+		} else if (cultMenu == 2){ //Menu - Cultists
 			pl.cultists = JSON.parse(pl.cultists);
 
 			if (pl.cultists.toString() != [].toString()){
 				let cultCopy = JSON.parse(JSON.stringify(pl.cultists));
-				for (let cultist of cultCopy){
+				for (let cultist of cultCopy){ //Get stats for the cultists
 					let cultName = '**';
 					let stat = cultist.stats;
 					let stats = [];
@@ -122,7 +88,7 @@ class CultCommand extends Command {
 				}
 				let cultist = 0;
 				let page = 0;
-				while (cultist == 0 || cultist > pageSize){
+				while (cultist == 0 || cultist > pageSize){ //Create Pages
 					let pageEmbed = f.createPage(page,cultCopy,us,`${pl.name}'s Cultists`);
 					cultist = yield pageEmbed;
 					if (cultist == 0) page--;
@@ -146,11 +112,9 @@ class CultCommand extends Command {
 						},
 						retry: message => `${us} Please enter a valid number.`,
 						prompt: true
-					}
+					} //Menu for cultist options
 				}
-//----------------------------------------------------------------------------------------------//
-//              Give Job
-				if (action == 1){
+				if (action == 1){ //Menu - Cultists - Give Job
 					const job = yield{
 						type: Argument.range('integer',0,5),
 						prompt:{
@@ -194,9 +158,7 @@ class CultCommand extends Command {
 					DB.query(`UPDATE cults SET cultists = '${JSON.stringify(pl.cultists)}' WHERE owner_id = ${pl.owner_id}`);
 					return message.channel.send(`${us} ${cultist.name} is now a ${cultist.job}`);
 				}
-//----------------------------------------------------------------------------------------------//
-//              Rename
-				if (action == 2){
+				if (action == 2){ //Menu - Cultists - Rename
 					const rename = yield{
 						type: "string",
 						prompt:{
@@ -210,20 +172,18 @@ class CultCommand extends Command {
 					DB.query(`UPDATE cults SET cultists = '${JSON.stringify(pl.cultists)}' WHERE owner_id = ${pl.owner_id}`);
 					return message.channel.send(`${us} Successfully changed the name of '${oldName}'' into '${rename}'.`);
 				}
-//----------------------------------------------------------------------------------------------//
-//              Equip
-				if (action == 4){
+				if (action == 4){ //Menu - Cultists - Equip
 					while (true){
 						let pl = await f.getCult(us);
 						pl.cultists = JSON.parse(pl.cultists);
 						cultist = pl.cultists[cultistNum];
 						pl.items = JSON.parse(pl.items);
 						let equipStr = '';
-						let armour = cultist.equipment.armour;
+						const armour = cultist.equipment.armour;
 						const wep1 = cultist.equipment.weapons[0];
 						const wep2 = cultist.equipment.weapons[1];
 
-						let equipped = [];
+						let equipped = []; //Make array of all equipped stuff.
 						equipped.push(armour.head);
 						equipped.push(armour.body);
 						equipped.push(armour.hands);
@@ -251,28 +211,27 @@ class CultCommand extends Command {
 
 									return emb;
 								},
-								retry: message => `${us} Please enter a valid number`,
+								retry: message => `${us} Please enter a valid number`,////
 								prompt: true
-							}
+							}//Make embed for equipment
 						}
 						
-						let curEquip = equipped[equipMenu-1];
+						let curEquip = equipped[equipMenu-1]; //Currently equipped weapon
 						let equipType;
-						if (equipMenu == 1) equipType = 'head';
-						if (equipMenu == 2) equipType = 'body';
+						if (equipMenu == 1) equipType = 'head'; //| Have to manually do this in case they currently
+						if (equipMenu == 2) equipType = 'body'; //| have nothing equipped in that slot
 						if (equipMenu == 3) equipType = 'hands';
 						if (equipMenu == 4) equipType = 'legs';
 						if (equipMenu == 5) equipType = 'feet';
 						if (equipMenu > 5) equipType = 'weapon';
-						if (!equipType) equipType = 'weapon';
-						let armTbl = [];
+						let armTbl = []; //Array of all weapons that are equippable to selected slot.
 						if (equipType == 'weapon'){
 							for (let i of pl.items.weapons){
-								armTbl.push(i);
+								armTbl.push(i); //Push all weapons into the array
 							}
 						} else{
 							for (let i of pl.items.armour){
-								if (i.equip == equipType){
+								if (i.equip == equipType){ //Push all armour equippable to the slot to the array.
 									armTbl.push(i);
 								}
 							}
@@ -285,7 +244,7 @@ class CultCommand extends Command {
 
 						if (!loop){
 							if (curEquip.id){
-								armTbl.unshift({
+								armTbl.unshift({ //If they have something equipped, give the option to unequip it.
 									name: 'none',
 									equip: equipType,
 									type: 'One Handed'
@@ -293,7 +252,7 @@ class CultCommand extends Command {
 							}
 
 							let newArmTbl = JSON.parse(JSON.stringify(armTbl)); //copy by value.
-							for (let arm of newArmTbl){
+							for (let arm of newArmTbl){ //Create the duplicate table so we can add info to item names.
 								if (arm.name == 'none' && !arm.base) arm.name = `Unequip`;
 								else if (equipType == 'weapon') arm.name += ` - ${arm.damage} damage`;
 								else arm.name += ` - ${arm.defence} defence`;
@@ -302,22 +261,22 @@ class CultCommand extends Command {
 							let chooseEquip = 0;
 							let page = 0;
 							while (chooseEquip == 0 || chooseEquip > pageSize){
-								let pageEmbed = f.createPage(page,newArmTbl,us,equipType);
+								let pageEmbed = f.createPage(page,newArmTbl,us,f.capitalise(equipType));
 								chooseEquip = yield{
 									type: pageEmbed.type,
 									prompt:pageEmbed.prompt
 								}
 								if (chooseEquip == 0) page--;
-								if (chooseEquip > pageSize) page++;
+								if (chooseEquip > pageSize) page++;//Create pages for equippable items
 							}
 							chooseEquip += (page*pageSize);
-							pl = await f.getCult(us);
+							pl = await f.getCult(us); //Now time has passed, so we need to regain info in case it changed.
 							pl.items = JSON.parse(pl.items);
 							pl.cultists = JSON.parse(pl.cultists);
 							for (let ct of pl.cultists){
-								if (ct.id == cultist.id) cultist = ct;
+								if (ct.id == cultist.id) cultist = ct; //Re-select the cultist we had before.
 							}
-							let arm = armTbl[chooseEquip-1];
+							let arm = armTbl[chooseEquip-1]; //The item we want to equip.
 							let region = arm.equip;
 							if (equipType == 'weapon' && (arm.type == 'One Handed' || arm.type == 'Thrown')) region = 1;
 							else if (arm.damage) region = 2;
@@ -325,34 +284,34 @@ class CultCommand extends Command {
 							let old; //The item you're replacing
 							let old2; //If we're replacing more than one item
 							let equipTbl;
-							if (region == 'head'){
+							if (region == 'head'){ //Equip to head
 								old = equip.armour.head;
 								equip.armour.head = arm;
 								equipTbl = pl.items.armour;
 							} 
-							if (region == 'body'){
+							if (region == 'body'){ //Equip to body
 								old = equip.armour.body;
 								equip.armour.body = arm;
 								equipTbl = pl.items.armour;
 							}
-							if (region == 'hands'){
+							if (region == 'hands'){ //Equip to hands
 								old = equip.armour.hands;
 								equip.armour.hands = arm;
 								equipTbl = pl.items.armour;
 							} 
-							if (region == 'legs'){
+							if (region == 'legs'){ //Equip to legs
 								old = equip.armour.legs;
 								equip.armour.legs = arm;
 								equipTbl = pl.items.armour;
 							}
-							if (region == 'feet'){
+							if (region == 'feet'){ //Equip to feet
 								old = equip.armour.feet;
 								equip.armour.feet = arm;
 								equipTbl = pl.items.armour;
 							}
 							if (region == 1){ //Equipping a one-handed weapon
 								old = equip.weapons[equipMenu-6];
-								old2 = equip.weapons[0]; //Need to check the primary weapon isn't two-handed
+								old2 = equip.weapons[0]; //Need to check the currently equipped weapon isn't two-handed
 								if (old2.type != 'Thrown' && old2.type != 'One Handed'){
 									old = old2; //Remove the primary weapon instead.
 									equip.weapons[0] = {name:'none'} //Clear this slot.
@@ -374,19 +333,19 @@ class CultCommand extends Command {
 							let x = 0;
 							for (let i of equipTbl){
 								if (i.id == arm.id){
-									equipTbl.splice(x,1);
+									equipTbl.splice(x,1);//Delete the selected item from inventory.
 								}
 								x++;
 							}
 							if (!old) old = {};
 							if (!old2) old2 = {}; //To prevent errors when fetching the id.
-								let placed = '';
-							if (old.id){
-								equipTbl.push(old);
+							let placed = '';
+							if (old.id){ //if the old item had an id (not nothing)
+								equipTbl.push(old); //put it in bag
 								placed = ` Placed ${old.name} in your bag.`;
 							} if (old2.id){
 								equipTbl.push(old2);
-								if (!old.name || old.name == 'none'){
+								if (!old.name){
 									placed = ` Placed ${old2.name} in your bag.`;
 								}else {
 									placed = ` Placed ${old.name} and ${old2.name} in your bag.`;
@@ -401,15 +360,13 @@ class CultCommand extends Command {
 							SET items = '${JSON.stringify(pl.items)}',
 							cultists = '${JSON.stringify(pl.cultists)}'
 							WHERE owner_id = ${pl.owner_id}
-							`
+							`;
 							await DB.query(query);
 							message.channel.send(mes);
 						}
 					}
 				}
-//----------------------------------------------------------------------------------------------//
-//              Sell
-				if (action == 5){
+				if (action == 5){ //Menu - Cultists - Sell
 					const confirmSell = yield{
 						type: "yes/no",
 						prompt:{
@@ -440,8 +397,7 @@ class CultCommand extends Command {
 			} else {
 				return message.channel.send(`${us} You do not own any cultists yet. Type /shop to buy some.`);
 			}
-		}
-		if (cultMenu == 3){
+		} else if (cultMenu == 3){ // Menu - Inventory
 			pl.items = JSON.parse(pl.items);
 			const invMenu = yield{
 				type: Argument.range('integer',0,4),
@@ -459,7 +415,7 @@ class CultCommand extends Command {
 				}
 			}
 
-			if (invMenu == 1 || invMenu == 2){
+			if (invMenu == 1 || invMenu == 2){ //Menu - Inventory - Weapons/Armour
 				let itmArr;
 				let itmType;
 				if (invMenu == 1){
@@ -511,7 +467,7 @@ class CultCommand extends Command {
 					}
 				}
 
-				if (itmAction == 1){
+				if (itmAction == 1){ //Menu - Inventory - Wep/Arm - Equip
 					pl.cultists = JSON.parse(pl.cultists);
 					if (pl.cultists.length == 0) return message.channel.send(`${us} You have no cultists to equip this item to.`)
 					let cultTbl = [];
@@ -695,7 +651,7 @@ class CultCommand extends Command {
 						return message.channel.send(`${us} Equipped ${ct.name} with ${itm.name}.${armStr}`)
 					}
 				}
-				if (itmAction == 2){
+				if (itmAction == 2){ //Menu - Inventory - Wep/Arm - Reforge
 					reforgeItm = yield{
 						type: 'yes/no',
 						prompt: {
@@ -767,7 +723,7 @@ class CultCommand extends Command {
 						}
 					}
 				}
-				if (itmAction == 3){
+				if (itmAction == 3){ //Menu - Inventory - Sell
 					sellItm = yield{
 						type: 'yes/no',
 						prompt: {
@@ -808,6 +764,42 @@ class CultCommand extends Command {
 				}
 				
 			}
+		} else if (cultMenu == 4){ //Menu - Rewards
+			if (pl.rewards.length == 0) return message.channel.send(`${us} You have no rewards to claim`)
+			let page = 0;
+			let rewardEmb = 0;
+
+			while (rewardEmb == 0 || rewardEmb == pageSize+1){
+				let minNum = 'claim';
+				let maxNum = 'claim';
+				if ((page+1)*pageSize < pl.rewards.length) maxNum = pageSize+1;
+				if (page != 0) minNum = 0;
+				let pageEmbed = f.createPage(page, pl.rewards,us,`Type 'claim' to claim rewards`);
+				rewardEmb = yield{
+					type: [[minNum.toString()], ['claim'], [maxNum.toString()]],
+					prompt: pageEmbed.prompt
+				}
+				if (rewardEmb == 0) page--;
+				if (rewardEmb == pageSize+1) page++;
+			}
+
+			if (rewardEmb.toLowerCase() == 'claim'){
+				pl.items = JSON.parse(pl.items);
+				for (let rew of pl.rewards){
+					if (rew.damage)	pl.items.weapons.push(rew);
+					if (rew.equip) pl.items.armour.push(rew);
+				}
+				pl.rewards = '[]';
+				pl.items = JSON.stringify(pl.items);
+				let query = `
+				UPDATE cults
+				SET rewards = '${pl.rewards}',
+				items = '${pl.items}'
+				WHERE owner_id = ${pl.owner_id}
+				`
+				DB.query(query);
+				return message.channel.send(`${us} Successfully claimed your rewards`);
+			} else return message.channel.send(`${us} Your rewards were not claimed`);
 		}
 	}
 	exec(message, args) {

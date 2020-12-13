@@ -24,7 +24,7 @@ class Skeleton extends Monster{
 						"CULTIST parries ENEMY's sword swing.",
 						"ENEMY swings and misses CULTIST"
 					],
-					damage: 25,
+					damage: 8,
 					chance: 1,
 					type: 'slashing'
 				}

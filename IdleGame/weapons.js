@@ -67,13 +67,13 @@ module.exports = {
 
 		if (prefix){
 			item.prefix = prefix.id;
-			item.name += prefix.name;
+			item.name += prefix.name + ' ';
 			item.damage *= prefix.damage;
 			item.value *= prefix.value;
 			if (prefix.overrideType) item.type = prefix.overrideType;	
 		}
 
-		item.name += ' ' + material.name + ' ' + base.name;
+		item.name += material.name + ' ' + base.name;
 
 
 		if (suffix){

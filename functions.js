@@ -63,6 +63,10 @@ module.exports = {
 	    return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
 	},
 
+	capitalise: function(str){
+		return str.charAt(0).toUpperCase() + str.slice(1);
+	},
+
 	//Remove array index by value
 	removeA: function(arr) {
 	    var what, a = arguments, L = a.length, ax;
@@ -350,8 +354,8 @@ module.exports = {
 			trVal *= tr.value;
 		}
 
-		const pow = 220;  //| These two variables control costs of stats.
-		const coeff = 1.9; //|
+		const pow = 100;  //| These two variables control costs of stats.
+		const coeff = 2.5; //|
 		const coeff2 = 0.1; //Multiply final cost by this variable. Controls overall expense of cultists.
 		const baseCost = 10000 //Minimum possible cost for a cultist
 		cultist.value = strVal*Math.pow(st.str*pow,coeff); //Want high stats to exponentially scale cost of cultist.
@@ -462,7 +466,8 @@ module.exports = {
 		upgrades = '${ply.upgrades}',
 		items = '${ply.items}',
 		cultists = '${ply.cultists}',
-		rewards = '${ply.rewards}'
+		rewards = '${ply.rewards}',
+		percentsac = ${ply.percentsac}
 		WHERE owner_id = ${ply.owner_id}
 		`;
 		DB.query(query);

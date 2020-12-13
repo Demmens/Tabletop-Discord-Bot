@@ -70,13 +70,14 @@ module.exports = {
 		let armour = {};
 
 		let of = ' '
+		armour.name = '';
 		if (!prefix){
 			prefix = {
 				name:'',
 				value:1,
 				multiplier:1,
 			}
-		}
+		} else armour.name += prefix.name + ' '
 		if (!suffix){
 			suffix = {
 				name:'',
@@ -84,7 +85,7 @@ module.exports = {
 			}
 		} else of = ' of '
 
-		armour.name = prefix.name + ' ' + material.name + ' ' + f.arrRandom(base.names) + of + suffix.name;
+		armour.name = material.name + ' ' + f.arrRandom(base.names) + of + suffix.name;
 		armour.id = id;
 		armour.defence = Math.floor(base.multiplier * prefix.multiplier * material.modifier * 10);
 		armour.type = base.type;

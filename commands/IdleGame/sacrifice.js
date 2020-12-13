@@ -34,7 +34,9 @@ class SacrificeCommand extends Command {
 		}
 		talkedRecently.add(us.id);
 		
-		let newTot = ply.sacrifices + Math.ceil(ply.sacrificemultiplier*ply.sacmult);			
+		let newTot = ply.sacrifices + Math.ceil((ply.sacrificemultiplier+ (ply.percentsac * ply.sacrifices / 100))*ply.sacmult);			
+		console.log(`ply.percentsac = ${ply.percentsac}`);
+		console.log(`increase sacrifices = ${Math.ceil(ply.percentsac*ply.sacrificemax / 1000)}`)
 		if (newTot >= ply.sacrificemax){
 			newTot = ply.sacrificemax;
 		}

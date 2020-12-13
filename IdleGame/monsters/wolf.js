@@ -24,7 +24,7 @@ class Wolf extends Monster{
 						'CULTIST swiftly dodges a bite from ENEMY.',
 						'CULTIST blocks ENEMY\'s bite.'
 					],
-					damage: 15,
+					damage: 5,
 					chance: 1,
 					type: 'piercing',
 					effects: [

@@ -20,7 +20,7 @@ class Bat extends Monster{
 						"ENEMY flies in a circle",
 						"ENEMY lets out a quiet screech"
 					],
-					damage: 8,
+					damage: 2,
 					chance: 1,
 					type: 'piercing'
 				}
