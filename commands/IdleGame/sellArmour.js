@@ -2,12 +2,12 @@ const { Command, Argument } = require("discord-akairo");
 const Discord = require("discord.js");
 const f = require('../../functions.js');
 
-class sellWeaponsCommand extends Command {
+class sellArmourCommand extends Command {
 
 	constructor() {
-		super("sellWeapons", {
-			aliases: ["sellWeapons"],
-			description: 'Sell your lowest value weapons.'
+		super("sellArmour", {
+			aliases: ["sellArmour"],
+			description: 'Sell your lowest value armour.'
 		});
 	}
 	async *args(message){
@@ -15,21 +15,21 @@ class sellWeaponsCommand extends Command {
 		const DB = this.client.db;
 		var pl = await f.getCult(us);
 		pl.items = JSON.parse(pl.items);
-		if (pl.items.weapons.length == 0) return message.channel.send(`${us} You do not own any weapons.`)
+		if (pl.items.armour.length == 0) return message.channel.send(`${us} You do not own any armour.`)
 
 		const num = yield{ //Number of items to keep
-			type: Argument.range('integer',-1,pl.items.weapons.length),
+			type: Argument.range('integer',-1,pl.items.armour.length),
 			prompt:{
-				start: message => `${us} How many weapons do you wish to keep?`,
+				start: message => `${us} How many pieces of armour do you wish to keep?`,
 				retry: message => `${us} Please enter a valid number.`
 			}
 		};
 
 		let sellArr = [];
 		let sellValue = 0;
-		pl.items.weapons.sort(function(a,b){return b.value-a.value});
-		for (let i = 0; i < pl.items.weapons.length;i++){
-			let itm = pl.items.weapons[i];
+		pl.items.armour.sort(function(a,b){return b.value-a.value});
+		for (let i = 0; i < pl.items.armour.length;i++){
+			let itm = pl.items.armour[i];
 			if (i >= num){
 				sellArr.push(itm);
 				sellValue += Math.floor(itm.value/2);
@@ -73,8 +73,8 @@ class sellWeaponsCommand extends Command {
 			pl = await f.getCult(us);
 			pl.items = JSON.parse(pl.items);
 			let x = 0;
-			for (let itm of pl.items.weapons){
-				for (let itm2 of sellArr) if (itm2.id == itm.id) pl.items.weapons.splice(x,1);
+			for (let itm of pl.items.armour){
+				for (let itm2 of sellArr) if (itm2.id == itm.id) pl.items.armour.splice(x,1);
 				x++;
 			}
 			pl.money = Number(pl.money)
@@ -86,11 +86,11 @@ class sellWeaponsCommand extends Command {
 				items = '${JSON.stringify(pl.items)}'
 				WHERE owner_id = ${pl.owner_id}
 				`)
-			return message.channel.send(`${us} Sold ${sellArr.length} weapons for £${f.numberWithCommas(sellValue)}. Balance: £${f.numberWithCommas(pl.money)}.`)
+			return message.channel.send(`${us} Sold ${sellArr.length} pieces of armour for £${f.numberWithCommas(sellValue)}. Balance: £${f.numberWithCommas(pl.money)}.`)
 
-		} else return message.channel.send(`${us} Weapons not sold.`)
+		} else return message.channel.send(`${us} Armour not sold.`)
 	}
 	async exec(){}
 }
 
-module.exports = sellWeaponsCommand;
+module.exports = sellArmourCommand;
