@@ -11,6 +11,7 @@ async function TriggerJobs(){
 		let key = require('../token.json').key;
 	} catch(err){
 		let players = await f.getCults();
+		let idlegame = (await f.runQuery(`SELECT * FROM idlegame`)).rows[0];
 		for (let ply of players){
 			ply.cultists = JSON.parse(ply.cultists);
 			ply.items = JSON.parse(ply.items);
@@ -58,12 +59,14 @@ async function TriggerJobs(){
 					if  ((Math.random()*20)+cha >= 20 && difference*(Math.pow(wis,0.5)) >= 7200000 ){ //every 2 hours, 5% chance to generate an item (if wis/cha are 1.)
 						let item;
 						let item2;
-						item = weapons.generateRandomItem();
-						item2 = armour.generateRandomArmour();
+						let id = Number(idlegame.nextitemid);
+						item = weapons.generateRandomItem(id);
+						item2 = armour.generateRandomArmour(id);
 						if (item2.value < item.value) item = item2; //Generate 2 items and take the lowest value of the two.
 
 						ply.rewards.push(item);
 						cult.lastAction = Date.now();
+						f.runQuery(`UPDATE idlegame SET nextitemid = ${id+1}`)
 					}
 				}
 			}

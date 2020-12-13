@@ -413,14 +413,12 @@ module.exports = {
 	//| Database Functions |\\
 	//|--------------------|\\
 
-	runQuery: function(query){
-		(async () => {
-			try{
-				const res = await client.query(query);
-			} catch (err) {
-				console.error(err);
-			}
-		})
+	runQuery: async function(query){
+		try{
+			return await DB.query(query);
+		} catch (err) {
+			console.error(err);
+		}
 	},
 
 	getCult: async function(user){
