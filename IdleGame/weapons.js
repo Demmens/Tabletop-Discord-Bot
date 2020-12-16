@@ -103,7 +103,7 @@ module.exports = {
 		if (guaranteeSuffix) suffixChance = 1;
 		let base = this.randomiseBase();
 
-		if (base.type == TYPE_MAGIC) suffixChance = 1; //Magic weapons will always have a suffix
+		
 
 		let prefix;
 		let suffix;
@@ -111,6 +111,9 @@ module.exports = {
 		if (Math.random() <= prefixChance){
 			prefix = this.randomisePrefix(base);
 		}
+
+		if (base.type == TYPE_MAGIC || prefix.overrideType == TYPE_MAGIC) suffixChance = 1; //Magic weapons will always have a suffix
+
 		if (Math.random() <= suffixChance){
 			suffix = this.randomiseSuffix(base);
 		}
@@ -525,6 +528,15 @@ module.exports = {
 			value: 0.3,
 			abundance: 7,
 			types: [TYPE_RANGED, TYPE_THROWN, TYPE_ONEHANDED, TYPE_TWOHANDED, TYPE_MAGIC]
+		},
+		{
+			id: 16,
+			name: 'Ethereal',
+			damage: 1,
+			value: 1.3,
+			abundance: 2,
+			types: [TYPE_RANGED, TYPE_THROWN, TYPE_ONEHANDED, TYPE_TWOHANDED],
+			overrideType: TYPE_MAGIC
 		}
 	],
 	suffixes: [

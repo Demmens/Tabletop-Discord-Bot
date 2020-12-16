@@ -31,7 +31,10 @@ class Wolf extends Monster{
 						{
 							effect: 'bleed',
 							chance: 0.3,
-							potency: 1
+							potency: 1,
+							duration: 2,
+							stat: 'con',
+							onHit: true
 						}
 					]
 				}

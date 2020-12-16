@@ -7,7 +7,7 @@ async function CreateBalanceEmbed(message, player){
 	if (!ply) return null;
 	let emb = new Discord.MessageEmbed()
 	.setTitle(`${player.displayName}'s Balance`)
-	.setDescription(`Money: £${f.numberWithCommas(ply.money)}\nSacrifices: ${f.numberWithCommas(ply.sacrifices)}/${f.numberWithCommas(ply.sacrificemax)}\nResearch: ${ply.research}`)
+	.setDescription(`Money: £${f.numberWithCommas(ply.money)}\nSacrifices: ${f.numberWithCommas(ply.sacrifices)}/${f.numberWithCommas(ply.sacrificemax)}\nResearch: ${f.numberWithCommas(ply.research)}`)
 
 	return emb;
 }

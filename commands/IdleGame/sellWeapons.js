@@ -43,7 +43,6 @@ class sellWeaponsCommand extends Command {
 			let prev = '';
 			let next = '';
 			let pageMax = Math.ceil(sellArr.length/pagesize);
-			console.log(`pageMax = ${pageMax}, numItems = ${sellArr.length}`)
 			if (page != 0) prev = '0 - Previous Page.';
 			if (page+1 < pageMax) next = '9 - Next Page.';
 			let displayStr = '';

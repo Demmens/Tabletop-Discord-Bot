@@ -4,6 +4,7 @@ const f = require('../../functions.js');
 const armourTbl = require('../../IdleGame/armour.js');
 const weaponTbl = require('../../IdleGame/weapons.js');
 const Monster = require('../../IdleGame/Monster');
+const conditions = require('../../IdleGame/conditions.js')
 const fs = require('fs');
 const path = require('path');
 const challengedRecently = new Set();
@@ -52,7 +53,9 @@ class ChallengeCommand extends Command {
 
 		let characters = [];
 		for (let ct of ply.cultists){
-			if (ct.job == 'Warrior') characters.push(ct);
+			if (ct.job == 'Warrior'){
+				characters.push(ct);
+			}
 		}
 
 		if (characters.length == 0) return message.channel.send(`${us} You do not have any warriors. Assign some in the /cult`);
@@ -98,6 +101,7 @@ class ChallengeCommand extends Command {
 		for (let char of characters){
 			if (char.equipment){
 				char.hp *= 2;
+				char.conditions = [];
 				let arm = char.equipment.armour;
 				char.armArr = [];
 				char.armArr.push(arm.head);
@@ -162,6 +166,31 @@ class ChallengeCommand extends Command {
 			return newdmg;
 		}
 
+		function triggerConditions(tgt){
+			let x = 0;
+			let effInfo = {}
+			let text = '';
+			effInfo.shouldEnd = false;
+			for (let cond of tgt.conditions){
+				let hpchange = tgt.hp;
+				cond.trigger(tgt);
+				hpchange = hpchange - tgt.hp;
+				text = f.arrRandom(cond.text);
+				text = text.replace('DMG', hpchange);
+				text = text.replace('CULTIST', tgt.name);
+				cond.timer++;
+				if (cond.endCondition(tgt)){
+					tgt.conditions.splice(x,1);
+					text += (`\n▫️ The ${cond.name} on ${tgt.name} wears off.`)
+				}
+				text = `${cond.emote} ${text}`;
+				if (cond.shouldEnd) effInfo.shouldEnd = true;
+				x++;
+			}
+			effInfo.text = text;
+			return effInfo;
+		}
+
 		const heart =  '❤️';
         const black_heart = '🖤';
         const skull = '☠️';
@@ -210,8 +239,19 @@ class ChallengeCommand extends Command {
 					dmgInfo.effects = [];
 					if (attack.effects){
 						for (let ef of attack.effects){
-							if (Math.random() < ef.chance/Math.floor(Math.pow(target.stats.con,0.5))){
-								dmgInfo.effects.push(ef);
+							if ((ef.onHit && dmgInfo.damage != 0) || !ef.onHit){
+								let r = Math.random();
+								let ch = Math.floor(Math.pow(f.getStatFromString(ef.stat,target),0.5));
+								if (r < ef.chance/ch){
+									for (let cond of conditions){
+										if (cond.name == ef.effect){
+											cond = {...cond};
+											cond.potency = ef.potency;
+											cond.duration = ef.duration;
+											dmgInfo.effects.push(cond);
+										}
+									}
+								}
 							}
 						}
 					}
@@ -230,7 +270,9 @@ class ChallengeCommand extends Command {
 			}
 			if (targetsHit > 1){
 				text = text.replace('CULTIST', 'the party');
-				text += ` an average of`
+				if (avDmg != 0){
+					text += ` an average of`;
+				}
 			}
 			else{
 				text = text.replace('CULTIST', fullDmgInfo[0].target.name);
@@ -238,10 +280,29 @@ class ChallengeCommand extends Command {
 			if (avDmg != 0) text += ` ${avDmg} ${attack.type} damage.`;
 			text = text.replace('ENEMY', monster.name);
 			text = `${monster.emote} `+f.capitalise(text);
+			for (let dmgInfo of fullDmgInfo){
+				for (let ef of dmgInfo.effects){
+					let has = false;
+					for (let cond of dmgInfo.target.conditions){
+						if (cond.name == ef.name){
+							has = true;
+							cond.duration += ef.duration;
+						}
+					}
+					if (!has){
+						text += `\n▫️ ${dmgInfo.target.name} is afflicted with ${ef.name}`
+						dmgInfo.target.conditions.push(ef)
+					} else text += `\n▫️ The ${ef.name} on ${dmgInfo.target.name} is extended.`;
+				}
+			}
 			return {fullDmgInfo, text};
 		}
 
 		function cultistAttack(cultist, wep){
+			let x = 0
+			let dmgInfo = {}; // Store info on the attack to use later.
+			let text = '';
+
 			let target = {};
 			while (!target.speed) target = f.arrRandom(initiativeTable);
 
@@ -258,7 +319,6 @@ class ChallengeCommand extends Command {
 			for (let pref of weaponTbl.prefixes){
 				if (pref.id == wep.prefix) prefix = pref;
 			}
-			let text = '';
 			let dmg = calcDamage(ab+wep.damage,target.defence);
 			if (!base.hitText && dmg < Math.floor((ab+wep.damage)/10)) dmg = Math.floor((ab+wep.damage)/10);
 			for (let res of monster.resistances){
@@ -282,7 +342,6 @@ class ChallengeCommand extends Command {
 			text = text.replace('ENEMY', target.name);
 			text = text.replace('ITEM', base.name.toLowerCase());
 			text = `${cultEmote} ` + f.capitalise(text);
-			let dmgInfo = {};
 			dmgInfo.text = text;
 			dmgInfo.damage = dmg;
 			dmgInfo.target = target;
@@ -464,74 +523,7 @@ class ChallengeCommand extends Command {
 			message.channel.send(rewMessage);
 		}
 
-		function doAttack(init){
-			let attacker = initiativeTable[init];
-			let dmgInfo;
-			const logsize = 4;
-			
-			if (attacker.speed){ //if the attacker is a monster.
-				let x = monsterAttack(attacker);
-				let fullDmgInfo = x.fullDmgInfo;
-				let text = x.text;
-				let dead = [];
-				
-				for (let dmgInfo of fullDmgInfo){ //Go through all targets of the attack.
-					if (dmgInfo.target.hp <= dmgInfo.damage){ //if the attack does more damage than the target has hp
-						dmgInfo.damage = dmgInfo.target.hp;
-						f.removeA(initiativeTable, dmgInfo.target);//Remove the dead character from possible targets.
-						dead.push(`\n${skull} ${dmgInfo.target.name} dies.`)
-					}
-					dmgInfo.target.hp -= dmgInfo.damage;
-					totalCultistHealth -= dmgInfo.damage;
-					for (let char of initTbl){
-						if (char.name == dmgInfo.target.name && char.id == dmgInfo.target.id) char.hp = dmgInfo.target.hp;
-					}
-				}
-				for (let deadtext of dead){
-					text += deadtext;
-				}
-				text = f.capitalise(text);
-				log.push(text);
-				if (log.length > logsize) log.splice(0,1); //Keep only the last few statements in the log.
-			}
-			else { //If the attacker is a cultist.
-				let emptyhands = 0;
-				let shouldAttack;
-				for (let wep of attacker.equipment.weapons){
-					shouldAttack = false;
-					if (wep.name != 'none' && wep.base){ //If it's a valid weapon, make an attack with it.
-						shouldAttack = true;
-					} else{
-						emptyhands++;
-						if (emptyhands == 2){ //If both hands are empty, cultist attacks with their fists.
-							wep = {
-								damage: 1,
-								base: 0,
-								stat: ['str'],
-								dmgType: 'bludgeoning'
-							}
-							shouldAttack = true;
-						}
-					}
-					if (shouldAttack){
-						console.log(`${attacker.name} is attacking`)
-						dmgInfo = cultistAttack(attacker, wep);
-						log.push(dmgInfo.text);
-						if (dmgInfo.target.hp <= dmgInfo.damage){
-							dmgInfo.damage = dmgInfo.target.hp;
-							f.removeA(initiativeTable, dmgInfo.target);
-							let dt = dmgInfo.target.name;
-							log.push(`${skull} ${f.capitalise(dt)} dies.`)
-						}
-						dmgInfo.target.hp -= dmgInfo.damage;
-						totalMonsterHealth -= dmgInfo.damage;
-						for (let char of initTbl){
-							if (char.name == dmgInfo.target.name) char.hp = dmgInfo.target.hp;
-						}
-						if (log.length > logsize) log.splice(0,1);
-					}
-				}
-			}
+		function generateAttackEmbed(){
 			let initStr = '';
 			for (let char of initTbl){
 				let hpStr = '';
@@ -563,19 +555,100 @@ class ChallengeCommand extends Command {
 
 				}
 			]);
+			return emb;
+		}
+
+		function doAttack(init){
+			let attacker = initiativeTable[init];
+			let dmgInfo;
+			const logsize = 4;
+			
+			if (attacker.speed){ //if the attacker is a monster.
+				let x = monsterAttack(attacker);
+				let fullDmgInfo = x.fullDmgInfo;
+				let text = x.text;
+				let dead = [];
+				
+				for (let dmgInfo of fullDmgInfo){ //Go through all targets of the attack.
+					if (dmgInfo.target.hp <= dmgInfo.damage){ //if the attack does more damage than the target has hp
+						dmgInfo.damage = dmgInfo.target.hp;
+						f.removeA(initiativeTable, dmgInfo.target);//Remove the dead character from possible targets.
+						dead.push(`\n${skull} ${dmgInfo.target.name} dies.`)
+					}
+					dmgInfo.target.hp -= dmgInfo.damage;
+					totalCultistHealth -= dmgInfo.damage;
+					for (let char of initTbl){
+						if (char.name == dmgInfo.target.name && char.id == dmgInfo.target.id) char.hp = dmgInfo.target.hp;
+					}
+				}
+				for (let deadtext of dead){
+					text += deadtext;
+				}
+				text = f.capitalise(text);
+				log.push(text);
+				if (log.length > logsize) log.splice(0,1); //Keep only the last few statements in the log.
+			}
+			else { //If the attacker is a cultist.
+				let effInfo = triggerConditions(attacker); //Trigger conditions first.
+				if (effInfo.text != '') log.push(effInfo.text);
+				if (log.length > logsize) log.splice(0,1);
+				if (effInfo.shouldEnd){
+					init++;
+					if (init >= initiativeTable.length) init = 0;
+					let emb = generateAttackEmbed();
+					combatLog.edit(emb)
+					return setTimeout(doAttack,4000, init);
+				}
+				let emptyhands = 0;
+				let shouldAttack;
+				for (let wep of attacker.equipment.weapons){
+					shouldAttack = false;
+					if (wep.name != 'none' && wep.base){ //If it's a valid weapon, make an attack with it.
+						shouldAttack = true;
+					} else{
+						emptyhands++;
+						if (emptyhands == 2){ //If both hands are empty, cultist attacks with their fists.
+							wep = {
+								damage: 1,
+								base: 0,
+								stat: ['str'],
+								dmgType: 'bludgeoning'
+							}
+							shouldAttack = true;
+						}
+					}
+					if (shouldAttack){
+						dmgInfo = cultistAttack(attacker, wep);
+						log.push(dmgInfo.text);
+						if (dmgInfo.target.hp <= dmgInfo.damage){
+							dmgInfo.damage = dmgInfo.target.hp;
+							f.removeA(initiativeTable, dmgInfo.target);
+							let dt = dmgInfo.target.name;
+							log.push(`${skull} ${f.capitalise(dt)} dies.`)
+						}
+						dmgInfo.target.hp -= dmgInfo.damage;
+						totalMonsterHealth -= dmgInfo.damage;
+						for (let char of initTbl){
+							if (char.name == dmgInfo.target.name) char.hp = dmgInfo.target.hp;
+						}
+						if (log.length > logsize) log.splice(0,1);
+					}
+				}
+			}
+			let emb = generateAttackEmbed();
 
 			combatLog.edit(emb);
 
-			if (totalMonsterHealth > 0 && totalCultistHealth > 0){
-				init++;
+			if (totalMonsterHealth > 0 && totalCultistHealth > 0){ //If both sides are alive, keep going.
+				init++; 
 				if (init >= initiativeTable.length) init = 0;
 				setTimeout(doAttack,4000, init)
-			} else {
+			} else { //Otherwise stop.
 				challengedRecently.delete(us.id);
-				if (totalMonsterHealth <= 0){
+				if (totalMonsterHealth <= 0){//if it's the monsters that have died, the cultists win
 					giveRewards(monster);
 				}
-				else message.channel.send(`${us} Monsters win.`)
+				else message.channel.send(`${us} Monsters win.`) //Otherwise monsters win.
 			}
 		}
 		let init = 0;	
