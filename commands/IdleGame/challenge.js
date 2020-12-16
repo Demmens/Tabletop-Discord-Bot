@@ -192,8 +192,6 @@ class ChallengeCommand extends Command {
 		}
 
 		const heart =  '❤️';
-        const black_heart = '🖤';
-        const skull = '☠️';
         const monstEmote = '💢';
         const cultEmote = '🗡️';
 
@@ -523,23 +521,45 @@ class ChallengeCommand extends Command {
 			message.channel.send(rewMessage);
 		}
 
+		const skull = '☠️';
+		function generateHealthBar(char){
+			let hpStr = '';
+			let colourArr = [];
+			colourArr.push('🖤');//Black
+			colourArr.push('❤️');//Red
+			colourArr.push('🧡');//Orange
+			colourArr.push('💛');//Yellow
+			colourArr.push('💚');//Green
+			colourArr.push('💙');//Blue
+			colourArr.push('💜');//Purple
+			colourArr.push('🤍');//White
+
+			if (char.hp <= 0){
+				return skull;
+			} else {
+				let colourNum = Math.ceil(char.hp/50);
+				for (let i = 50*(colourNum-1); i < 50*colourNum; i++){
+					if (Math.floor(i/25) == i/25 && Math.floor(i/2) != i/2) hpStr += '\n';
+					if (i<char.hp) hpStr += colourArr[colourNum];
+					else if ((i >= char.hp && char.maxhp > 50)|| (i < char.maxhp && i >= char.hp && char.hp < char.maxhp && char.maxhp <= 50)) hpStr += colourArr[colourNum-1];
+					// ^ If they have over 50hp, fill hp bar with previous colour hearts|| ^ If they have less than 50hp, only use previous colour hearts for missing hp.
+				}
+			}
+
+			return hpStr;
+		}	
+
 		function generateAttackEmbed(){
 			let initStr = '';
 			for (let char of initTbl){
-				let hpStr = '';
-				if (char.hp <= 0){
-					hpStr = skull;
-				} else {
-					for (let i = 0; i< char.maxhp; i++){
-						if (i<char.hp) hpStr += heart;
-						else hpStr += black_heart
-					}
-				}
-				if (char.hp <= 0) hpStr;
+				let hpStr = generateHealthBar(char);
 				let name = char.name;
 				if (name.startsWith('the ')){ //Remove 'the' from monsters in the initiative list.
 					name = monster.name;
 				}
+				let nameParts = name.split(' ');
+				name = '';
+				for (let part of nameParts)	name += f.capitalise(part) + ' '; //Capitalise all words of the name.
 				initStr += `**${f.capitalise(name)}**\n${hpStr}\n`;
 			}
 			let logStr = '';
@@ -617,6 +637,11 @@ class ChallengeCommand extends Command {
 							shouldAttack = true;
 						}
 					}
+					let x = 0;
+					for (let int of initiativeTable){
+						if (int.speed) x++;
+					}
+					if (x == 0) shouldAttack = false; //Make sure if there are no monsters we don't attack.
 					if (shouldAttack){
 						dmgInfo = cultistAttack(attacker, wep);
 						log.push(dmgInfo.text);
@@ -626,6 +651,7 @@ class ChallengeCommand extends Command {
 							let dt = dmgInfo.target.name;
 							log.push(`${skull} ${f.capitalise(dt)} dies.`)
 						}
+						console.log(`Attacking ${dmgInfo.target.name} (${dmgInfo.target.hp})`);
 						dmgInfo.target.hp -= dmgInfo.damage;
 						totalMonsterHealth -= dmgInfo.damage;
 						for (let char of initTbl){
@@ -636,7 +662,6 @@ class ChallengeCommand extends Command {
 				}
 			}
 			let emb = generateAttackEmbed();
-
 			combatLog.edit(emb);
 
 			if (totalMonsterHealth > 0 && totalCultistHealth > 0){ //If both sides are alive, keep going.

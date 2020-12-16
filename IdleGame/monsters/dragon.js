@@ -22,8 +22,8 @@ class Dragon extends Monster {
 						"ENEMY snaps at CULTIST, but they quickly dodge out of the way.",
 						"CULTIST sees ENEMY's bite, and dodges."
 					],
-					damage: 100,
-					chance: 0.4,
+					damage: 140,
+					chance: 0.35,
 					type: 'piercing'
 				},
 				{
@@ -34,8 +34,8 @@ class Dragon extends Monster {
 					miss: [
 						"Torrents of fire stream from the dragons mouth, but CULTIST swiftly ducks out of the way."
 					],
-					damage: 200,
-					chance: 0.05,
+					damage: 120,
+					chance: 0.1,
 					type: 'fire',
 					targets: 3
 				},
@@ -49,7 +49,7 @@ class Dragon extends Monster {
 						"The dragon slashes its claws at CULTIST, but they narrowly duck out of the way",
 						"The dragon's claws swipe at CULTIST, but they dodge."
 					],
-					damage: 85,
+					damage: 120,
 					chance: 0.55,
 					type: 'slashing'
 				}
