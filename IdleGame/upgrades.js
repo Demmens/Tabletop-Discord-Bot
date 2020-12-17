@@ -345,7 +345,7 @@ module.exports = {
 		{
 			name: "Raise Standards",
 			id: 9,
-			description: "Increase Sacrifice yield by 25%, but sacrificing takes an additional 50% longer",
+			description: "Increase Sacrifice yield by 25%, but sacrificing takes an additional 25% longer",
 			cost: 25000,
 			requirements: function(ply){
 				if (hasResearch((hasRepeatableUpgrade(9,ply)*100)^1.2,ply)) return true;
@@ -353,7 +353,7 @@ module.exports = {
 			},
 			onBuy: function(ply){
 				ply.sacmult = Number(ply.sacmult) + 0.25;
-				ply.sacrificespeedadd = Number(ply.sacrificespeedadd) + 3.5;
+				ply.sacrificespeedadd = Number(ply.sacrificespeedadd) + 1.75;
 				pushRepeatableUpgrade(this.id,ply);
 			}
 		},
