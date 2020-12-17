@@ -44,10 +44,10 @@ class CultCommand extends Command {
 		let itm;
 		if (cultMenu == 1){ // Menu - Rename
 			let renameCult = yield{
-				type: 'string',
+				type: Argument.validate('string', (m, p, str) => str.length <= 50),
 				prompt: {
 					start: message => `${us} Enter a new name for your cult`,
-					retry: message => `${us} Please enter a valid name`,
+					retry: message => `${us} Please enter a valid name. Limit 50 characters.`,
 					prompt: true
 				}
 			}
