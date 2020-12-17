@@ -370,7 +370,7 @@ module.exports = {
 				ply.sacmult = Number(ply.sacmult);
 				ply.sacrificespeedadd = Number(ply.sacrificespeedadd);
 				ply.sacmult -= 0.25;
-				ply.sacrificespeedadd -= 3.5;
+				ply.sacrificespeedadd -= 1.75;
 				let x=0;
 				for (let upgr of ply.upgrades.repeatable){
 					if (upgr.id == 9){
