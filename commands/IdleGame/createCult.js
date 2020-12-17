@@ -1,4 +1,4 @@
-const { Command } = require("discord-akairo");
+const { Command, Argument } = require("discord-akairo");
 const Discord = require("discord.js");
 const f = require('../../functions.js');
 
@@ -16,10 +16,10 @@ class CreateCultCommand extends Command {
 		if (ply) return `${us} You already have a cult.`
 
 		const name = yield{
-			type: 'string',
+			type: Argument.validate('string', (m, p, str) => str.length <= 50),
 			prompt: {
 				start: message => `${us} What would you like to name your cult?`,
-				retry: message => `${us} Please enter a valid name.`,
+				retry: message => `${us} Please enter a valid name. Limit 50 characters`,
 				prompt: true
 			}
 		}
