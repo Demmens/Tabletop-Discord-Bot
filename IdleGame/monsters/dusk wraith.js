@@ -5,7 +5,7 @@ class DuskWraith extends Monster{
 		super({
 			name: 'Dusk Wraith',
 			hp: 50,
-			defence: 1500,
+			defence: 150,
 			speed: 15,
 			minNumber: 1,
 			maxNumber: 1,
@@ -21,7 +21,7 @@ class DuskWraith extends Monster{
 						'ENEMY lets out a horrific sriek.'
 					],
 					damage: 0,
-					chance: 0.3,
+					chance: 0.2,
 					type: 'necrotic',
 					targets: 3,
 					effects: [
@@ -45,13 +45,13 @@ class DuskWraith extends Monster{
 						`ENEMY slashes its claws at CULTIST, but they swiftly dodge the attack.`
 					],
 					damage: 20,
-					chance: 0.7,
+					chance: 0.8,
 					type: 'necrotic',
 					targets: 1,
 					effects: [
 						{
 							effect: 'fear',
-							chance: 0.3,
+							chance: 0.5,
 							potency: 1,
 							duration: 1,
 							stat: 'wis'
@@ -101,8 +101,8 @@ class DuskWraith extends Monster{
 				{
 					name: 'Money',
 					chance: 1,
-					minNumber: 1000,
-					maxNumber: 5000
+					minNumber: 10000,
+					maxNumber: 50000
 				}
 			]
 		});
