@@ -44,7 +44,7 @@ class DuskWraith extends Monster{
 						`ENEMY swipes at CULTIST, but the attack is blocked.`,
 						`ENEMY slashes its claws at CULTIST, but they swiftly dodge the attack.`
 					],
-					damage: 20,
+					damage: 70,
 					chance: 0.8,
 					type: 'necrotic',
 					targets: 1,
