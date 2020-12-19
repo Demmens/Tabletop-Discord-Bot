@@ -23,7 +23,7 @@ class Dragon extends Monster {
 						"CULTIST sees ENEMY's bite, and dodges."
 					],
 					damage: 140,
-					chance: 0.35,
+					chance: 0.3,
 					type: 'piercing'
 				},
 				{
@@ -50,8 +50,25 @@ class Dragon extends Monster {
 						"The dragon's claws swipe at CULTIST, but they dodge."
 					],
 					damage: 120,
-					chance: 0.55,
+					chance: 0.5,
 					type: 'slashing'
+				},
+				{
+					miss: [
+						"The dragon lets out an ear-shattering roar."
+					],
+					damage: 0,
+					chance: 0.1,
+					targets: 3,
+					effects: [
+						{
+							effect: 'fear',
+							chance: 1.5,
+							potency: 1,
+							duration: 1,
+							stat: 'wis'
+						}
+					]
 				}
 			],
 			drops: [

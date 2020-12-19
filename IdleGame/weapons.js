@@ -75,6 +75,7 @@ module.exports = {
 
 		item.name += material.name + ' ' + base.name;
 
+		if (base.type = TYPE_MAGIC && !suffix) suffix = this.randomiseSuffix(base);
 
 		if (suffix){
 			item.suffix = suffix.id;
@@ -112,7 +113,8 @@ module.exports = {
 			prefix = this.randomisePrefix(base);
 		}
 
-		if (base.type == TYPE_MAGIC || prefix.overrideType == TYPE_MAGIC) suffixChance = 1; //Magic weapons will always have a suffix
+		if (base.type == TYPE_MAGIC) suffixChance = 1;
+		if (prefix) if (prefix.overrideType == TYPE_MAGIC) suffixChance = 1; //Magic weapons will always have a suffix
 
 		if (Math.random() <= suffixChance){
 			suffix = this.randomiseSuffix(base);

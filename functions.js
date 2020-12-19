@@ -133,6 +133,22 @@ module.exports = {
 		return contents;
 	},
 
+	hasOneTimeUpgrade(id,ply){
+		if (!ply.upgrades.oneTime) ply.upgrades = JSON.parse(ply.upgrades);
+		for (let upgr of ply.upgrades.oneTime){
+			if (upgr == id) return true;
+		}
+		return false;
+	},
+
+	hasRepeatableUpgrade(id,ply){
+		if (!ply.upgrades.repeatable) ply.upgrades = JSON.parse(ply.upgrades);
+		for (let upgr of ply.upgrades.repeatable){
+			if (upgr.id == id) return upgr.number;
+		}
+		return false;
+	},
+
 	createPage: function(page, arr, us, title){
 		let x = 0;
 		let pageStr = '';

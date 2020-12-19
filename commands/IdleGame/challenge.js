@@ -651,7 +651,6 @@ class ChallengeCommand extends Command {
 							let dt = dmgInfo.target.name;
 							log.push(`${skull} ${f.capitalise(dt)} dies.`)
 						}
-						console.log(`Attacking ${dmgInfo.target.name} (${dmgInfo.target.hp})`);
 						dmgInfo.target.hp -= dmgInfo.damage;
 						totalMonsterHealth -= dmgInfo.damage;
 						for (let char of initTbl){
