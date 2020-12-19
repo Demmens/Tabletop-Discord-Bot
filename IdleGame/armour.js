@@ -205,7 +205,7 @@ module.exports = {
 			names: ['Robes'],
 			type: TYPE_MAGIC,
 			equip: 'body',
-			multiplier: 2,
+			multiplier: 0.9,
 			material: 'magic'
 		}
 	],
