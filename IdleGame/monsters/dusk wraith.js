@@ -101,8 +101,8 @@ class DuskWraith extends Monster{
 				{
 					name: 'Money',
 					chance: 1,
-					minNumber: 10000,
-					maxNumber: 50000
+					minNumber: 30000,
+					maxNumber: 70000
 				}
 			]
 		});
