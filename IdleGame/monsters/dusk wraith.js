@@ -63,32 +63,14 @@ class DuskWraith extends Monster{
 				{
 					name: 'Armour',
 					prefixes: ['Ethereal'],
-					suffixes: ['Night'],
-					chance: 0.05,
-					modify: [
-						{
-							baseName: 'of Night',
-							newName: 'of Souls',
-							chance: 1,
-							defenceModifier: 1.2,
-							valueModifier: 1.25
-						}
-					]
+					suffixes: ['Souls'],
+					chance: 0.05
 				},
 				{
 					name: 'Weapon',
 					prefixes: ['Ethereal'],
-					suffixes: ['Night'],
-					chance: 0.05,
-					modify: [
-						{
-							baseName: 'of Night',
-							newName: 'of Souls',
-							chance: 1,
-							damageModifier: 1.2,
-							valueModifier: 1.25
-						}
-					]
+					suffixes: ['Souls'],
+					chance: 0.05
 				},
 				{
 					name: 'Armour',

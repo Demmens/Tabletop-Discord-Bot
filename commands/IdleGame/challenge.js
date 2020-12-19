@@ -379,8 +379,8 @@ class ChallengeCommand extends Command {
 							if (base.names.includes(b)) feasibleBase = true;
 						}
 					}
-				} else{
-					feasibleBase = true; //Otherwise use any base.
+				} else if (base.id > 0){
+					feasibleBase = true; //Otherwise use any base with id > 0.
 				}
 
 				if (feasibleBase){
@@ -451,7 +451,7 @@ class ChallengeCommand extends Command {
 						let itm = await item.generateItem(id,base,material,prefix,suffix);
 						if (rew.modify){ //Do final modifications to allow drops unique to monsters.
 							for (let mod of rew.modify){
-								if (itm.name.search(mod.baseName) > 0 && mod.chance > Math.random()){
+								if (mod.chance > Math.random() && itm.name.search(mod.baseName) != -1){
 									if (mod.newName) itm.name = itm.name.replace(mod.baseName,mod.newName);
 									if (mod.defenceModifier && itm.defence) itm.defence = Math.ceil(itm.defence*mod.defenceModifier);
 									if (mod.attackModifier && itm.attack) itm.attack = Math.ceil(mod.attackModifier*itm.attack);

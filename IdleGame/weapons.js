@@ -8,18 +8,37 @@ const f = require('../functions.js')
 
 
 module.exports = {
+	getBase: function(id){
+		for (let base of this.bases){
+			if (base.id == id) return base;
+		}
+	},
+
+	getPrefix: function(id){
+		for (let prefix of this.prefixes){
+			if (prefix.id == id) return prefix;
+		}
+	},
+
+	getSuffix: function(id){
+		for (let suffix of this.suffixes){
+			if (suffix.id == id) return suffix;
+		}
+	},
 
 //This is probably a terrible way of randomising with different weights, but I can't think of anything better rn.
 	randomisePrefix: function(base){
 		let prefixTbl = [];
 		for (let i of this.prefixes){
 			let canHave;
-			for (let j of i.types){
-				if (j == base.type) canHave = true;
-			}
-			if (canHave){
-				for (let j=0; j<i.abundance; j++){
-					prefixTbl.push(i); //Create table so we can give the correct probabilities
+			if (i.id > 0){
+				for (let j of i.types){
+					if (j == base.type) canHave = true;
+				}
+				if (canHave){
+					for (let j=0; j<i.abundance; j++){
+						prefixTbl.push(i); //Create table so we can give the correct probabilities
+					}
 				}
 			}
 		}
@@ -30,8 +49,10 @@ module.exports = {
 	randomiseSuffix: function(base){
 		let suffixTbl = [];
 		for (let i of this.suffixes){
-			for (let j=0; j<i.abundance; j++){
-				suffixTbl.push(i); //Create table so we can give the correct probabilities
+			if (i.id > 0){
+				for (let j=0; j<i.abundance; j++){
+					suffixTbl.push(i); //Create table so we can give the correct probabilities
+				}
 			}
 		}
 		num = Math.floor(Math.random()*suffixTbl.length);
@@ -542,6 +563,19 @@ module.exports = {
 		}
 	],
 	suffixes: [
+		{
+			id: 0,
+			name: 'Souls',
+			damage: 1.2,
+			value: 1.5,
+			abundance: 1,
+			overrideDamage: 'necrotic',
+			hitText: [
+				"CULTIST raises their ITEM and a dark ghostly aura emenates forward, draining ENEMY for",
+				"CULTIST chants under their breath and a dark ethereal hand burst from their ITEM, tearing through ENEMY for",
+				"CULTIST's eyes turn black and multiple withered arms brust from the ground around ENEMY, scratching them for"
+			]
+		},
 		{
 			id: 1,
 			name: 'Fire',
