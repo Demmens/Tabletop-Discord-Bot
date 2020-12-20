@@ -24,7 +24,17 @@ class Dragon extends Monster {
 					],
 					damage: 140,
 					chance: 0.3,
-					type: 'piercing'
+					type: 'piercing',
+					effects: [
+						{
+							effect: 'bleed',
+							chance: 0.8,
+							potency: 6,
+							duration: 2,
+							stat: 'con',
+							onHit: true
+						}
+					]
 				},
 				{
 					hit: [
@@ -37,7 +47,17 @@ class Dragon extends Monster {
 					damage: 120,
 					chance: 0.1,
 					type: 'fire',
-					targets: 3
+					targets: 3,
+					effects: [
+						{
+							effect: 'burn',
+							chance: 1.2,
+							potency: 8,
+							duration: 2,
+							stat: 'con',
+							onHit: true
+						}
+					]
 				},
 				{
 					hit: [
@@ -51,7 +71,17 @@ class Dragon extends Monster {
 					],
 					damage: 120,
 					chance: 0.5,
-					type: 'slashing'
+					type: 'slashing',
+					effects: [
+						{
+							effect: 'bleed',
+							chance: 0.6,
+							potency: 6,
+							duration: 2,
+							stat: 'con',
+							onHit: true
+						}
+					]
 				},
 				{
 					miss: [
