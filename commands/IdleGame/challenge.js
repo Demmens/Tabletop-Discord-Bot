@@ -614,9 +614,9 @@ class ChallengeCommand extends Command {
 				for (let char of initTbl){
 					if (char.name == attacker.name && char.id == attacker.id) char.hp = attacker.hp;
 				}
-				let emb = await generateAttackEmbed();
-				combatLog.edit(emb);
 				if (attacker.hp <= 0){
+					let emb = generateAttackEmbed();
+					combatLog.edit(emb);
 					f.removeA(initiativeTable, attacker);
 					init++
 					if (init >= initiativeTable.length) init = 0;
@@ -624,6 +624,8 @@ class ChallengeCommand extends Command {
 				}
 				if (log.length > logsize) log.splice(0,1);
 				if (effInfo.shouldEnd){
+					let emb = generateAttackEmbed();
+					combatLog.edit(emb);
 					init++;
 					if (init >= initiativeTable.length) init = 0;
 					return setTimeout(doAttack,4000, init);
