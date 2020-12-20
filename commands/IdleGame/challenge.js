@@ -578,7 +578,7 @@ class ChallengeCommand extends Command {
 			return emb;
 		}
 
-		function doAttack(init){
+		async function doAttack(init){
 			let attacker = initiativeTable[init];
 			let dmgInfo;
 			const logsize = 4;
@@ -611,12 +611,21 @@ class ChallengeCommand extends Command {
 			else { //If the attacker is a cultist.
 				let effInfo = triggerConditions(attacker); //Trigger conditions first.
 				if (effInfo.text != '') log.push(effInfo.text);
+				for (let char of initTbl){
+					if (char.name == attacker.name && char.id == attacker.id) char.hp = attacker.hp;
+				}
+				let emb = await generateAttackEmbed();
+				combatLog.edit(emb);
+				if (attacker.hp <= 0){
+					f.removeA(initiativeTable, attacker);
+					init++
+					if (init >= initiativeTable.length) init = 0;
+					return setTimeout(doAttack,4000,init);
+				}
 				if (log.length > logsize) log.splice(0,1);
 				if (effInfo.shouldEnd){
 					init++;
 					if (init >= initiativeTable.length) init = 0;
-					let emb = generateAttackEmbed();
-					combatLog.edit(emb)
 					return setTimeout(doAttack,4000, init);
 				}
 				let emptyhands = 0;
