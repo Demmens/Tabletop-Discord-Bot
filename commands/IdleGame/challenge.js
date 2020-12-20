@@ -169,13 +169,13 @@ class ChallengeCommand extends Command {
 		function triggerConditions(tgt){
 			let x = 0;
 			let effInfo = {}
-			let text = '';
+			let finaltext = '';
 			effInfo.shouldEnd = false;
 			for (let cond of tgt.conditions){
 				let hpchange = tgt.hp;
 				cond.trigger(tgt);
 				hpchange = hpchange - tgt.hp;
-				text = f.arrRandom(cond.text);
+				let text = f.arrRandom(cond.text);
 				text = text.replace('DMG', hpchange);
 				text = text.replace('CULTIST', tgt.name);
 				cond.timer++;
@@ -184,10 +184,12 @@ class ChallengeCommand extends Command {
 					text += (`\n▫️ The ${cond.name} on ${tgt.name} wears off.`)
 				}
 				text = `${cond.emote} ${text}`;
+				if (finaltext != '') finaltext += '\n';
+				finaltext += text;
 				if (cond.shouldEnd) effInfo.shouldEnd = true;
 				x++;
 			}
-			effInfo.text = text;
+			effInfo.text = finaltext;
 			return effInfo;
 		}
 
