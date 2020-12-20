@@ -325,7 +325,7 @@ class ChallengeCommand extends Command {
 				if (res == wep.dmgType) dmg = Math.floor(dmg/resistanceReduction);
 			}
 			for (let weak of monster.weaknesses){
-				if (weak == wep.dmgType) dmg *= weaknessIncrease;
+				if (weak == wep.dmgType) dmg = dmg*Math.ceil(weaknessIncrease);
 			}
 			if (base.hitText){
 				if (dmg == 0) text += f.arrRandom(base.missText);
