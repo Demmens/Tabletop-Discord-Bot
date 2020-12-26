@@ -11,8 +11,8 @@ class OfferCommand extends Command {
 		});
 	}
 	async exec(message, args) {
-		const us = message.author;
-		const ply = await f.getCult(us);
+		const us = `<@${message.author.id}>`;
+		const ply = await f.getCult(message.author);
 		const DB = this.client.db;
 		if (!ply) return
 		ply.money = Number(ply.money);

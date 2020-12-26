@@ -7,13 +7,24 @@ class sellArmourCommand extends Command {
 	constructor() {
 		super("sellArmour", {
 			aliases: ["sellArmour"],
-			description: 'Sell your lowest value armour.'
+			description: {
+				name: 'Sellarmour',
+				description: 'Bulk sell your armour.',
+				options: [
+					{
+						name: 'Keep',
+						description: 'How many pieces of armour to keep',
+						type: 4,
+						required: true
+					}
+				]
+			}
 		});
 	}
 	async *args(message){
-		const us = message.author;
+		const us = `<@${message.author.id}>`;
 		const DB = this.client.db;
-		var pl = await f.getCult(us);
+		var pl = await f.getCult(message.author);
 		pl.items = JSON.parse(pl.items);
 		if (pl.items.armour.length == 0) return message.channel.send(`${us} You do not own any armour.`)
 
@@ -69,7 +80,7 @@ class sellArmourCommand extends Command {
 			if (confirm == 0 && page != 0) page--;
 		}
 		if (confirm == 'yes'){
-			pl = await f.getCult(us);
+			pl = await f.getCult(message.author);
 			pl.items = JSON.parse(pl.items);
 			let x = 0;
 			for (let itm of pl.items.armour){

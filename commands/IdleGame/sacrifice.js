@@ -16,13 +16,13 @@ class SacrificeCommand extends Command {
 		});
 	}
 	async exec(message, args) {
-		const us = message.author;
-		if (talkedRecently.has(us.id)){
-			return message.delete();
+		const us = `<@${message.author.id}>`;
+		if (talkedRecently.has(message.author.id)){
+			return
 		}
 
 		const DB = this.client.db
-		let ply = await f.getCult(us);
+		let ply = await f.getCult(message.author);
 		if (!ply) return message.channel.send(`${us} You must create a cult before you can make sacrifices. Type /CreateCult to get started.`)
 		ply.sacrifices = Number(ply.sacrifices);
 		ply.sacrificemax = Number(ply.sacrificemax);
@@ -32,11 +32,9 @@ class SacrificeCommand extends Command {
 		if (ply.sacrifices >= ply.sacrificemax){
 			return message.channel.send(`${us} You do not have any more space to store sacrifices. /offer to offer them to the bot or increase your storage in the /shop.`)
 		}
-		talkedRecently.add(us.id);
+		talkedRecently.add(message.author.id);
 		
 		let newTot = ply.sacrifices + Math.ceil((ply.sacrificemultiplier+ (ply.percentsac * ply.sacrifices / 100))*ply.sacmult);			
-		console.log(`ply.percentsac = ${ply.percentsac}`);
-		console.log(`increase sacrifices = ${Math.ceil(ply.percentsac*ply.sacrificemax / 1000)}`)
 		if (newTot >= ply.sacrificemax){
 			newTot = ply.sacrificemax;
 		}
@@ -61,7 +59,7 @@ class SacrificeCommand extends Command {
 		let msg = await message.channel.send(`${us} Creating ${newIncrease} sacrifice${addS}.. `+ogBar);
 
 		setTimeout(async function() {
-			ply = await f.getCult(us);//Stuff can change in this amount of time, so make sure to re-obtain the player info.
+			ply = await f.getCult(message.author);//Stuff can change in this amount of time, so make sure to re-obtain the player info.
 			ply.sacrifices = Number(ply.sacrifices);
 			ply.sacrificemax = Number(ply.sacrificemax);
 			ply.sacrifices += newIncrease;
@@ -69,8 +67,8 @@ class SacrificeCommand extends Command {
 			if (newIncrease == 1){
 				msg.edit(`${us} Sacrifice complete. You have ${f.numberWithCommas(ply.sacrifices)}/${f.numberWithCommas(ply.sacrificemax)} total sacrifices.`)
 			} else{msg.edit(`${us} Sacrifices complete. You have ${f.numberWithCommas(ply.sacrifices)}/${f.numberWithCommas(ply.sacrificemax)} total sacrifices.`);}
-			f.writeCults(us.id,'sacrifices',BigInt(ply.sacrifices));
-			talkedRecently.delete(us.id);
+			f.writeCults(message.author.id,'sacrifices',BigInt(ply.sacrifices));
+			talkedRecently.delete(message.author.id);
 		}, sacSpeed);	
 
 		for (let i=1;i<barLength+1;i++){

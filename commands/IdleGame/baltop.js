@@ -8,7 +8,10 @@ class BaltopCommand extends Command {
 		super("Baltop", {
 			aliases: ["Baltop", "Leaderboards"],
 			args: [],
-			description: "View the money leaderboards"
+			description: {
+				name: 'Baltop',
+				description: 'View the top 10 players'
+			}
 		});
 	}
 	async exec(message, args) {

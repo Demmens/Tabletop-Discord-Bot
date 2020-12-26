@@ -13,15 +13,26 @@ class ChallengeCommand extends Command {
 	constructor() {
 		super("Challenge", {
 			aliases: ["challenge", "fight", "battle"],
-			description: "Challenge someone to a fight.",
-			cooldown: 5000
+			cooldown: 5000,
+			description: {
+				name: 'Fight',
+				description: 'Fight monsters for money and unique rewards!',
+				options: [
+					{
+						type: 4,
+						name: 'Level',
+						description: 'level of the combat you wish to fight. (Currently 0,1,2,3,7,10)',
+						required: true
+					}
+				]
+			}
 		});
 	}
 	async *args(message){
 		const DB = this.client.db;
-		const us = message.author;
-		if (challengedRecently.has(us.id)) return;
-		let ply = await f.getCult(us);
+		const us = `<@${message.author.id}>`;
+		if (challengedRecently.has(message.author.id)) return;
+		let ply = await f.getCult(message.author);
 		ply.cultists = JSON.parse(ply.cultists);
 		const highestLevel = 10;
 		const resistanceReduction = 1.5;
@@ -60,7 +71,7 @@ class ChallengeCommand extends Command {
 
 		if (characters.length == 0) return message.channel.send(`${us} You do not have any warriors. Assign some in the /cult`);
 
-		challengedRecently.add(us.id); //Make sure they can't spam the command.
+		challengedRecently.add(message.author.id); //Make sure they can't spam the command.
 
 		for (let war of characters){ //Determine front or backline
 			let secondPass = false; //If they have any melee weapon, they're on the front line
@@ -468,7 +479,7 @@ class ChallengeCommand extends Command {
 		}
 
 		async function giveRewards(monster){
-			ply = await f.getCult(us);
+			ply = await f.getCult(message.author);
 			ply.money = Number(ply.money);
 			ply.items = JSON.parse(ply.items);
 			let rewMessage = `${us} Your cultists defeat the monsters.\n__**Rewards**__\n`;
@@ -578,6 +589,23 @@ class ChallengeCommand extends Command {
 			return emb;
 		}
 
+		function endAttack(){
+			let emb = generateAttackEmbed();
+			combatLog.edit(emb);
+
+			if (totalMonsterHealth > 0 && totalCultistHealth > 0){ //If both sides are alive, move to next attack.
+				init++; 
+				if (init >= initiativeTable.length) init = 0;
+				setTimeout(doAttack,4000, init)
+			} else { //Otherwise stop.
+				challengedRecently.delete(message.author.id);
+				if (totalMonsterHealth <= 0){//if it's the monsters that have died, the cultists win
+					giveRewards(monster);
+				}
+				else message.channel.send(`${us} Monsters win.`) //Otherwise monsters win.
+			}
+		}
+
 		function doAttack(init){
 			let attacker = initiativeTable[init];
 			let dmgInfo;
@@ -613,11 +641,7 @@ class ChallengeCommand extends Command {
 				if (effInfo.text != '') log.push(effInfo.text);
 				if (log.length > logsize) log.splice(0,1);
 				if (effInfo.shouldEnd){
-					init++;
-					if (init >= initiativeTable.length) init = 0;
-					let emb = generateAttackEmbed();
-					combatLog.edit(emb)
-					return setTimeout(doAttack,4000, init);
+					return endAttack();
 				}
 				let emptyhands = 0;
 				let shouldAttack;
@@ -651,7 +675,6 @@ class ChallengeCommand extends Command {
 							let dt = dmgInfo.target.name;
 							log.push(`${skull} ${f.capitalise(dt)} dies.`)
 						}
-						console.log(`Attacking ${dmgInfo.target.name} (${dmgInfo.target.hp})`);
 						dmgInfo.target.hp -= dmgInfo.damage;
 						totalMonsterHealth -= dmgInfo.damage;
 						for (let char of initTbl){
@@ -661,20 +684,8 @@ class ChallengeCommand extends Command {
 					}
 				}
 			}
-			let emb = generateAttackEmbed();
-			combatLog.edit(emb);
 
-			if (totalMonsterHealth > 0 && totalCultistHealth > 0){ //If both sides are alive, keep going.
-				init++; 
-				if (init >= initiativeTable.length) init = 0;
-				setTimeout(doAttack,4000, init)
-			} else { //Otherwise stop.
-				challengedRecently.delete(us.id);
-				if (totalMonsterHealth <= 0){//if it's the monsters that have died, the cultists win
-					giveRewards(monster);
-				}
-				else message.channel.send(`${us} Monsters win.`) //Otherwise monsters win.
-			}
+			return endAttack();
 		}
 		let init = 0;	
 		doAttack(init);

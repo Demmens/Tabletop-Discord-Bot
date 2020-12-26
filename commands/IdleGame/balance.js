@@ -3,10 +3,10 @@ const Discord = require("discord.js");
 const f = require('../../functions.js');
 
 async function CreateBalanceEmbed(message, player){
-	ply = await f.getCult(player);
+	ply = (await f.runQuery(`select * from cults where owner_id = ${player}`)).rows[0];
 	if (!ply) return null;
 	let emb = new Discord.MessageEmbed()
-	.setTitle(`${player.displayName}'s Balance`)
+	.setTitle(`${ply.name}'s Balance`)
 	.setDescription(`Money: £${f.numberWithCommas(ply.money)}\nSacrifices: ${f.numberWithCommas(ply.sacrifices)}/${f.numberWithCommas(ply.sacrificemax)}\nResearch: ${f.numberWithCommas(ply.research)}`)
 
 	return emb;
@@ -16,27 +16,33 @@ class IGBalanceCommand extends Command {
 
 	constructor() {
 		super("Balance", {
-			aliases: ["Balance", "Bal"],
+			aliases: ["Balance"],
 			args: [
 				{
 					id: "player",
-					type: "memberMention"
 				}
 			],
-			description: "See how much money you have"
+			description: {
+				name: 'Balance',
+				description: 'Check your total money, sacrifices and research',
+				options: [
+					{
+						type: 6,
+						name: 'User',
+						description: 'View another persons balance',
+						required: true
+					}
+				]
+			}
 		});
 	}
 	async exec(message, args) {
-		const us = message.author;
-		let ply = message.member;
-		if (args.player) ply = args.player;
-		let emb = await CreateBalanceEmbed(message, ply);
+		const us = `<@${message.author.id}>`;
+		if (!args.player) return
+		let emb = await CreateBalanceEmbed(message, args.player);
 
-		if (ply.user.bot){
-			return message.channel.send(`${us} Bots do not trifle with human concepts such as money.`)
-		}
 		if (emb) return message.channel.send(emb);
-		else if (ply == message.member) return message.channel.send(`${us} You have not set up a cult yet. Type /CreateCult to get started.`);
+		else if (args.player == message.member.id) return message.channel.send(`${us} You have not set up a cult yet. Type /CreateCult to get started.`);
 		else return message.channel.send(`${us} That player does not own a cult.`)
 
 	}
