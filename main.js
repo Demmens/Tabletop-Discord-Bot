@@ -146,6 +146,7 @@ client.on("ready", async () => {
 	        message.content = command;
 	        message.author = interaction.member.user;
 	        message.channel = await client.channels.fetch(interaction.channel_id);
+	        message.guild = message.channel.guild;
 	        client.api.interactions(interaction.id, interaction.token).callback.post({
 	            data: {
 	                type: 5
