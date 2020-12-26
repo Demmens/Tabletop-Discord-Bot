@@ -7,7 +7,10 @@ class OfferCommand extends Command {
 		super("Offer", {
 			aliases: ["Offer"],
 			args: [],
-			description: "Appease the bot, lest it turn on the server."
+			description: {
+				name: 'offer',
+				description: 'Offer up your sacrifices to the almighty bot overlords, lest they turn on the server once again.'
+			}
 		});
 	}
 	async exec(message, args) {

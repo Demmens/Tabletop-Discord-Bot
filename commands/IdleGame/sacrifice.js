@@ -11,7 +11,10 @@ class SacrificeCommand extends Command {
 		super("Sacrifice", {
 			aliases: ["Sacrifice", "s"],
 			args: [],
-			description: "Appease the bot, lest it turn on the server.",
+			description: {
+				name: 'sacrifice',
+				description: 'Create a sacrifice.'
+			},
 			cooldown: sacTimeMin
 		});
 	}
