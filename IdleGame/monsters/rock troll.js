@@ -66,8 +66,8 @@ class RockTroll extends Monster{
 				},
 				{
 					name: 'Money',
-					minNumber: 5000,
-					maxNumber: 10000,
+					minNumber: 10000,
+					maxNumber: 40000,
 					chance: 1
 				}
 			]

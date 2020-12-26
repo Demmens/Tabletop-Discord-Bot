@@ -23,8 +23,18 @@ class Dragon extends Monster {
 						"CULTIST sees ENEMY's bite, and dodges."
 					],
 					damage: 140,
-					chance: 0.35,
-					type: 'piercing'
+					chance: 0.3,
+					type: 'piercing',
+					effects: [
+						{
+							effect: 'bleed',
+							chance: 0.8,
+							potency: 6,
+							duration: 2,
+							stat: 'con',
+							onHit: true
+						}
+					]
 				},
 				{
 					hit: [
@@ -37,7 +47,17 @@ class Dragon extends Monster {
 					damage: 120,
 					chance: 0.1,
 					type: 'fire',
-					targets: 3
+					targets: 3,
+					effects: [
+						{
+							effect: 'burn',
+							chance: 1.2,
+							potency: 8,
+							duration: 2,
+							stat: 'con',
+							onHit: true
+						}
+					]
 				},
 				{
 					hit: [
@@ -50,8 +70,35 @@ class Dragon extends Monster {
 						"The dragon's claws swipe at CULTIST, but they dodge."
 					],
 					damage: 120,
-					chance: 0.55,
-					type: 'slashing'
+					chance: 0.5,
+					type: 'slashing',
+					effects: [
+						{
+							effect: 'bleed',
+							chance: 0.6,
+							potency: 6,
+							duration: 2,
+							stat: 'con',
+							onHit: true
+						}
+					]
+				},
+				{
+					miss: [
+						"The dragon lets out an ear-shattering roar."
+					],
+					damage: 0,
+					chance: 0.1,
+					targets: 3,
+					effects: [
+						{
+							effect: 'fear',
+							chance: 1.5,
+							potency: 1,
+							duration: 1,
+							stat: 'wis'
+						}
+					]
 				}
 			],
 			drops: [

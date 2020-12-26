@@ -33,8 +33,8 @@ class Bandit extends Monster{
 				{
 					name: 'Money',
 					chance: 1,
-					minNumber: 2000,
-					maxNumber: 4000
+					minNumber: 7000,
+					maxNumber: 12000
 				},
 				{
 					name: 'Weapon',

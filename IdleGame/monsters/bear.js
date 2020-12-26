@@ -46,7 +46,7 @@ class Bear extends Monster{
 					name: 'Money',
 					chance: 1,
 					minNumber: 5000,
-					maxNumber: 10000
+					maxNumber: 25000
 				},
 				{
 					name: 'Armour',

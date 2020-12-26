@@ -13,26 +13,15 @@ class ChallengeCommand extends Command {
 	constructor() {
 		super("Challenge", {
 			aliases: ["challenge", "fight", "battle"],
-			cooldown: 5000,
-			description: {
-				name: 'Fight',
-				description: 'Fight monsters for money and unique rewards!',
-				options: [
-					{
-						type: 4,
-						name: 'Level',
-						description: 'level of the combat you wish to fight. (Currently 0,1,2,3,7,10)',
-						required: true
-					}
-				]
-			}
+			description: "Challenge someone to a fight.",
+			cooldown: 5000
 		});
 	}
 	async *args(message){
 		const DB = this.client.db;
-		const us = `<@${message.author.id}>`;
-		if (challengedRecently.has(message.author.id)) return;
-		let ply = await f.getCult(message.author);
+		const us = message.author;
+		if (challengedRecently.has(us.id)) return;
+		let ply = await f.getCult(us);
 		ply.cultists = JSON.parse(ply.cultists);
 		const highestLevel = 10;
 		const resistanceReduction = 1.5;
@@ -71,7 +60,7 @@ class ChallengeCommand extends Command {
 
 		if (characters.length == 0) return message.channel.send(`${us} You do not have any warriors. Assign some in the /cult`);
 
-		challengedRecently.add(message.author.id); //Make sure they can't spam the command.
+		challengedRecently.add(us.id); //Make sure they can't spam the command.
 
 		for (let war of characters){ //Determine front or backline
 			let secondPass = false; //If they have any melee weapon, they're on the front line
@@ -180,13 +169,13 @@ class ChallengeCommand extends Command {
 		function triggerConditions(tgt){
 			let x = 0;
 			let effInfo = {}
-			let text = '';
+			let finaltext = '';
 			effInfo.shouldEnd = false;
 			for (let cond of tgt.conditions){
 				let hpchange = tgt.hp;
 				cond.trigger(tgt);
 				hpchange = hpchange - tgt.hp;
-				text = f.arrRandom(cond.text);
+				let text = f.arrRandom(cond.text);
 				text = text.replace('DMG', hpchange);
 				text = text.replace('CULTIST', tgt.name);
 				cond.timer++;
@@ -195,10 +184,12 @@ class ChallengeCommand extends Command {
 					text += (`\n▫️ The ${cond.name} on ${tgt.name} wears off.`)
 				}
 				text = `${cond.emote} ${text}`;
+				if (finaltext != '') finaltext += '\n';
+				finaltext += text;
 				if (cond.shouldEnd) effInfo.shouldEnd = true;
 				x++;
 			}
-			effInfo.text = text;
+			effInfo.text = finaltext;
 			return effInfo;
 		}
 
@@ -390,8 +381,8 @@ class ChallengeCommand extends Command {
 							if (base.names.includes(b)) feasibleBase = true;
 						}
 					}
-				} else{
-					feasibleBase = true; //Otherwise use any base.
+				} else if (base.id > 0){
+					feasibleBase = true; //Otherwise use any base with id > 0.
 				}
 
 				if (feasibleBase){
@@ -462,7 +453,7 @@ class ChallengeCommand extends Command {
 						let itm = await item.generateItem(id,base,material,prefix,suffix);
 						if (rew.modify){ //Do final modifications to allow drops unique to monsters.
 							for (let mod of rew.modify){
-								if (itm.name.search(mod.baseName) > 0 && mod.chance > Math.random()){
+								if (mod.chance > Math.random() && itm.name.search(mod.baseName) != -1){
 									if (mod.newName) itm.name = itm.name.replace(mod.baseName,mod.newName);
 									if (mod.defenceModifier && itm.defence) itm.defence = Math.ceil(itm.defence*mod.defenceModifier);
 									if (mod.attackModifier && itm.attack) itm.attack = Math.ceil(mod.attackModifier*itm.attack);
@@ -479,7 +470,7 @@ class ChallengeCommand extends Command {
 		}
 
 		async function giveRewards(monster){
-			ply = await f.getCult(message.author);
+			ply = await f.getCult(us);
 			ply.money = Number(ply.money);
 			ply.items = JSON.parse(ply.items);
 			let rewMessage = `${us} Your cultists defeat the monsters.\n__**Rewards**__\n`;
@@ -589,24 +580,7 @@ class ChallengeCommand extends Command {
 			return emb;
 		}
 
-		function endAttack(){
-			let emb = generateAttackEmbed();
-			combatLog.edit(emb);
-
-			if (totalMonsterHealth > 0 && totalCultistHealth > 0){ //If both sides are alive, move to next attack.
-				init++; 
-				if (init >= initiativeTable.length) init = 0;
-				setTimeout(doAttack,4000, init)
-			} else { //Otherwise stop.
-				challengedRecently.delete(message.author.id);
-				if (totalMonsterHealth <= 0){//if it's the monsters that have died, the cultists win
-					giveRewards(monster);
-				}
-				else message.channel.send(`${us} Monsters win.`) //Otherwise monsters win.
-			}
-		}
-
-		function doAttack(init){
+		async function doAttack(init){
 			let attacker = initiativeTable[init];
 			let dmgInfo;
 			const logsize = 4;
@@ -639,9 +613,24 @@ class ChallengeCommand extends Command {
 			else { //If the attacker is a cultist.
 				let effInfo = triggerConditions(attacker); //Trigger conditions first.
 				if (effInfo.text != '') log.push(effInfo.text);
+				for (let char of initTbl){
+					if (char.name == attacker.name && char.id == attacker.id) char.hp = attacker.hp;
+				}
+				if (attacker.hp <= 0){
+					let emb = generateAttackEmbed();
+					combatLog.edit(emb);
+					f.removeA(initiativeTable, attacker);
+					init++
+					if (init >= initiativeTable.length) init = 0;
+					return setTimeout(doAttack,4000,init);
+				}
 				if (log.length > logsize) log.splice(0,1);
 				if (effInfo.shouldEnd){
-					return endAttack();
+					let emb = generateAttackEmbed();
+					combatLog.edit(emb);
+					init++;
+					if (init >= initiativeTable.length) init = 0;
+					return setTimeout(doAttack,4000, init);
 				}
 				let emptyhands = 0;
 				let shouldAttack;
@@ -684,8 +673,20 @@ class ChallengeCommand extends Command {
 					}
 				}
 			}
+			let emb = generateAttackEmbed();
+			combatLog.edit(emb);
 
-			return endAttack();
+			if (totalMonsterHealth > 0 && totalCultistHealth > 0){ //If both sides are alive, keep going.
+				init++; 
+				if (init >= initiativeTable.length) init = 0;
+				setTimeout(doAttack,4000, init)
+			} else { //Otherwise stop.
+				challengedRecently.delete(us.id);
+				if (totalMonsterHealth <= 0){//if it's the monsters that have died, the cultists win
+					giveRewards(monster);
+				}
+				else message.channel.send(`${us} Monsters win.`) //Otherwise monsters win.
+			}
 		}
 		let init = 0;	
 		doAttack(init);
