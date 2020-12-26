@@ -47,7 +47,7 @@ class IGShopCommand extends Command {
 		let armourConfirm;
 
 		const us = `<@${message.author.id}>`;
-		var ply = await f.getCult(us);
+		var ply = await f.getCult(message.author);
 		if (!ply) return message.channel.send(`${us} you must first create a cult. Type /CreateCult to get started`)
 		let query = `
 				SELECT * FROM itemshop
