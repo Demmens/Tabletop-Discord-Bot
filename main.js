@@ -4,6 +4,8 @@ const func = require('./functions.js');
 const jobloop = require('./IdleGame/jobs.js');
 const { Client } = require('pg');
 
+
+
 var token, prefix, testMode, pool, dbURL;
 try {
 	token = require("./token.json").key;
@@ -33,9 +35,9 @@ class MyClient extends AkairoClient {
 				prefix: prefix,
 				argumentDefaults:{
 					prompt:{
-						timeout: message => `${message.author} Time ran out, command has been cancelled.`,
-						cancel: message => `${message.author} Command has been cancelled.`,
-						ended: message => `${message.author} Too many retries, command has been cancelled.`,
+						timeout: message => `<@${message.author.id}> Time ran out, command has been cancelled.`,
+						cancel: message => `<@${message.author.id}> Command has been cancelled.`,
+						ended: message => `<@${message.author.id}> Too many retries, command has been cancelled.`,
 						retries: 4,
 						time: 30000
 					}
@@ -113,7 +115,47 @@ client.functions = require('./functions.js');
 
 client.ownerID = 144543622015090690;
 
-client.on("ready", () => {console.log('ready')});
+client.on("ready", async () => {
+	console.log('ready')
+	if (!testMode){
+		let categories = client.commandHandler.categories.filter(c => c.id !== 'default').sort((a, b) => a.size - b.size);
+		let commands = client.commandHandler.modules;
+		let [cmds,_] = client.commandHandler.categories;
+
+		for (let [id,cmd] of cmds[1]){
+			if (cmd.description.name){
+				client.api.applications(client.user.id).guilds('704330818834792499').commands.post({
+			        data: cmd.description
+			    });
+			}
+		}
+
+		
+
+	    client.ws.on('INTERACTION_CREATE', async interaction => {
+	       	var command = prefix + interaction.data.name.toLowerCase();
+	       	const args = interaction.data.options;
+	        if (args){
+		        for (let arg of args){
+					command += ` ${arg.value}`;
+		        }
+		    }
+		    console.log(`full command = ${command}`)
+	        var message = {}; //Create artificial message.
+	        message.member = interaction.member;
+	        message.content = command;
+	        message.author = interaction.member.user;
+	        message.channel = await client.channels.fetch(interaction.channel_id);
+	        message.guild = message.channel.guild;
+	        client.api.interactions(interaction.id, interaction.token).callback.post({
+	            data: {
+	                type: 5
+	            }
+	        })
+	        client.commandHandler.handle(message); //Act as if that message was sent by that user in that channel.
+	    });
+	}
+});
 
 client.testMode = testMode;
 

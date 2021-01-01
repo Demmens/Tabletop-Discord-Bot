@@ -9,7 +9,10 @@ class IGShopCommand extends Command {
 	constructor() {
 		super("Shop", {
 			aliases: ["Shop"],
-			description: "Buy things"
+			description: {
+				name: 'shop',
+				description: 'Buy things'
+			}
 		});
 	}
 	async *args(message){
@@ -43,8 +46,8 @@ class IGShopCommand extends Command {
 		let arm;
 		let armourConfirm;
 
-		const us = message.author;
-		var ply = await f.getCult(us);
+		const us = `<@${message.author.id}>`;
+		var ply = await f.getCult(message.author);
 		if (!ply) return message.channel.send(`${us} you must first create a cult. Type /CreateCult to get started`)
 		let query = `
 				SELECT * FROM itemshop
@@ -168,7 +171,7 @@ class IGShopCommand extends Command {
 				SET 
 				money = ${ply.money},
 				cultists = '${JSON.stringify(plyCultists)}'
-				WHERE owner_id = ${us.id}
+				WHERE owner_id = ${ply.id}
 				`;
 				DB.query(query);
 				return message.channel.send(`${us} Successfully hired ${cultistMenu.name}`);
@@ -240,7 +243,7 @@ class IGShopCommand extends Command {
 				if (ply.money < upgr.cost){
 					return message.channel.send(`${us} You cannot afford that upgrade.`);
 				}
-				ply = await f.getCult(us); //A lot can have changed in response times.
+				ply = await f.getCult(message.author); //A lot can have changed in response times.
 				ply.money = Number(ply.money);
 				ply.upgrades = JSON.parse(ply.upgrades);
 				upgr.onBuy(ply);

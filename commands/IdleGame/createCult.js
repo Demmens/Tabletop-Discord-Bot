@@ -6,13 +6,24 @@ class CreateCultCommand extends Command {
 	constructor() {
 		super("CreateCult", {
 			aliases: ["CreateCult", "NewCult", "StartCult"],
-			description: "Create a cult to devote your life to the bot.",
-			cooldown: 5000
+			cooldown: 5000,
+			description: {
+				name: 'Createcult',
+				description: 'Creates your cult',
+				options: [
+					{
+						name: 'Name',
+						description: 'Max 50 characters.',
+						type: 5,
+						required: true
+					}
+				]
+			}
 		});
 	}
 	async *args(message){
-		let us = message.author;
-		const ply = await f.getCult(us);
+		let us = `<@${message.author.id}>`;
+		const ply = await f.getCult(message.author);
 		if (ply) return `${us} You already have a cult.`
 
 		const name = yield{
@@ -28,7 +39,7 @@ class CreateCultCommand extends Command {
 	}
 	async exec(message, args) {
 		if (args.name){
-			const us = message.author;
+			const us = message.author.toString();
 
 			
 			let firstCultist = f.CreateCultist();
@@ -37,7 +48,7 @@ class CreateCultCommand extends Command {
 			cultists.push(firstCultist);
 			let query = `
 			INSERT INTO cults(owner_id,name, cultists)
-			VALUES (${us.id},'${args.name}', '${JSON.stringify(cultists)}')
+			VALUES (${message.author.id},'${args.name}', '${JSON.stringify(cultists)}')
 			`
 
 			await this.client.db.query(query);

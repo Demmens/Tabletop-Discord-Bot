@@ -10,14 +10,17 @@ class CultCommand extends Command {
 	constructor() {
 		super("Cult", {
 			aliases: ["Cult"],
-			description: "Manage your cult."
+			description: {
+				name: 'Cult',
+				description: 'Manage your cult'
+			}
 		});
 	}
 	async *args(message){
 		const DB = this.client.db;
-		const us = message.author;
+		const us = `<@${message.author.id}>`;
 		const mem = message.member;
-		var pl = await f.getCult(us);
+		var pl = await f.getCult(message.author);
 		if (!pl) return message.channel.send(`${us} You don't have a cult. Type /CreateCult to get started.`);
 		pl.rewards = JSON.parse(pl.rewards);
 		let rew = '';
@@ -174,7 +177,7 @@ class CultCommand extends Command {
 				}
 				if (action == 4){ //Menu - Cultists - Equip
 					while (true){
-						let pl = await f.getCult(us);
+						let pl = await f.getCult(message.author);
 						pl.cultists = JSON.parse(pl.cultists);
 						cultist = pl.cultists[cultistNum];
 						pl.items = JSON.parse(pl.items);
@@ -270,7 +273,7 @@ class CultCommand extends Command {
 								if (chooseEquip > pageSize) page++;//Create pages for equippable items
 							}
 							chooseEquip += (page*pageSize);
-							pl = await f.getCult(us); //Now time has passed, so we need to regain info in case it changed.
+							pl = await f.getCult(message.author); //Now time has passed, so we need to regain info in case it changed.
 							pl.items = JSON.parse(pl.items);
 							pl.cultists = JSON.parse(pl.cultists);
 							for (let ct of pl.cultists){
@@ -376,7 +379,7 @@ class CultCommand extends Command {
 						}
 					}
 					if (confirmSell == 'yes'){
-						pl = await f.getCult(us);
+						pl = await f.getCult(message.author);
 						pl.money = Number(pl.money);
 						pl.cultists = JSON.parse(pl.cultists);
 						message.channel.send(`${us} Successfully sold ${cultist.name} for £${f.numberWithCommas(cultist.value/2)}`);
@@ -494,7 +497,7 @@ class CultCommand extends Command {
 							prompt: true
 						}
 					}
-					pl = await f.getCult(us);
+					pl = await f.getCult(message.author);
 					pl.items = JSON.parse(pl.items);
 					pl.cultists = JSON.parse(pl.cultists);
 					eqCultist--;
@@ -661,7 +664,7 @@ class CultCommand extends Command {
 						}
 					}
 					if (reforgeItm == 'yes'){
-						pl = await f.getCult(us);
+						pl = await f.getCult(message.author);
 						pl.items = JSON.parse(pl.items);
 						pl.money = Number(pl.money);
 						if (itm.value >= pl.money){
@@ -670,7 +673,7 @@ class CultCommand extends Command {
 						else{
 							if (itm.damage){ //Have to do weapons and armour separately for this one.
 								let wep;
-								let pl = await f.getCult(us);
+								let pl = await f.getCult(message.author);
 								pl.items = JSON.parse(pl.items);
 								pl.money = Number(pl.money);
 								for (let weapon of pl.items.weapons){
@@ -734,7 +737,7 @@ class CultCommand extends Command {
 					}
 
 					if (sellItm == 'yes'){
-						pl = await f.getCult(us);
+						pl = await f.getCult(message.author);
 						pl.items = JSON.parse(pl.items);
 						pl.money = Number(pl.money);
 						let equipTbl;

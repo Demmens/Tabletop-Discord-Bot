@@ -19,9 +19,9 @@ class ChallengeCommand extends Command {
 	}
 	async *args(message){
 		const DB = this.client.db;
-		const us = message.author;
-		if (challengedRecently.has(us.id)) return;
-		let ply = await f.getCult(us);
+		const us = `<@${message.author.id}>`;
+		if (challengedRecently.has(message.author.id)) return;
+		let ply = await f.getCult(message.author);
 		ply.cultists = JSON.parse(ply.cultists);
 		const highestLevel = 10;
 		const resistanceReduction = 1.5;
@@ -60,7 +60,7 @@ class ChallengeCommand extends Command {
 
 		if (characters.length == 0) return message.channel.send(`${us} You do not have any warriors. Assign some in the /cult`);
 
-		challengedRecently.add(us.id); //Make sure they can't spam the command.
+		challengedRecently.add(message.author.id); //Make sure they can't spam the command.
 
 		for (let war of characters){ //Determine front or backline
 			let secondPass = false; //If they have any melee weapon, they're on the front line
@@ -470,7 +470,7 @@ class ChallengeCommand extends Command {
 		}
 
 		async function giveRewards(monster){
-			ply = await f.getCult(us);
+			ply = await f.getCult(message.author);
 			ply.money = Number(ply.money);
 			ply.items = JSON.parse(ply.items);
 			let rewMessage = `${us} Your cultists defeat the monsters.\n__**Rewards**__\n`;
@@ -681,7 +681,7 @@ class ChallengeCommand extends Command {
 				if (init >= initiativeTable.length) init = 0;
 				setTimeout(doAttack,4000, init)
 			} else { //Otherwise stop.
-				challengedRecently.delete(us.id);
+				challengedRecently.delete(message.author.id);
 				if (totalMonsterHealth <= 0){//if it's the monsters that have died, the cultists win
 					giveRewards(monster);
 				}
