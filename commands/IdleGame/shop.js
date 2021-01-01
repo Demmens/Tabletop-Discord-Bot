@@ -171,7 +171,7 @@ class IGShopCommand extends Command {
 				SET 
 				money = ${ply.money},
 				cultists = '${JSON.stringify(plyCultists)}'
-				WHERE owner_id = ${ply.id}
+				WHERE owner_id = ${ply.owner_id}
 				`;
 				DB.query(query);
 				return message.channel.send(`${us} Successfully hired ${cultistMenu.name}`);
