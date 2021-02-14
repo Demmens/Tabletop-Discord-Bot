@@ -13,6 +13,7 @@ class RpJoinCommand extends Command {
 	*args(message){
 		let gamesStr = '';
 		let x = 0;
+		games = [];
 
 		for (let [_,chnl] of message.guild.channels.cache){ //Search channels
 			if (chnl.name == 'active-games' && chnl.parent.name.toUpperCase() == 'ROLEPLAY'){//Find the games
@@ -61,7 +62,7 @@ class RpJoinCommand extends Command {
 
 			for (let i of embed.fields){
 				let split = i.name.split(" ")
-				if (split[0] == "Players"){ //Split[1] = (x/n), x = current players, n = max players.
+				if (split[0] == "Players"){ //split[1] = "(x/n)", x = current players, n = max players.
 					split = split[1].split(/\D/);
 					let cur = parseInt(split[1]);
 					let tot = parseInt(split[2]);
@@ -82,7 +83,7 @@ class RpJoinCommand extends Command {
 						emb = embed;
 						emb.fields[1].name = name;
 						emb.fields[1].value = val;
-						games[args.gameName-1].edit(emb)
+						games[args.gameName-1].edit(emb);
 					}
 				}
 			}

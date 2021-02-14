@@ -14,7 +14,7 @@ class CreateCultCommand extends Command {
 					{
 						name: 'Name',
 						description: 'Max 50 characters.',
-						type: 5,
+						type: 3,
 						required: true
 					}
 				]

@@ -140,7 +140,6 @@ client.on("ready", async () => {
 					command += ` ${arg.value}`;
 		        }
 		    }
-		    console.log(`full command = ${command}`)
 	        var message = {}; //Create artificial message.
 	        message.member = interaction.member;
 	        message.content = command;
