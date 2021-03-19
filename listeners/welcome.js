@@ -13,7 +13,7 @@ class WelcomeListener extends Listener {
 
 	exec(member) {
 		if (!this.client.testMode) {
-			member.guild.systemChannel.send(`Welcome to the **${member.guild.name}** server, ${member}! Go to the ${message.guild.channels.cache.get('769131551828869130').toString()} channel to gain access to the various parts of the society!`);
+			member.guild.systemChannel.send(`Welcome to the **${member.guild.name}** server, ${member}! Go to the ${member.guild.channels.cache.get('769131551828869130').toString()} channel to gain access to the various parts of the society!`);
 		}
 	}
 }
