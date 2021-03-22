@@ -446,7 +446,7 @@ class rpEditCommand extends Command {
 				return message.channel.send(`${us} Successfully changed time and date.`)
 			}
 			if (args.verify){
-				if (args.verify == 'yes'){
+				if (args.verify.toLowerCase() == 'yes'){
 					await gmMsg.delete();
 
 					for (let ch of gmChns){
@@ -488,7 +488,7 @@ class rpEditCommand extends Command {
 				return message.channel.send(`${us} Your channel has successfully been renamed.`);
 			}
 			if (args.verifyCh){
-				if (args.verifyCh == 'yes'){
+				if (args.verifyCh.toLowerCase() == 'yes'){
 					args.channel.delete();
 					return message.channel.send(`${us} Your channel has successfully been deleted.`)
 				} else {
@@ -496,7 +496,7 @@ class rpEditCommand extends Command {
 				}
 			}
 			if (args.kickPly){
-				if (args.verifyKick == 'yes'){
+				if (args.verifyKick.toLowerCase() == 'yes'){
 					args.kickPly.roles.remove(plRole);
 
 					for (let i of gmMsg.embeds[0].fields){
