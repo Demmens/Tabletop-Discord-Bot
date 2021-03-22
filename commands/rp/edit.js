@@ -447,7 +447,7 @@ class rpEditCommand extends Command {
 			}
 			if (args.verify){
 				if (args.verify.toLowerCase() == 'yes'){
-					await gmMsg.delete();
+					if (gmMsg) await gmMsg.delete();
 
 					for (let ch of gmChns){
 						await ch.delete();
