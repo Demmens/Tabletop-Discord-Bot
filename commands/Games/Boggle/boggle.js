@@ -270,7 +270,6 @@ class BoggleCommand extends Command {
 		{
 			let ply = message.member;
 			let word = message.content.toLowerCase();
-			console.log(word);
 			if (!guessedWords.includes(word) && possibleWordsArr.includes(word)) //Correct guess
 			{
 
@@ -278,15 +277,12 @@ class BoggleCommand extends Command {
 				guessedWords.push(word);
 				possibleWordsMsg = possibleWordsMsg.replace(`\n${word}\n`, `\n${word} (${message.member.displayName})\n`);
 				let wordlength = Math.min(8,word.length);
-				console.log(`word length: ${wordlength}`);
-				console.log(`score: ${wordValues[wordlength]}`);
 				for (let score of scores)
 				{
 					if (score.player == ply)
 					{
 						hasUser = true;
 						score.score += wordValues[wordlength];
-						console.log(score.score);
 					}
 				}
 				if (!hasUser)
