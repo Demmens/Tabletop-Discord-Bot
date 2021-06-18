@@ -21,7 +21,6 @@ class mcListener extends Listener {
         {
             for (let [_,gld] of this.client.guilds.cache)
             {
-                console.log(gld.id);
                 if (gld.id == pizzaTimeId)
                 {
                     for (let [_,chnl] of gld.channels.cache)
