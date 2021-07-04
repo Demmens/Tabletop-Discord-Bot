@@ -12,42 +12,37 @@ class BoggleCommand extends Command {
 		});
 	}
 	async exec(message, args) {
-		let data = fs.readFileSync('./Commands/Games/Boggle/words.txt', {encoding: 'utf8'});
+		let data = fs.readFileSync('./Commands/Games/Boggle/words.txt', {encoding: 'utf8'}); //https://drive.google.com/file/d/1oGDf1wjWp5RF_X9C7HoedhIWMh5uJs8s/view
 		let words = data.replace(/\r/gi, '').split('\n');
 		const emojis = {
 	        a: '🇦', b: '🇧', c: '🇨', d: '🇩',
 	        e: '🇪', f: '🇫', g: '🇬', h: '🇭',
 	        i: '🇮', j: '🇯', k: '🇰', l: '🇱',
 	        m: '🇲', n: '🇳', o: '🇴', p: '🇵',
-	        q: '🇶', r: '🇷', s: '🇸', t: '🇹',
+	        q: '<:Qu:855707640603869204>', r: '🇷', s: '🇸', t: '🇹',
 	        u: '🇺', v: '🇻', w: '🇼', x: '🇽',
-	        y: '🇾', z: '🇿', 0: '0⃣', 1: '1⃣',
-	        2: '2⃣', 3: '3⃣', 4: '4⃣', 5: '5⃣',
-	        6: '6⃣', 7: '7⃣', 8: '8⃣', 9: '9⃣',
-	        10: '🔟', '#': '#⃣', '*': '*⃣',
-	        '!': '❗', '?': '❓', '+': '➕',
-	        '-': '➖', '$': '💲', '>': '▶️',
-	        '<': '◀️', ' ': ' '
+	        y: '🇾', z: '🇿'
 	    }
 		let dice = [
-			"R I F O B X",
-			"I F E H E Y",
-			"D E N O W S",
-			"U T O K N D",
-			"H M S R A O",
-			"L U P E T S",
-			"A C I T O A",
-			"Y L G K U E",
-			"Q B M J O A",
-			"E H I S P N",
-			"V E T I G N",
-			"B A L I Y T",
-			"E Z A V N D",
-			"R A L E S C",
-			"U W I L R G",
-			"P A C E M D"
+			"AAEEGN", //credit to http://www.robertgamble.net/2016/01/a-programmers-analysis-of-boggle.html for dice values
+			"ELRTTY",
+			"AOOTTW",
+			"ABBJOO",
+			"EHRTVW",
+			"CIMOTU",
+			"DISTTY",
+			"EIOSST",
+			"DELRVY",
+			"ACHOPS",
+			"HIMNQU",
+			"EEINSU",
+			"EEGHNW",
+			"AFFKPS",
+			"HLNNRZ",
+			"DEILRX"
 		];
 
+		let mode = false;
 		let diceOrder = f.arrRandomise(dice);
 
 		let msg = "";
@@ -55,7 +50,7 @@ class BoggleCommand extends Command {
 		let boggleArray = [];
 		for (let die of diceOrder)
 		{
-			let letterArr = die.split(" ");
+			let letterArr = die.split("");
 			let ranLetter = f.arrRandom(letterArr).toLowerCase();
 			msg += emojis[ranLetter] + " ";
 			boggleArray.push(ranLetter);
@@ -229,16 +224,29 @@ class BoggleCommand extends Command {
 			}
 		}
 		let timeUp = false;
-		message.channel.send(msg);
+		let canSubmit = false;
+		await message.channel.send(msg);
 
-		setTimeout(function(){
+		const timeLimit = 60000;
+		const submitTime = 2000;
+		let deadline;
+
+		setTimeout(function()
+		{
+			message.channel.send("**SUBMIT YOUR ANSWERS NOW!**");
+			deadline = new Date().getTime() + submitTime;
+			canSubmit = true;
+		}, timeLimit);
+
+		setTimeout(function()
+		{
 			fs.writeFileSync("./Commands/Games/Boggle/SPOILER_FILE.txt", possibleWordsMsg);
 			timeUp=true;
 
-			if (scores.length != 0)
+			if (scores.length != 0 && mode)
 			{
 				let scoreDesc = "";
-				scores.sort((a,b) => {return b-a});
+				scores.sort((a,b) => {return b.score-a.score});
 				for (let score of scores)
 				{
 					scoreDesc += `${score.player.user} - ${score.score}\n`
@@ -247,17 +255,16 @@ class BoggleCommand extends Command {
 				.setDescription(scoreDesc)
 				.setTitle("**SCORES**");
 				message.channel.send(emb);
-			}
-			message.channel.send({
-				content:`**${possibleWordsArr.length} possible words**:`,
-				files:["./Commands/Games/Boggle/SPOILER_FILE.txt"]
-			});
-		},60000);
+			}			
+		},timeLimit+submitTime);
 
 		let guessedWords = [];
+		let duplicateGuesses = [];
 		let scores = [];
 
 		let wordValues = {
+			1:0,
+			2:0,
 			3:1,
 			4:1,
 			5:2,
@@ -266,47 +273,126 @@ class BoggleCommand extends Command {
 			8:11
 		}
 
-		function guessWord(message)
+		function guessWord(word, ply)
 		{
-			let ply = message.member;
-			let word = message.content.toLowerCase();
-			if (!guessedWords.includes(word) && possibleWordsArr.includes(word)) //Correct guess
+			let wordlength = Math.min(8,word.length);
+			if (mode) //Race mode
 			{
-
-				let hasUser = false;
-				guessedWords.push(word);
-				possibleWordsMsg = possibleWordsMsg.replace(`\n${word}\n`, `\n${word} (${message.member.displayName})\n`);
-				let wordlength = Math.min(8,word.length);
-				for (let score of scores)
+				if (!guessedWords.includes(word) && possibleWordsArr.includes(word)) //Correct guess
 				{
-					if (score.player == ply)
+	
+					let hasUser = false;
+					guessedWords.push(word);
+					possibleWordsMsg = possibleWordsMsg.replace(`\n${word}\n`, `\n${word} (${message.member.displayName})\n`);
+					for (let score of scores)
 					{
-						hasUser = true;
-						score.score += wordValues[wordlength];
+						if (score.player == ply)
+						{
+							hasUser = true;
+							score.score += wordValues[wordlength];
+						}
+					}
+					if (!hasUser)
+					{
+						scores.push({
+							player: ply,
+							score: wordValues[wordlength]
+						})
 					}
 				}
-				if (!hasUser)
-				{
-					scores.push({
-						player: ply,
-						score: wordValues[wordlength]
-					})
-				}
-			}
-
-			if (message.author.id != 708801223083556898)
-			{
-				message.delete();
 			}
 		}
 
+		let playerWords = [];
 		while (!timeUp)
 		{
 			let filter = m => !m.content.includes(" ");
-            let guess = await message.channel.awaitMessages(filter, { max: 1, time: 45*1000});
+			let guess = (await message.channel.awaitMessages(filter, { max: 1, time: deadline - new Date().getTime()})).first();
+			if (guess)
+			{
+				if (mode)
+				{
+					guessWord(guess.content.toLowerCase(), guess.member);
+					if (guess.author.id != 708801223083556898)
+					{
+						guess.delete();
+					}
+				}
+				if (canSubmit)
+				{
+					let words = guess.content.split("\n");
+					words.sort((a,b) => {
+						if (a.length > b.length) return -1;
+						if (a.length < b.length) return 1;
+						if (a.length == b.length)
+						{
+							if (a>b) return 1;
+							if (a<b) return -1;
+						}
+					})
+					let alreadySubmitted = false
+					for (let ply of playerWords) //Check if they've submitted already
+					{
+						if (ply.player == guess.member) alreadySubmitted = true;
+					}
 
-			guessWord(guess.first());
+					if (!alreadySubmitted)
+					{
+						playerWords.push(
+							{
+								player: guess.member,
+								words: words
+							}
+						);
+						for (let word of words)
+						{
+							if (!guessedWords.includes(word.toLowerCase())) guessedWords.push(word.toLowerCase()); //Create a list of unique guessed words
+							else duplicateGuesses.push(word.toLowerCase());
+						}
+					}
+				}
+			}
 		}
+
+		if (!mode)
+		{
+			if (playerWords.length == 0) return message.channel.send("Nobody submitted their words in time!")
+			for (let ply of playerWords)
+			{
+				let score = 0;
+				let uniqueWords = "";
+				for (let word of ply.words)
+				{
+					if (!duplicateGuesses.includes(word.toLowerCase()) && possibleWordsArr.includes(word.toLowerCase()))
+					{
+						score += wordValues[Math.min(8,word.length)];
+						uniqueWords += `${word.toLowerCase()}\n`;
+					}
+				}
+				scores.push({
+					player: ply.player,
+					score: score,
+					words: uniqueWords
+				});
+			}
+			scores.sort((a,b) => {return b.score-a.score});
+			let desc = "";
+			for (let score of scores)
+			{
+				desc += `**${score.player} - ${score.score}**\n${score.words}`;
+			}
+
+			let emb = new Discord.MessageEmbed()
+			.setTitle("**SCORES**")
+			.setDescription(desc);
+			message.channel.send(emb);
+		}
+		
+
+		message.channel.send({
+			content:`**${possibleWordsArr.length} possible words**:`,
+			files:["./Commands/Games/Boggle/SPOILER_FILE.txt"]
+		});
 	}
 }
 

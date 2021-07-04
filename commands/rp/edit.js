@@ -19,7 +19,6 @@ class rpEditCommand extends Command {
 		gmRls = [];
 		for (let [_,rl] of message.member.roles.cache){ //make a table of all their games they gm
 			if (rl.hexColor == RP_COLOUR && rl.name.slice(rl.name.length-3) == ' GM'){
-				console.log('ping')
 				gmRls.push(rl.name.slice(0, rl.name.length-3));
 			}
 		}
