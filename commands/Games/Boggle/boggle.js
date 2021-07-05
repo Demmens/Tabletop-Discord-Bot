@@ -2,8 +2,6 @@ const { Command } = require("discord-akairo");
 const f = require('../../../functions.js');
 const fs = require('fs');
 const Discord = require("discord.js");
-const test = fs.readFileSync(__dirname+"/SPOILER_FILE.txt");
-const test2 = fs.readFileSync(__dirname+"/words.txt");
 
 class BoggleCommand extends Command {
 	constructor() {
@@ -242,6 +240,8 @@ class BoggleCommand extends Command {
 
 		setTimeout(function()
 		{
+			const test = fs.readFileSync(__dirname+"/SPOILER_FILE.txt");
+			console.log(test);
 			fs.writeFileSync(__dirname+"/SPOILER_FILE.txt", possibleWordsMsg);
 			timeUp=true;
 
