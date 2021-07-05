@@ -2,8 +2,8 @@ const { Command } = require("discord-akairo");
 const f = require('../../../functions.js');
 const fs = require('fs');
 const Discord = require("discord.js");
-const test = require(__dirname+"/SPOILER_FILE.txt");
-const test2 = require(__dirname+"/words.txt");
+const test = fs.readFileSync(__dirname+"/SPOILER_FILE.txt");
+const test2 = fs.readFileSync(__dirname+"/words.txt");
 
 class BoggleCommand extends Command {
 	constructor() {
