@@ -12,6 +12,7 @@ class BoggleCommand extends Command {
 		});
 	}
 	async exec(message, args) {
+		await fs.writeFile(__dirname+"/SPOILER_FILE.txt", "hm", function(){});
 		let data = fs.readFileSync(__dirname+'/words.txt', {encoding: 'utf8'}); //https://drive.google.com/file/d/1oGDf1wjWp5RF_X9C7HoedhIWMh5uJs8s/view
 		let words = data.replace(/\r/gi, '').split('\n');
 		const emojis = {
@@ -238,11 +239,11 @@ class BoggleCommand extends Command {
 			canSubmit = true;
 		}, timeLimit);
 
-		setTimeout(function()
+		setTimeout(async function()
 		{
 			const test = fs.readFileSync(__dirname+"/SPOILER_FILE.txt");
 			console.log(test);
-			fs.writeFileSync(__dirname+"/SPOILER_FILE.txt", possibleWordsMsg);
+			await fs.writeFile(__dirname+"/SPOILER_FILE.txt", possibleWordsMsg);
 			timeUp=true;
 
 			if (scores.length != 0 && mode)
