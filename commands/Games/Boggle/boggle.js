@@ -12,7 +12,7 @@ class BoggleCommand extends Command {
 		});
 	}
 	async exec(message, args) {
-		let data = fs.readFileSync('.\\Commands\\Games\\Boggle\\words.txt', {encoding: 'utf8'}); //https://drive.google.com/file/d/1oGDf1wjWp5RF_X9C7HoedhIWMh5uJs8s/view
+		let data = fs.readFileSync(__dirname+'/words.txt', {encoding: 'utf8'}); //https://drive.google.com/file/d/1oGDf1wjWp5RF_X9C7HoedhIWMh5uJs8s/view
 		let words = data.replace(/\r/gi, '').split('\n');
 		const emojis = {
 	        a: '🇦', b: '🇧', c: '🇨', d: '🇩',
@@ -240,7 +240,7 @@ class BoggleCommand extends Command {
 
 		setTimeout(function()
 		{
-			fs.writeFileSync("./Commands/Games/Boggle/SPOILER_FILE.txt", possibleWordsMsg);
+			fs.writeFileSync(__dirname+"/SPOILER_FILE.txt", possibleWordsMsg);
 			timeUp=true;
 
 			if (scores.length != 0 && mode)
