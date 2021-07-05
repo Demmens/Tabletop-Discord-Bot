@@ -391,7 +391,7 @@ class BoggleCommand extends Command {
 
 		message.channel.send({
 			content:`**${possibleWordsArr.length} possible words**:`,
-			files:["./Commands/Games/Boggle/SPOILER_FILE.txt"]
+			files:[__dirname+"/SPOILER_FILE.txt"]
 		});
 	}
 }
