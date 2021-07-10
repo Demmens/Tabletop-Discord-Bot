@@ -41,6 +41,8 @@ class ReactRoleAddListener extends Listener {
 						rlName = "She/Her";
 					} else if (messageReaction.emoji.name == config.emoji_letters[19]){
 						rlName = "They/Them";
+					} else if (messageReaction.emoji.name == config.emoji_letters[23]){
+						rlName = "Xe/Xem/Xyr";
 					}
 					for (let [_, role] of message.guild.roles.cache){
 						if ((role.name == rlName)){
