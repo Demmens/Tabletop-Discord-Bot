@@ -5,12 +5,12 @@ class DiceCommand extends Command {
 		super("dice", {
 			args: [{id: "message", type: "string", match: "content"}],
 			description: "Rolls dice",
-			regex: /^\/\d*d\d*/i
+			regex: /^\!\d*d\d*/i
 		});
 	}
 	exec(message, args) {
 		let cont = message.content;
-		let arr = cont.split(/ |\\|\/|(?<=\D)(?=\d+)|(?<=\d)(?=\D+)/); //split string into an array of numbers and words while deleting spaces.
+		let arr = cont.split(/ |\!|(?<=\D)(?=\d+)|(?<=\d)(?=\D+)/); //split string into an array of numbers and words while deleting spaces.
 		let dice; //Dice is the number of sides on the dice		
 		let num; //Num is how many dice to roll
 		let rolls = [];
