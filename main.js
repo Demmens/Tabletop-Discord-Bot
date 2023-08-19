@@ -1,25 +1,21 @@
 const { AkairoClient, CommandHandler, InhibitorHandler, ListenerHandler } = require("discord-akairo");
 const config = require("./config.js");
 const func = require('./functions.js');
-const jobloop = require('./IdleGame/jobs.js');
-const { Client } = require('pg');
 
 
 
-var token, prefix, testMode, pool, dbURL;
+var token, prefix, testMode;
 try {
 	token = require("./token.json").key;
 	console.log("Starting using locally stored value for token...");
 	prefix = config.test_prefix;
 	testMode = true;
-	dbURL = require('./token.json').dbURL;
 }
 catch(error) {
 	token = process.env.TOKEN;
 	console.log("Starting using token stored on Heroku...");
 	prefix = config.main_prefix;
 	testMode = false;
-	dbURL = process.env.DATABASE_URL;
 }
 
 class MyClient extends AkairoClient {
@@ -91,25 +87,6 @@ class MyClient extends AkairoClient {
 }
 
 const client = new MyClient();
-
-client.db = new Client({
-	connectionString: dbURL,
-	ssl: {
-		rejectUnauthorized: false
-	}
-});
-
-(async function dbConnect() {
-
-	console.log('Connecting to Database...')
-	try{
-		await client.db.connect()
-		console.log('\x1b[32m%s\x1b[0m', 'Connection to Database established.')
-	} catch(error)
-	{
-		console.log(error)
-	}
-}())
 
 client.functions = require('./functions.js');
 
